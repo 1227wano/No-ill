@@ -1,0 +1,103 @@
+.greeting-card {
+  background: linear-gradient(135deg, #E8F4F8 0%, #D4E8F0 100%);
+  border-radius: 20px;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.sun-icon {
+  font-size: 48px;
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  animation: rotate 20s linear infinite;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.robot-container {
+  margin: 20px 0;
+  position: relative;
+  z-index: 1;
+}
+
+.robot-avatar {
+  width: 120px;
+  height: 120px;
+  background: linear-gradient(135deg, #5BA3D0 0%, #4A90C2 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(91, 163, 208, 0.3);
+}
+
+.robot-face {
+  width: 80px;
+  height: 80px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.robot-eye {
+  width: 12px;
+  height: 12px;
+  background-color: #5BA3D0;
+  border-radius: 50%;
+  position: absolute;
+  top: 30px;
+}
+
+.robot-eye.left-eye {
+  left: 25px;
+}
+
+.robot-eye.right-eye {
+  right: 25px;
+}
+
+.robot-mouth {
+  width: 24px;
+  height: 12px;
+  border: 2px solid #5BA3D0;
+  border-top: none;
+  border-radius: 0 0 24px 24px;
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.greeting-text {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.greeting-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0 0 8px 0;
+}
+
+.greeting-subtitle {
+  font-size: 16px;
+  color: #5BA3D0;
+  margin: 0;
+}
