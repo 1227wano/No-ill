@@ -110,10 +110,10 @@ deploy:
     matrix:
       - SERVER: ["$SERVER_HOST_1", "$SERVER_HOST_2"]
   script:
-    - ssh $SERVER_DEPLOY_USER@$SERVER "docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY"
-    - ssh $SERVER_DEPLOY_USER@$SERVER "docker pull $IMAGE_TAG"
-    - ssh $SERVER_DEPLOY_USER@$SERVER "docker stop server || true"
-    - ssh $SERVER_DEPLOY_USER@$SERVER "docker rm server || true"
-    - ssh $SERVER_DEPLOY_USER@$SERVER "docker run -d --name server -p 8081:8081 --env-file /opt/server/.env $IMAGE_TAG"
+    - ssh $SERVER_DEPLOY_USER@$SERVER "/opt/homebrew/bin/docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY"
+    - ssh $SERVER_DEPLOY_USER@$SERVER "/opt/homebrew/bin/docker pull $IMAGE_TAG"
+    - ssh $SERVER_DEPLOY_USER@$SERVER "/opt/homebrew/bin/docker stop server || true"
+    - ssh $SERVER_DEPLOY_USER@$SERVER "/opt/homebrew/bin/docker rm server || true"
+    - ssh $SERVER_DEPLOY_USER@$SERVER "/opt/homebrew/bin/docker run -d --name server -p 8081:8081 --env-file /opt/server/.env $IMAGE_TAG"
     - sleep 10
     - ssh $SERVER_DEPLOY_USER@$SERVER "curl -f http://localhost:8081/actuator/health --retry 3 --retry-delay 5 || exit 1"
