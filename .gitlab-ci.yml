@@ -91,7 +91,6 @@ deploy:
     - apk add --no-cache openssh-client
     - eval $(ssh-agent -s)
     - mkdir -p ~/.ssh && chmod 700 ~/.ssh
-    - echo "DEBUG len:" && echo "$DISPLAY_SSH_PRIVATE_KEY" | wc -c
     - echo "$DISPLAY_SSH_PRIVATE_KEY" | base64 -d > ~/.ssh/deploy_key
     - chmod 600 ~/.ssh/deploy_key && ssh-add ~/.ssh/deploy_key
     - echo "$DISPLAY_SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
@@ -103,6 +102,6 @@ deploy:
     - ssh $DISPLAY_DEPLOY_USER@$SERVER "/opt/homebrew/bin/docker pull $IMAGE_TAG"
     - ssh $DISPLAY_DEPLOY_USER@$SERVER "/opt/homebrew/bin/docker stop display || true"
     - ssh $DISPLAY_DEPLOY_USER@$SERVER "/opt/homebrew/bin/docker rm display || true"
-    - ssh $DISPLAY_DEPLOY_USER@$SERVER "/opt/homebrew/bin/docker run -d --name display -p 80:80 $IMAGE_TAG"
+    - ssh $DISPLAY_DEPLOY_USER@$SERVER "/opt/homebrew/bin/docker run -d --name display -p 3002:80 $IMAGE_TAG"
     - sleep 5
-    - ssh $DISPLAY_DEPLOY_USER@$SERVER "curl -f http://localhost:80 --retry 3 --retry-delay 5 || exit 1"
+    - ssh $DISPLAY_DEPLOY_USER@$SERVER "curl -f http://localhost:3002 --retry 3 --retry-delay 5 || exit 1"
