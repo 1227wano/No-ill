@@ -1,0 +1,119 @@
+stages:
+  - lint
+  - test
+  - build
+  - docker
+  - deploy
+
+variables:
+  IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+
+lint:
+  stage: lint
+  image: eclipse-temurin:21-jdk-alpine
+  rules:
+    - if: $CI_MERGE_REQUEST_IID
+    - if: $CI_COMMIT_BRANCH
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - server/.gradle/
+  before_script:
+    - cd server
+  script:
+    - ./gradlew check -x test
+
+security:
+  stage: lint
+  image: eclipse-temurin:21-jdk-alpine
+  rules:
+    - if: $CI_MERGE_REQUEST_IID
+    - if: $CI_COMMIT_BRANCH
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - server/.gradle/
+  before_script:
+    - cd server
+  script:
+    - ./gradlew dependencyCheckAnalyze || true
+  allow_failure: true
+
+test:
+  stage: test
+  image: eclipse-temurin:21-jdk-alpine
+  rules:
+    - if: $CI_MERGE_REQUEST_IID
+    - if: $CI_COMMIT_BRANCH
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - server/.gradle/
+  before_script:
+    - cd server
+  script:
+    - ./gradlew test
+  artifacts:
+    when: always
+    reports:
+      junit: server/build/test-results/test/*.xml
+
+build:
+  stage: build
+  image: eclipse-temurin:21-jdk-alpine
+  rules:
+    - if: $CI_MERGE_REQUEST_IID
+    - if: $CI_COMMIT_BRANCH
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - server/.gradle/
+  before_script:
+    - cd server
+  script:
+    - ./gradlew build -x test
+  artifacts:
+    paths:
+      - server/build/libs/
+    expire_in: 1 hour
+
+docker:
+  stage: docker
+  image: docker:latest
+  only:
+    - server
+  services:
+    - docker:dind
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker build -t $IMAGE_TAG ./server
+    - docker push $IMAGE_TAG
+
+deploy:
+  stage: deploy
+  image: alpine:latest
+  only:
+    - server
+  before_script:
+    - apk add --no-cache openssh-client
+    - eval $(ssh-agent -s)
+    - mkdir -p ~/.ssh && chmod 700 ~/.ssh
+    - echo "$SERVER_SSH_PRIVATE_KEY" | base64 -d > ~/.ssh/deploy_key
+    - chmod 600 ~/.ssh/deploy_key && ssh-add ~/.ssh/deploy_key
+    - echo "$SERVER_SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+  parallel:
+    matrix:
+      - SERVER: ["$SERVER_HOST_1", "$SERVER_HOST_2"]
+  script:
+    - ssh $SERVER_DEPLOY_USER@$SERVER "docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY"
+    - ssh $SERVER_DEPLOY_USER@$SERVER "docker pull $IMAGE_TAG"
+    - ssh $SERVER_DEPLOY_USER@$SERVER "docker stop server || true"
+    - ssh $SERVER_DEPLOY_USER@$SERVER "docker rm server || true"
+    - ssh $SERVER_DEPLOY_USER@$SERVER "docker run -d --name server -p 8081:8081 --env-file /opt/server/.env $IMAGE_TAG"
+    - sleep 10
+    - ssh $SERVER_DEPLOY_USER@$SERVER "curl -f http://localhost:8081/actuator/health --retry 3 --retry-delay 5 || exit 1"
