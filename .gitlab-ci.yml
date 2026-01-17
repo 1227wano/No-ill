@@ -11,6 +11,9 @@ variables:
 lint:
   stage: lint
   image: node:20-alpine
+  rules:
+    - if: $CI_MERGE_REQUEST_IID
+    - if: $CI_COMMIT_BRANCH
   cache:
     key: ${CI_COMMIT_REF_SLUG}
     paths:
@@ -24,6 +27,9 @@ lint:
 security:
   stage: lint
   image: node:20-alpine
+  rules:
+    - if: $CI_MERGE_REQUEST_IID
+    - if: $CI_COMMIT_BRANCH
   cache:
     key: ${CI_COMMIT_REF_SLUG}
     paths:
@@ -38,6 +44,9 @@ security:
 test:
   stage: test
   image: node:20-alpine
+  rules:
+    - if: $CI_MERGE_REQUEST_IID
+    - if: $CI_COMMIT_BRANCH
   cache:
     key: ${CI_COMMIT_REF_SLUG}
     paths:
@@ -52,6 +61,9 @@ test:
 build:
   stage: build
   image: node:20-alpine
+  rules:
+    - if: $CI_MERGE_REQUEST_IID
+    - if: $CI_COMMIT_BRANCH
   cache:
     key: ${CI_COMMIT_REF_SLUG}
     paths:
