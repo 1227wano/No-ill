@@ -21,6 +21,7 @@ lint:
       - server/.gradle/
   before_script:
     - cd server
+    - chmod +x ./gradlew
   script:
     - ./gradlew check -x test
 
@@ -36,6 +37,7 @@ security:
       - server/.gradle/
   before_script:
     - cd server
+    - chmod +x ./gradlew
   script:
     - ./gradlew dependencyCheckAnalyze || true
   allow_failure: true
@@ -52,6 +54,7 @@ test:
       - server/.gradle/
   before_script:
     - cd server
+    - chmod +x ./gradlew
   script:
     - ./gradlew test
   artifacts:
@@ -71,6 +74,7 @@ build:
       - server/.gradle/
   before_script:
     - cd server
+    - chmod +x ./gradlew
   script:
     - ./gradlew build -x test
   artifacts:
