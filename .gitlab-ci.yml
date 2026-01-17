@@ -92,6 +92,13 @@ deploy:
     - eval $(ssh-agent -s)
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
+    - echo "=== DEBUG: Variable length ==="
+    - echo "$DISPLAY_SSH_PRIVATE_KEY" | wc -c
+    - echo "=== DEBUG: First 50 chars ==="
+    - echo "$DISPLAY_SSH_PRIVATE_KEY" | head -c 50
+    - echo ""
+    - echo "=== DEBUG: Decoded key start ==="
+    - echo "$DISPLAY_SSH_PRIVATE_KEY" | base64 -d | head -n 1
     - echo "$DISPLAY_SSH_PRIVATE_KEY" | base64 -d > ~/.ssh/deploy_key
     - chmod 600 ~/.ssh/deploy_key
     - ssh-add ~/.ssh/deploy_key
