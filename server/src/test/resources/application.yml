@@ -22,3 +22,7 @@ management:
     web:
       exposure:
         include: health
+
+jwt:
+  secret: dGVzdHNlY3JldGtleXRlc3RzZWNyZXRrZXl0ZXN0c2VjcmV0a2V5
+  expiration: 86400000
