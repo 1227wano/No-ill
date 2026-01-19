@@ -94,9 +94,9 @@ docker:
     DOCKER_TLS_CERTDIR: ""
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker buildx create --use --name multiarch --driver docker-container
   script:
-    - docker build -t $IMAGE_TAG ./server
-    - docker push $IMAGE_TAG
+    - docker buildx build --platform linux/amd64,linux/arm64 -t $IMAGE_TAG --push ./server
 
 deploy:
   stage: deploy
