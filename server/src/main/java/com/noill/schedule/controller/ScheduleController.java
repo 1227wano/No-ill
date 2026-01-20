@@ -15,6 +15,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/schedules")
+@CrossOrigin(origins = "http://localhost:3000") // 이 줄이 있어야 프론트 접근이 가능합니다.
 @RequiredArgsConstructor
 public class ScheduleController {
 
