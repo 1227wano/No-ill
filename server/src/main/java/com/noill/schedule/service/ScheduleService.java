@@ -67,14 +67,14 @@ public class ScheduleService {
     }
 
     /**
-     * 일정 삭제 (논리적 삭제)
-     * 실제 DB에서 지우지 않고, 상태값만 변경합니다.
+     * 일정 삭제 (물리적 삭제)
+     * DB에서 데이터를 완전히 삭제합니다.
      */
     public void deleteSchedule(Long id) {
         Schedule schedule = scheduleRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 일정이 없습니다. id=" + id));
 
-        // 상태를 'N'으로 변경
-        schedule.deleteLogic();
+        // JPA delete 호출 (Hard Delete)
+        scheduleRepository.delete(schedule);
     }
 }

@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.SQLRestriction;
 import java.time.LocalDateTime;
 
 /**
@@ -19,8 +18,6 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-// 조회 시 자동으로 삭제되지 않은(Y) 데이터만 가져오도록 필터링 (Hibernate 6.3+)
-@SQLRestriction("SCH_STATUS = 'Y'")
 public class Schedule {
 
     @Id
@@ -54,13 +51,5 @@ public class Schedule {
         this.schName = schName;
         this.schMemo = schMemo;
         this.schTime = schTime;
-    }
-
-    /**
-     * 논리적 삭제
-     * 실제 DB에서 지우지 않고 상태만 'N'으로 변경합니다.
-     */
-    public void deleteLogic() {
-        this.schStatus = "N";
     }
 }
