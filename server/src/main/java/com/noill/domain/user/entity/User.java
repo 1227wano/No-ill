@@ -5,54 +5,70 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Collections;
 
 @Entity
-@Table(name = "users")
+@Table(name = "members")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long userNo;
 
-    @Column(nullable = false, unique = true, length = 50)
-    private String username;
+    @Column(nullable = false, unique = true, length = 100)
+    private String userId;
+
+    @Column(nullable = false, length = 100)
+    private String userPassword;
+
+    @Column(nullable = false, length = 100)
+    private String userName;
+
+    @Column(nullable = false, length = 1000)
+    private String userAddress;
 
     @Column(nullable = false)
-    private String password;
+    private String userPhone;
 
-    @Column(nullable = false, length = 50)
-    private String name;
+    @Column()
+    private String userFamily;
 
-    @Column(length = 255)
-    private String address;
-
-    @Column(length = 20)
-    private String phone;
-
-    @Column(length = 20)
-    private String emergencyPhone;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 1)
+    private UserType userType;
 
     @Builder
-    public User(String username, String password, String name, String address, String phone, String emergencyPhone) {
-        this.username = username;
-        this.password = password;
-        this.name = name;
-        this.address = address;
-        this.phone = phone;
-        this.emergencyPhone = emergencyPhone;
+    public User(String userId, String userPassword, String userName, String userAddress, String userPhone, String userFamily, UserType userType) {
+        this.userId = userId;
+        this.userPassword = userPassword;
+        this.userName = userName;
+        this.userAddress = userAddress;
+        this.userPhone = userPhone;
+        this.userFamily = userFamily;
+        this.userType = userType;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        return Collections.singletonList(new SimpleGrantedAuthority(this.userType.getKey()));
+    }
+
+    @Override
+    public String getUsername() {
+        return this.userId;
+    }
+
+    @Override
+    public String getPassword() {
+        return this.userPassword;
     }
 
     @Override
@@ -73,5 +89,16 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Getter
+    @RequiredArgsConstructor
+    public enum UserType {
+        U("ROLE_USER", "사용자"),
+        F("ROLE_FAMILY", "보호자"),
+        A("ROLE_ADMIN", "관리자");
+
+        private final String key;
+        private final String title;
     }
 }

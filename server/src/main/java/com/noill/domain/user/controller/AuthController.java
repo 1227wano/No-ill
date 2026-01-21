@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -34,5 +35,15 @@ public class AuthController {
         LoginResponse response = authService.login(request);
         return ResponseEntity
                 .ok(ApiResponse.success("로그인이 완료되었습니다", response));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse<Void>> logout(@RequestHeader("Authorization") String accessToken) {
+        String token = accessToken.substring(7);
+
+        authService.logout(token);
+
+        return ResponseEntity
+                .ok(ApiResponse.success("로그아웃 되었습니다."));
     }
 }
