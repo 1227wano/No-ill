@@ -1,16 +1,17 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import Dashboard from './components/Dashboard'
-import './App.css'
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import DisplayPage from './pages/DisplayPage';
+import AdminPage from './pages/AdminPage';
+import './App.css';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Dashboard />} />
-        {/* 새 페이지 추가 예시: <Route path="/about" element={<About />} /> */}
+        <Route path="/" element={<DisplayPage />} />
+        <Route path="/admin" element={<AdminPage />} />
       </Routes>
     </BrowserRouter>
-  )
+  );
 }
 
-export default App
+export default App;
