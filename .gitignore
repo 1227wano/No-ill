@@ -183,4 +183,4 @@ server/
 
 # Local environment files
 .vscode/
-.env
+display/.env

@@ -3,6 +3,9 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
+# 빌드 인자로 환경 변수 받기
+ARG VITE_API_BASE_URL
+
 # Install dependencies
 COPY package*.json ./
 RUN npm ci
