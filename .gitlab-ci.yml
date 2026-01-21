@@ -91,7 +91,7 @@ docker:
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    - docker build -t $IMAGE_TAG ./display
+    - docker build --build-arg VITE_API_BASE_URL=$VITE_API_BASE_URL -t $IMAGE_TAG ./display
     - docker push $IMAGE_TAG
 
 deploy:
