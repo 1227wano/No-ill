@@ -180,3 +180,7 @@ $RECYCLE.BIN/
 
 # Branch-specific folders
 server/
+
+# Local environment files
+.vscode/
+.env
