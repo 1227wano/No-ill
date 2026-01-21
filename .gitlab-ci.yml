@@ -45,6 +45,8 @@ security:
 test:
   stage: test
   image: eclipse-temurin:21-jdk-alpine
+  variables:
+    SPRING_PROFILES_ACTIVE: test
   rules:
     - if: $CI_MERGE_REQUEST_IID
     - if: $CI_COMMIT_BRANCH
@@ -56,7 +58,7 @@ test:
     - cd server
     - chmod +x ./gradlew
   script:
-    - ./gradlew test
+    - ./gradlew test -Dspring.profiles.active=test
   artifacts:
     when: always
     reports:

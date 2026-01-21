@@ -18,9 +18,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
 #    hikari: # 로컬에서 DB 확인용 서버 가부화 감소
 #      maximum-pool-size: 2
-#    url: jdbc:mysql://localhost:3306/wano?serverTimezone=UTC&useUnicode=true&characterEncoding=utf8
-#    username: root
-#    password: 1227
+
 management:
   endpoints:
     web:

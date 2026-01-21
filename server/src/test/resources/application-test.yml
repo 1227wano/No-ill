@@ -2,13 +2,15 @@ server:
   port: 8081
 
 spring:
-  config:
-    import: optional:dotenv:.env
 
   autoconfigure:
     exclude:
       - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
       - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
+
+  data:
+    redis:
+      url: redis://:${REDIS_PASSWORD:S14P11A301}@${REDIS_HOST:i14a301.p.ssafy.io}:${REDIS_PORT:6379}
 
   datasource:
     url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
