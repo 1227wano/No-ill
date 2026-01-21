@@ -9,19 +9,18 @@ spring:
       ddl-auto: update
   data:
     redis:
-      host: localhost
-      port: 6379
-#      host: ${REDIS_HOST:localhost}
-#      port: ${REDIS_PORT:6379}
-#      password: ${REDIS_PASSWORD:}
+      url: redis://:${REDIS_PASSWORD:}@${REDIS_HOST:localhost}:${REDIS_PORT:6379}
+
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
-    hikari: # DB 확인용 서버 가부화 감소
-      maximum-pool-size: 2
-
+#    hikari: # 로컬에서 DB 확인용 서버 가부화 감소
+#      maximum-pool-size: 2
+#    url: jdbc:mysql://localhost:3306/wano?serverTimezone=UTC&useUnicode=true&characterEncoding=utf8
+#    username: root
+#    password: 1227
 management:
   endpoints:
     web:
