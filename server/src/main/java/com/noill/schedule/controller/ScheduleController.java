@@ -13,6 +13,11 @@ import java.util.List;
  * ScheduleController
  * 수정(PUT) 및 삭제(DELETE) API가 추가되었습니다.
  */
+import com.noill.domain.user.entity.User;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+
+// ... (기존 imports)
+
 @RestController
 @RequestMapping("/api/schedules")
 @CrossOrigin(origins = "http://localhost:3000") // 이 줄이 있어야 프론트 접근이 가능합니다.
@@ -23,8 +28,10 @@ public class ScheduleController {
 
     // 일정 등록
     @PostMapping
-    public ScheduleResponseDto create(@Valid @RequestBody ScheduleRequestDto requestDto) {
-        return scheduleService.addSchedule(requestDto);
+    public ScheduleResponseDto create(
+            @AuthenticationPrincipal User user,
+            @Valid @RequestBody ScheduleRequestDto requestDto) {
+        return scheduleService.addSchedule(requestDto, user);
     }
 
     // 일정 목록 조회
