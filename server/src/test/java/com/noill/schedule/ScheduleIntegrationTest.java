@@ -96,4 +96,70 @@ public class ScheduleIntegrationTest {
                 .andExpect(jsonPath("$.schName").value("통합 테스트 일정")) // 응답 데이터 검증
                 .andExpect(jsonPath("$.userNo").exists()); // userNo가 응답에 포함되었는지 확인
     }
+
+    @Test
+    @DisplayName("LLM 연동 일정 등록 통합 테스트 (실제 API 호출)")
+    void createScheduleWithLlm() throws Exception {
+        // 1. 회원가입 (Sign Up)
+        SignupRequest signupRequest = new SignupRequest();
+        signupRequest.setUserId("llmuser1");
+        signupRequest.setUserPassword("Password123!");
+        signupRequest.setUserName("LLM유저");
+        signupRequest.setUserAddress("서울시 강남구");
+        signupRequest.setUserPhone("010-1234-5678");
+        signupRequest.setUserFamilyPhone("010-9876-5432");
+        signupRequest.setUserType(User.UserType.U);
+
+        mockMvc.perform(post("/api/auth/signup")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(signupRequest)))
+                .andExpect(status().isCreated());
+
+        // 2. 로그인 (Login)
+        String loginJson = """
+                    {
+                        "userId": "llmuser1",
+                        "userPassword": "Password123!"
+                    }
+                """;
+        MvcResult loginResult = mockMvc.perform(post("/api/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(loginJson))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String accessToken = objectMapper.readTree(loginResult.getResponse().getContentAsString())
+                .get("data").get("accessToken").asText();
+
+        System.out.println(">>> LLM 테스트용 토큰 발급 완료");
+
+        // 3. LLM 명령 전송 (Command)
+        // 실제 API를 호출하므로 네트워크 상태나 API Key가 유효해야 함
+        String commandText = "내일 오후 6시에 강남역에서 회식 있어";
+        String commandJson = "{\"text\": \"" + commandText + "\"}";
+
+        System.out.println(">>> LLM 요청 전송: " + commandText);
+
+        MvcResult commandResult = mockMvc.perform(post("/api/schedules/command")
+                .header("Authorization", "Bearer " + accessToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(commandJson))
+                .andDo(print())
+                .andExpect(status().isOk()) // 200 OK 확인
+                .andReturn();
+
+        String responseContent = commandResult.getResponse().getContentAsString();
+        System.out.println(">>> LLM 응답 결과: " + responseContent);
+
+        // 4. DB 저장 확인 (Verification)
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/api/schedules")
+                .header("Authorization", "Bearer " + accessToken))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[-1].schName").exists()) // 마지막 일정 존재 확인
+                .andExpect(jsonPath("$[-1].schTime").exists())
+        // .andExpect(jsonPath("$[-1].schMemo").value(org.hamcrest.Matchers.containsString("강남역")))
+        // // 메모에 강남역이 들어갔는지 확인 (선택)
+        ;
+    }
 }

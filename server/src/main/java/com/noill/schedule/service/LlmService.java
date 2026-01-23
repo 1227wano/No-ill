@@ -22,20 +22,20 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class LlmService {
 
-    private final RestTemplate restTemplate;
-    private final ObjectMapper objectMapper;
+  private final RestTemplate restTemplate;
+  private final ObjectMapper objectMapper;
 
-    @Value("${gms.api.url:https://gms.ssafy.io/gmsapi/api.openai.com/v1/responses}")
-    private String apiUrl;
+  @Value("${gms.api.url:https://gms.ssafy.io/gmsapi/api.openai.com/v1/responses}")
+  private String apiUrl;
 
-    @Value("${gms.api.key}")
-    private String apiKey;
+  @Value("${gms.api.key}")
+  private String apiKey;
 
-    @Value("${gms.model:gpt-4.1}")
-    private String model;
+  @Value("${gms.model:gpt-4.1}")
+  private String model;
 
-    // TODO: 시스템 프롬프트 로딩 방식 고민 (파일 읽기 or 하드코딩) -> 일단 상수로 정의하되 추후 파일 로딩 고려
-    private static final String SYSTEM_PROMPT = """
+  // TODO: 시스템 프롬프트 로딩 방식 고민 (파일 읽기 or 하드코딩) -> 일단 상수로 정의하되 추후 파일 로딩 고려
+  private static final String SYSTEM_PROMPT = """
       [페르소나 / 상황]
       너는 독거 노인들의 정서 안정을 돕는 어시스턴스야.
       최우선 목표는 노인과의 소통이야.
@@ -87,64 +87,64 @@ public class LlmService {
       Assistant: {"message": "저는 하루 종일 어르신 기다리고 있었죠. 오늘 하루는 어떠셨어요?"}
       """;
 
-    public ScheduleAnalysisResponseDto analyzeUserCommand(String userText) {
-        if (userText == null || userText.trim().isEmpty()) {
-            throw new IllegalArgumentException("입력 텍스트가 비어있습니다.");
-        }
-
-        log.info("LLM 요청: {}", userText);
-
-        try {
-            // 1. 요청 페이로드 구성
-            Map<String, Object> requestBody = new HashMap<>();
-            requestBody.put("model", model);
-            requestBody.put("input", createPrompt(userText));
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.setBearerAuth(apiKey);
-
-            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
-
-            // 2. API 호출
-            String responseString = restTemplate.postForObject(apiUrl, entity, String.class);
-            log.info("LLM 원본 응답: {}", responseString); // 디버깅을 위해 INFO로 // 3. 파싱 (GMS/OpenAI 응답 구조 처리)
-            // 응답 구조: { "output": [ { "content": [ { "text": "{ ... }" } ] } ] }
-            JsonNode rootNode = objectMapper.readTree(responseString);
-
-            // GMS/OpenAI 래퍼 구조에서 실제 알맹이 JSON 문자열 추출
-            JsonNode textNode = rootNode
-                    .path("output")
-                    .path(0)
-                    .path("content")
-                    .path(0)
-                    .path("text");
-
-            if (textNode.isMissingNode() || textNode.isNull()) {
-                log.error("LLM 응답에서 text 필드를 찾을 수 없습니다: {}", responseString);
-                throw new RuntimeException("LLM 응답 구조가 올바르지 않습니다.");
-            }
-
-            String realContentJson = textNode.asText();
-            log.info("LLM 추출된 콘텐츠: {}", realContentJson);
-
-            // 4. 추출한 JSON 문자열을 DTO로 변환
-            return objectMapper.readValue(realContentJson, ScheduleAnalysisResponseDto.class);
-
-        } catch (JsonProcessingException e) {
-            log.error("LLM 응답 파싱 실패", e);
-            throw new RuntimeException("LLM 응답을 파싱할 수 없습니다.", e);
-        } catch (Exception e) {
-            log.error("LLM API 호출 중 오류 발생", e);
-            throw new RuntimeException("LLM 서비스 오류", e);
-        }
+  public ScheduleAnalysisResponseDto analyzeUserCommand(String userText) {
+    if (userText == null || userText.trim().isEmpty()) {
+      throw new IllegalArgumentException("입력 텍스트가 비어있습니다.");
     }
 
-    private String createPrompt(String userText) {
-        // 현재 시간 주입
-        String currentTime = LocalDateTime.now().toString();
+    log.info("LLM 요청: {}", userText);
 
-        return String.format("""
+    try {
+      // 1. 요청 페이로드 구성
+      Map<String, Object> requestBody = new HashMap<>();
+      requestBody.put("model", model);
+      requestBody.put("input", createPrompt(userText));
+
+      HttpHeaders headers = new HttpHeaders();
+      headers.setContentType(MediaType.APPLICATION_JSON);
+      headers.setBearerAuth(apiKey);
+
+      HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
+
+      // 2. API 호출
+      String responseString = restTemplate.postForObject(apiUrl, entity, String.class);
+      log.info("LLM 원본 응답: {}", responseString); // 디버깅을 위해 INFO로 // 3. 파싱 (GMS/OpenAI 응답 구조 처리)
+      // 응답 구조: { "output": [ { "content": [ { "text": "{ ... }" } ] } ] }
+      JsonNode rootNode = objectMapper.readTree(responseString);
+
+      // GMS/OpenAI 래퍼 구조에서 실제 알맹이 JSON 문자열 추출
+      JsonNode textNode = rootNode
+          .path("output")
+          .path(0)
+          .path("content")
+          .path(0)
+          .path("text");
+
+      if (textNode.isMissingNode() || textNode.isNull()) {
+        log.error("LLM 응답에서 text 필드를 찾을 수 없습니다: {}", responseString);
+        throw new RuntimeException("LLM 응답 구조가 올바르지 않습니다.");
+      }
+
+      String realContentJson = textNode.asText();
+      log.info("LLM 추출된 콘텐츠: {}", realContentJson);
+
+      // 4. 추출한 JSON 문자열을 DTO로 변환
+      return objectMapper.readValue(realContentJson, ScheduleAnalysisResponseDto.class);
+
+    } catch (JsonProcessingException e) {
+      log.error("LLM 응답 파싱 실패", e);
+      throw new RuntimeException("LLM 응답을 파싱할 수 없습니다.", e);
+    } catch (Exception e) {
+      log.error("LLM API 호출 중 오류 발생", e);
+      throw new RuntimeException("LLM 서비스 오류", e);
+    }
+  }
+
+  private String createPrompt(String userText) {
+    // 현재 시간 주입
+    String currentTime = LocalDateTime.now().toString();
+
+    return String.format("""
         %s
 
         [현재 시간 정보]
@@ -153,5 +153,5 @@ public class LlmService {
         User: %s
         Assistant:
         """, SYSTEM_PROMPT, currentTime, userText);
-    }
+  }
 }
