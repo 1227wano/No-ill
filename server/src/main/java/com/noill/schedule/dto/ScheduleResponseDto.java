@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 public class ScheduleResponseDto {
     private Long id;
-    private Integer userNo;
+    private Long userNo;
     private String schName;
     private LocalDateTime schTime;
     private String schMemo;
@@ -19,7 +19,7 @@ public class ScheduleResponseDto {
 
     public ScheduleResponseDto(Schedule schedule) {
         this.id = schedule.getId();
-        this.userNo = schedule.getUserNo();
+        this.userNo = schedule.getUser().getUserNo();
         this.schName = schedule.getSchName();
         this.schTime = schedule.getSchTime();
         this.schMemo = schedule.getSchMemo();

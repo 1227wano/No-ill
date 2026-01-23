@@ -4,6 +4,7 @@ import com.noill.schedule.entity.Schedule;
 import com.noill.schedule.dto.ScheduleRequestDto;
 import com.noill.schedule.dto.ScheduleResponseDto;
 import com.noill.schedule.repository.ScheduleRepository;
+import com.noill.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,12 +25,13 @@ public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
 
-    // 일정 등록
-    public ScheduleResponseDto addSchedule(ScheduleRequestDto requestDto) {
+    // 일정 등록 - 로그인한 사용자 정보를 Controller에서 받음
+    public ScheduleResponseDto addSchedule(ScheduleRequestDto requestDto, User user) {
         if (requestDto.getSchName().contains("금지어")) {
             throw new IllegalArgumentException("적절하지 않은 일정 이름입니다.");
         }
-        Schedule savedSchedule = scheduleRepository.save(requestDto.toEntity());
+
+        Schedule savedSchedule = scheduleRepository.save(requestDto.toEntity(user));
         return new ScheduleResponseDto(savedSchedule);
     }
 

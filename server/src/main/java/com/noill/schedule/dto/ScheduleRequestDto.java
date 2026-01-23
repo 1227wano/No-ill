@@ -18,8 +18,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class ScheduleRequestDto {
 
-    private Integer userNo;
-
     @NotBlank(message = "일정 이름은 필수입니다.")
     private String schName;
 
@@ -28,9 +26,9 @@ public class ScheduleRequestDto {
 
     private String schMemo;
 
-    public Schedule toEntity() {
+    public Schedule toEntity(com.noill.domain.user.entity.User user) {
         Schedule schedule = new Schedule();
-        schedule.setUserNo(this.userNo);
+        schedule.setUser(user);
         schedule.setSchName(this.schName);
         schedule.setSchTime(this.schTime);
         schedule.setSchMemo(this.schMemo);

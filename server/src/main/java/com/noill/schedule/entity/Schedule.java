@@ -1,6 +1,7 @@
 package com.noill.schedule.entity;
 
 import jakarta.persistence.*;
+import com.noill.domain.user.entity.User;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -24,8 +25,12 @@ public class Schedule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "USER_NO", nullable = false)
-    private Integer userNo;
+
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "USER_NO", nullable = false)
+    private User user;
 
     @NotBlank(message = "일정 이름은 필수입니다.")
     @Column(name = "SCH_NAME", length = 100, nullable = false)
