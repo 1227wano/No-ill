@@ -31,6 +31,9 @@ public class ScheduleController {
     public ScheduleResponseDto create(
             @AuthenticationPrincipal User user,
             @Valid @RequestBody ScheduleRequestDto requestDto) {
+        if (user == null) {
+            throw new IllegalArgumentException("로그인 정보가 유효하지 않습니다. (User principal is null)");
+        }
         return scheduleService.addSchedule(requestDto, user);
     }
 
