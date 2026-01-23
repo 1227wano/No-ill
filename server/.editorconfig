@@ -1,0 +1,30 @@
+# 최상위 설정 파일임을 명시
+root = true
+
+# [모든 파일 공통 설정]
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# [Java 파일 설정]
+[*.java]
+# 상단 [*]에서 4칸을 설정했으므로 indent_size는 생략 가능합니다.
+# 줄 바꿈 시 들여쓰기는 IntelliJ 전용 속성을 권장합니다.
+ij_java_continuation_indent_size = 8
+
+# Import문 최적화 및 순서
+ij_java_imports_layout = static all | blank_line | java.** | javax.** | blank_line | org.** | com.** | blank_line | all
+
+# [네이밍 및 코드 스타일 가이드]
+ij_java_names_count_to_use_import_on_demand = 999
+ij_java_class_count_to_use_import_on_demand = 999
+ij_java_doc_add_blank_line_after_description = true
+ij_java_doc_add_blank_line_after_param_comments = false
+
+# [설정 파일] - 여기는 2칸이므로 명시가 필요합니다.
+[*.{xml,yml,yaml,json,properties}]
+indent_size = 2

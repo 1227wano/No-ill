@@ -1,0 +1,99 @@
+
+package com.noill.schedule;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.noill.domain.user.dto.SignupRequest;
+import com.noill.domain.user.entity.User;
+import com.noill.global.redis.RedisService;
+import com.noill.schedule.dto.ScheduleRequestDto;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+
+import java.time.LocalDateTime;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@SpringBootTest
+@AutoConfigureMockMvc
+@ActiveProfiles("test")
+public class ScheduleIntegrationTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @MockBean
+    private RedisService redisService;
+
+    @Test
+    @DisplayName("회원가입 -> 로그인 -> 일정 생성 전체 흐름 테스트")
+    void createScheduleFlowTest() throws Exception {
+        // 1. 회원가입 (Sign Up)
+        SignupRequest signupRequest = new SignupRequest();
+        signupRequest.setUserId("testuser999");
+        signupRequest.setUserPassword("Password123!");
+        signupRequest.setUserName("테스트유저");
+        signupRequest.setUserAddress("서울시 테스트구");
+        signupRequest.setUserPhone("010-0000-0000");
+        signupRequest.setUserFamilyPhone("010-1111-1111");
+        signupRequest.setUserType(User.UserType.U);
+
+        mockMvc.perform(post("/api/auth/signup")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(signupRequest)))
+                .andDo(print())
+                .andExpect(status().isCreated()); // 201 Created 확인
+
+        // 2. 로그인 및 토큰 발급 (Login)
+        // DTO 수정 없이 테스트하기 위해 JSON 문자열 직접 사용
+        String loginJson = """
+                    {
+                        "userId": "testuser999",
+                        "userPassword": "Password123!"
+                    }
+                """;
+
+        MvcResult loginResult = mockMvc.perform(post("/api/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(loginJson)) // JSON 문자열 전달
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        // 토큰 추출
+        String responseBody = loginResult.getResponse().getContentAsString();
+        JsonNode jsonNode = objectMapper.readTree(responseBody);
+        String accessToken = jsonNode.get("data").get("accessToken").asText();
+
+        System.out.println(">>> 발급된 토큰: " + accessToken);
+
+        // 3. 일정 생성 (Create Schedule) - userNo 없이 토큰만으로 요청
+        ScheduleRequestDto scheduleRequest = new ScheduleRequestDto();
+        scheduleRequest.setSchName("통합 테스트 일정");
+        scheduleRequest.setSchTime(LocalDateTime.now().plusDays(1)); // 내일
+        scheduleRequest.setSchMemo("테스트 코드로 생성된 일정입니다.");
+
+        mockMvc.perform(post("/api/schedules")
+                .header("Authorization", "Bearer " + accessToken) // 토큰 헤더 추가
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(scheduleRequest)))
+                .andDo(print())
+                .andExpect(status().isOk()) // 200 OK 확인
+                .andExpect(jsonPath("$.schName").value("통합 테스트 일정")) // 응답 데이터 검증
+                .andExpect(jsonPath("$.userNo").exists()); // userNo가 응답에 포함되었는지 확인
+    }
+}
