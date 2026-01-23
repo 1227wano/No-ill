@@ -49,7 +49,7 @@ public class ScheduleIntegrationTest {
         signupRequest.setUserName("테스트유저");
         signupRequest.setUserAddress("서울시 테스트구");
         signupRequest.setUserPhone("010-0000-0000");
-        signupRequest.setUserFamily("010-1111-1111");
+        signupRequest.setUserFamilyPhone("010-1111-1111");
         signupRequest.setUserType(User.UserType.U);
 
         mockMvc.perform(post("/api/auth/signup")
