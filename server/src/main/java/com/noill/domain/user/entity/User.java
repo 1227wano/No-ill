@@ -39,20 +39,20 @@ public class User implements UserDetails {
     private String userPhone;
 
     @Column()
-    private String userFamily;
+    private String userFamilyPhone;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 1)
     private UserType userType;
 
     @Builder
-    public User(String userId, String userPassword, String userName, String userAddress, String userPhone, String userFamily, UserType userType) {
+    public User(String userId, String userPassword, String userName, String userAddress, String userPhone, String userFamilyPhone, UserType userType) {
         this.userId = userId;
         this.userPassword = userPassword;
         this.userName = userName;
         this.userAddress = userAddress;
         this.userPhone = userPhone;
-        this.userFamily = userFamily;
+        this.userFamilyPhone = userFamilyPhone;
         this.userType = userType;
     }
 
@@ -95,8 +95,7 @@ public class User implements UserDetails {
     @RequiredArgsConstructor
     public enum UserType {
         U("ROLE_USER", "사용자"),
-        F("ROLE_FAMILY", "보호자"),
-        A("ROLE_ADMIN", "관리자");
+        F("ROLE_FAMILY", "보호자");
 
         private final String key;
         private final String title;

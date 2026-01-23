@@ -33,7 +33,7 @@ public class SignupRequest {
     private String userPhone;
 
     @Size(max = 20, message = "비상전화번호는 20자 이하로 입력해주세요")
-    private String userFamily;
+    private String userFamilyPhone;
 
     @NotNull(message = "회원 유형은 필수입니다 (U: 사용자, F: 보호자)")
     private UserType userType;

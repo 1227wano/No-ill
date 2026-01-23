@@ -38,7 +38,7 @@ public class AuthService {
                 .userName(request.getUserName())
                 .userAddress(request.getUserAddress())
                 .userPhone(request.getUserPhone())
-                .userFamily(request.getUserFamily())
+                .userFamilyPhone(request.getUserFamilyPhone())
                 .userType(request.getUserType())
                 .build();
 
