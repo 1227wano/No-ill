@@ -8,8 +8,7 @@ ARG VITE_API_BASE_URL
 
 # Install dependencies
 COPY package*.json ./
-RUN npm ci
-
+RUN npm ci --only=production
 # Copy source and build
 COPY . .
 RUN npm run build
