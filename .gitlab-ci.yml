@@ -112,19 +112,14 @@ deploy:
     - echo "$SERVER_SSH_PRIVATE_KEY" | base64 -d > ~/.ssh/deploy_key
     - chmod 600 ~/.ssh/deploy_key && ssh-add ~/.ssh/deploy_key
     - echo "$SERVER_SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
-  parallel:
-    matrix:
-      - SERVER: "$SERVER_HOST_1"
-        PORT: "8081"
-        DOCKER_PATH: "/opt/homebrew/bin/docker"
-      - SERVER: "$SERVER_HOST_2"
-        PORT: "8080"
-        DOCKER_PATH: "docker"
+  variables:
+    SERVER: "$SERVER_HOST_2"
+    PORT: "8080"
   script:
-    - ssh $SERVER_DEPLOY_USER@$SERVER "$DOCKER_PATH login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY"
-    - ssh $SERVER_DEPLOY_USER@$SERVER "$DOCKER_PATH pull $IMAGE_TAG"
-    - ssh $SERVER_DEPLOY_USER@$SERVER "$DOCKER_PATH stop server || true"
-    - ssh $SERVER_DEPLOY_USER@$SERVER "$DOCKER_PATH rm server || true"
-    - ssh $SERVER_DEPLOY_USER@$SERVER "$DOCKER_PATH run -d --name server --add-host=host.docker.internal:host-gateway -p $PORT:$PORT -e SERVER_PORT=$PORT --env-file /opt/server/.env $IMAGE_TAG"
+    - ssh $SERVER_DEPLOY_USER@$SERVER "docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY"
+    - ssh $SERVER_DEPLOY_USER@$SERVER "docker pull $IMAGE_TAG"
+    - ssh $SERVER_DEPLOY_USER@$SERVER "docker stop server || true"
+    - ssh $SERVER_DEPLOY_USER@$SERVER "docker rm server || true"
+    - ssh $SERVER_DEPLOY_USER@$SERVER "docker run -d --name server --add-host=host.docker.internal:host-gateway -p $PORT:$PORT -e SERVER_PORT=$PORT --env-file /opt/server/.env $IMAGE_TAG"
     - sleep 30
     - ssh $SERVER_DEPLOY_USER@$SERVER "curl -f http://localhost:$PORT/actuator/health --retry 5 --retry-delay 10 --retry-all-errors || exit 1"
