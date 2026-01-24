@@ -80,14 +80,10 @@ build:
 
 docker:
   stage: docker
-  image: docker:latest
   only:
     - display
-  services:
-    - docker:dind
-  variables:
-    DOCKER_HOST: tcp://docker:2375
-    DOCKER_TLS_CERTDIR: ""
+  tags:
+    - shell
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
@@ -96,11 +92,11 @@ docker:
 
 deploy:
   stage: deploy
-  image: alpine:latest
   only:
     - display
+  tags:
+    - shell
   before_script:
-    - apk add --no-cache openssh-client
     - eval $(ssh-agent -s)
     - mkdir -p ~/.ssh && chmod 700 ~/.ssh
     - echo "$DISPLAY_SSH_PRIVATE_KEY" | base64 -d > ~/.ssh/deploy_key
