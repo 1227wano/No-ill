@@ -1,19 +1,38 @@
-// 백엔드 주소
 import axios from 'axios';
 
 const client = axios.create({
-  // 환경 변수에서 주소를 가져옵니다.
   baseURL: import.meta.env.VITE_API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// 필요한 경우 인터셉터를 추가해 토큰 등을 처리할 수 있습니다.
+// 요청 인터셉터
 client.interceptors.request.use((config) => {
-  // 예: const token = localStorage.getItem('token');
-  // if (token) config.headers.Authorization = `Bearer ${token}`;
-  return config;
+    const token = localStorage.getItem('token');
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    console.log('API Request:', config.method?.toUpperCase(), config.url);
+    return config;
 });
+
+// 응답 인터셉터
+client.interceptors.response.use(
+    (response) => {
+        console.log('API Response:', response.status, response.config.url);
+        return response;
+    },
+    (error) => {
+        console.error('API Error:', error);
+
+        if (error.response?.status === 401) {
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+        }
+
+        return Promise.reject(error);
+    }
+);
 
 export default client;

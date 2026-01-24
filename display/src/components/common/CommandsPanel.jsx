@@ -12,7 +12,11 @@ const CommandsPanel = () => {
       <h2 className="text-xl font-semibold text-gray-800 mb-6">이렇게 말해보세요</h2>
       <div className="flex flex-col gap-3 mb-8">
         {commands.map((command, index) => (
-          <button key={index} className="flex items-center gap-3 px-5 py-4 bg-[#E8F4F8] border-2 border-[#5BA3D0] rounded-xl cursor-pointer transition-all text-left text-base text-gray-800 hover:bg-[#5BA3D0] hover:text-white hover:translate-x-1 [&:hover_.command-icon]:brightness-0 [&:hover_.command-icon]:invert">
+          <button
+            key={index}
+            className="flex items-center gap-3 px-5 py-4 bg-[#E8F4F8] border-2 border-[#5BA3D0] rounded-xl cursor-pointer transition-all text-left text-base text-gray-800 hover:bg-[#5BA3D0] hover:text-white hover:translate-x-1 [&:hover_.command-icon]:brightness-0 [&:hover_.command-icon]:invert"
+            aria-label={`${command.text} 명령어`}
+          >
             <span className="command-icon text-xl min-w-[24px]">{command.icon}</span>
             <span className="font-medium">{command.text}</span>
           </button>
