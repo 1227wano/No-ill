@@ -184,3 +184,11 @@ server/
 # Local environment files
 .vscode/
 display/.env
+
+# Claude Code
+.continue/
+CLAUDE.md
+
+# Qodana
+qodana.sarif.json
+qodana.yaml
