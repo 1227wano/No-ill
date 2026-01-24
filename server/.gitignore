@@ -39,3 +39,9 @@ out/
 ### Environment ###
 .env
 .env.local
+
+
+.continue/
+CLAUDE.md
+qodana.sarif.json
+qodana.yaml
