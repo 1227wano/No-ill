@@ -3,6 +3,7 @@ package com.noill.domain.pet.controller;
 import com.noill.common.ApiResponse;
 import com.noill.domain.pet.dto.PetLoginRequest;
 import com.noill.domain.pet.dto.PetLoginResponse;
+import com.noill.domain.pet.dto.PetVerifyResponse;
 import com.noill.domain.pet.service.PetAuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,5 +35,14 @@ public class PetAuthController {
         String accessToken = authorization.replace("Bearer ", "");
         petAuthService.logout(accessToken);
         return ResponseEntity.ok(ApiResponse.success(null));
+    }
+
+    @Operation(summary = "토큰 검증", description = "토큰을 검증하고 Pet 정보를 반환합니다.")
+    @GetMapping("/verify")
+    public ResponseEntity<ApiResponse<PetVerifyResponse>> verify(
+            @RequestHeader("Authorization") String authorization) {
+        String accessToken = authorization.replace("Bearer ", "");
+        PetVerifyResponse response = petAuthService.verify(accessToken);
+        return ResponseEntity.ok(ApiResponse.success(response));
     }
 }

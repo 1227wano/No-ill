@@ -2,6 +2,7 @@ package com.noill.domain.pet.service;
 
 import com.noill.domain.pet.dto.PetLoginRequest;
 import com.noill.domain.pet.dto.PetLoginResponse;
+import com.noill.domain.pet.dto.PetVerifyResponse;
 import com.noill.domain.pet.entity.Pet;
 import com.noill.domain.pet.repository.PetRepository;
 import com.noill.global.redis.RedisService;
@@ -50,5 +51,33 @@ public class PetAuthService {
         // Access Token을 블랙리스트에 추가
         long expiration = jwtTokenProvider.getRemainingExpirationTime(accessToken);
         redisService.setBlackList(accessToken, expiration);
+    }
+
+    public PetVerifyResponse verify(String accessToken) {
+        // 토큰 유효성 검증
+        if (!jwtTokenProvider.validateToken(accessToken)) {
+            throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
+        }
+
+        // 블랙리스트 확인
+        if (redisService.hasKeyBlackList(accessToken)) {
+            throw new IllegalArgumentException("로그아웃된 토큰입니다.");
+        }
+
+        // 토큰에서 subject 추출 (pet:{petNo} 형식)
+        String subject = jwtTokenProvider.getUsernameFromToken(accessToken);
+        if (!subject.startsWith("pet:")) {
+            throw new IllegalArgumentException("유효하지 않은 Pet 토큰입니다.");
+        }
+
+        String petNo = subject.substring(4); // "pet:" 제거
+        Pet pet = petRepository.findByPetNo(petNo)
+                .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 로봇펫입니다."));
+
+        return PetVerifyResponse.builder()
+                .petId(pet.getId())
+                .petNo(pet.getPetNo())
+                .name(pet.getName())
+                .build();
     }
 }
