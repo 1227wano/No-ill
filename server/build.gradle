@@ -46,7 +46,12 @@ dependencies {
     // Validation (입력값 검증)
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-    // Dotenv (.env 환경 변수 로드)
+
+    // WebSocket
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+    // Dotenv (.env 파일 로드)
+
     implementation 'me.paulschwarz:spring-dotenv:4.0.0'
     implementation 'io.github.cdimascio:dotenv-java:3.0.0'
 
@@ -84,7 +89,7 @@ tasks.named('test') {
                     def (key, value) = line.split('=', 2)
                     key = key.trim()
                     value = value.trim()
-                    
+
                     println "   >>> Setting env: ${key}" // 키 이름만 로그로 출력
                     // 시스템 프로퍼티로 주입 (테스트 실행 시 사용됨)
                     systemProperty key, value

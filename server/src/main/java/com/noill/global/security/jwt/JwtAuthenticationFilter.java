@@ -26,6 +26,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final RedisService redisService;
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        // /api/auth/** 경로는 필터 건너뛰기
+        return path.startsWith("/api/auth/");
+    }
+
+    @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
