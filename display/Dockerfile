@@ -5,6 +5,7 @@ WORKDIR /app
 
 # 빌드 인자로 환경 변수 받기
 ARG VITE_API_BASE_URL
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
 
 # Install dependencies
 COPY package*.json ./
