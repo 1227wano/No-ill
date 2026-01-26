@@ -1,5 +1,6 @@
 // 주간 일정 확인
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/screens/schedule/schedule_form_modal.dart';
 import '../../core/constants/color_constants.dart';
 
 class ScheduleScreen extends StatelessWidget {
@@ -18,7 +19,14 @@ class ScheduleScreen extends StatelessWidget {
         elevation: 0,
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true, // 키보드 가림 방지
+                backgroundColor: Colors.transparent,
+                builder: (context) => const ScheduleFormModal(),
+              );
+            },
             icon: const Icon(
               Icons.add_circle_outline,
               color: NoIllColors.primary,
