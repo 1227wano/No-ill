@@ -1,177 +1,328 @@
-# <**No-ill** (노일)> - 와... 너 정말, **"핵심을 찔렀어"** (A301)
+# Jetson Orin Nano 시뮬레이션 환경 (WSL2)
 
-# 프로젝트 개요
+WSL2에서 Jetson Orin Nano와 유사한 개발/테스트 환경을 구축하기 위한 Docker 컨테이너 설정입니다.
 
-## 프로젝트명
+## 환경 스펙 비교
 
-**No-ill** (노일): '노인'의 어감과 'no ill'(질병이 없기를) 바라는 의미를 담은 독거 노인 케어 솔루션
+| 항목 | Jetson Orin Nano | WSL2 컨테이너 | 비고 |
+|------|------------------|---------------|------|
+| CPU 코어 | 6코어 (ARM64) | 6코어 (x86_64) | 코어 수 동일 |
+| 메모리 | 8GB | 8GB | 동일 |
+| GPU 메모리 | 4-6GB (공유) | 6GB 제한 권장 | 코드 레벨 제한 |
+| OS | Ubuntu 22.04 (JetPack 6.0) | Ubuntu 22.04 | 동일 |
+| CUDA | 12.2 | 12.0 | 유사 |
 
-## 프로젝트 목표
+## 제한 사항
 
-고령화 시대의 독거 노인들을 위한 **모션 기반 추적형 보조 로봇 및 스마트 모니터**를 활용한 종합 케어 서비스 제공
+- **GPU 성능**: 호스트 GPU(RTX 등)가 Jetson보다 훨씬 빠름
+- **아키텍처**: ARM64가 아닌 x86_64 환경
+- **실제 성능 테스트는 Jetson 보드에서 수행 필요**
 
-- 독거 노인의 외로움 해결 (정서적 지원)
-- 낙상 등 건강 관련 실시간 모니터링
-- 긴급 상황 대처 및 보호자 연결
+## 테스트 가능 항목
 
-## 프로젝트 범위
-
-- **타겟 사용자**: 독거 노인 가구 및 보호자(자녀)
-- **적용 범위**: 실내 주거 공간
-
----
-
-# 기획 배경 및 문제 정의
-
-## 기획 배경
-
-성북구 독거노인 도우미 봉사활동 중 고독사의 주요 원인이 다음과 같음을 확인:
-
-- "**외롭다**"는 정서적 고립감
-- "**궁금한 것이 생겼을 때 물어볼 방법을 모르겠다**"는 커뮤니케이션 단절
-
-이는 대한민국 사회 전체에 해당되는 문제로, 독거 노인의 **고독사 예방** 및 **긴급 상황 대처**를 목표로 본 프로젝트를 기획하였습니다.
-
-## 핵심 문제점
-
-- 독거 노인의 정서적 고립 및 외로움
-- 낙상 등 응급 상황 발생 시 즉각 대응 부재
-- 보호자의 실시간 돌봄 모니터링 어려움
-- 기존 CCTV 솔루션의 프라이버시 침해 우려
+- 메모리 초과(OOM) 오류 확인
+- GPU VRAM 부족 상황 테스트
+- 코드/라이브러리 호환성 검증
+- CPU 병목 확인
+- 다중 서비스 동시 실행 부하 테스트
 
 ---
 
-# 시스템 구성
+## 빠른 시작
 
-전체 하드웨어 시스템은 **2가지 디바이스**와 **서버 인프라**로 구성됩니다.
+### 1. 저장소 클론 및 환경 구축
 
-## 1. 노일이 (로봇 펫 (Mobile Robot))
+```bash
+# WSL2 Ubuntu에서 실행
 
-**역할**: 사용자 추적형 보조 로봇 (반려 로봇 컨셉)
+# 저장소 클론
+git clone https://lab.ssafy.com/s14-webmobile1-sub1/S14P11A301.git
+cd S14P11A301
 
-**하드웨어 플랫폼**: Jetson Nano Orin (AGX 차량 베이스)
+# 줄바꿈 변환 (Windows에서 편집한 경우)
+sed -i 's/\r$//' jetson-orin-nano-wsl2-setup.sh
 
-**주요 특징**:
+# 실행 권한 부여
+chmod +x jetson-orin-nano-wsl2-setup.sh
 
-- 친근한 외형으로 사용자 거부감 최소화
-- 2가지 동작 모드 (추적 모드 / 순찰 모드)
-- 사용자와 일정 거리(1~1.5m) 유지하며 추적
-- 사용자를 인식하지 못하였을 때, 사용자를 감지하기 위해 순찰
+# Docker 컨테이너 생성
+./jetson-orin-nano-wsl2-setup.sh
+```
 
-### 주요 기능
+스크립트는 실행 위치를 자동 감지하여 컨테이너에 마운트합니다.
 
-**기본 동작**: 각 모드에 의한 주행 및 이벤트 감지, 대응
+### 2. 의존성 설치
 
-**보조 역할**:
+```bash
+# 컨테이너 접속
+docker exec -it jetson-sim bash
 
-- LLM 기반 대화 챗봇 (STT/TTS 연동)
-- 낙상 감지 (상시 작동, TFLite 경량 모델)
-- 응급 상황 발생 시 신고 및 보호자 연락
+# 의존성 설치 (최초 1회)
+cd /workspace
+sed -i 's/\r$//' tests/install_dependencies.sh
+chmod +x tests/install_dependencies.sh
+./tests/install_dependencies.sh
+```
 
-**주행 모드** (각 모드는 배타적으로 작동): 주행 API - Jetson 라이브러리
+### 3. 통합 부하 테스트 실행
 
-- **추적 모드**: 객체 인식에 의한 사용자 감지 및 거리 유지를 통한 추적 주행
-- **순찰 모드**: A* 알고리즘 기반 경로 계획
-- **취침 모드**: 수면 시간 데이터에 기반한 대기 상태
-
-**자율주행 기술**:
-
-- LiDAR + Tracking 기반
-- 사용자 인식 불가시 매핑된 지도를 활용해 재탐색
-- 실시간 장애물 회피 (사용자 경로 방해 방지)
-
-**참고 영상**:
-
-- [따라다니며 애교 부리기 예시 1](https://youtube.com/shorts/6A3n1TmvFYA?si=boGUwsOXyNlAYi5x)
-
-## 2. 디스플레이 시스템 (Raspberry Pi 5 + 모니터)
-
-**역할**: 사용자 및 보호자를 위한 대시보드 인터페이스
-
-**기술 스택**: React 기반 웹 애플리케이션
-
-**주요 화면 구성**:
-
-- **대시보드**
-    - 수면 시간 측정 및 표시
-    - 건강 관리 To-Do 리스트
-    - 일정 관리 (캘린더)
-    - 기기 상태 모니터링
-    - 장비 아바타(캐릭터) - 로컬 렌더링
-- **화상 통화**: 소켓 통신 기반
-
-## 3. 서버 인프라
-
-**기술 스택**: Java / Spring Boot / AWS
-
-**주요 역할**:
-
-- LLM 통합 (AI 서버)
-- 대시보드 출력용 정적 데이터 제공
-- 수집 데이터 저장 및 관리 (MySQL)
-- REST API 통신 (Jetson ↔ Server)
-- 소켓 통신 서버 (실시간 화상 통화)
+```bash
+cd /workspace/tests
+python3 integrated_load_test.py -d 60
+```
 
 ---
 
-# 주요 기능 상세
+## 설치되는 패키지
 
-## 응급 상황 동작 시나리오
-
-### 시나리오 플로우
-
-1. **낙상 감지**: CCTV 또는 로봇 펫이 사용자 낙상 포착
-2. **근접 확인**: 로봇 펫이 사용자 얼굴에 근접하여 상태 체크
-3. **음성 응답 확인**: "괜찮으세요?" 질문 후 응답 대기
-4. **무응답 시 긴급 연락**: 담당자(보호자) 즉시 연결
-
-### 낙상 감지 기술
-
-**객체 인식 기반 시퀀스 분석**:
-
-- 단순히 누워있는 상태가 아닌, 일련의 동작 패턴 분석
-- 분석 시퀀스: '서 있는 상태 → 갑작스러운 위치 변화 → 바닥에 닿음 → 움직임 없음'
-- TFLite 경량 모델로 실시간 처리
-
-## 자율주행 및 사용자 추적
-
-**LiDAR + Tracking 기반**:
-
-- 사용자와 1~1.5m 거리 유지
-- 노일이 시야에서 사용자가 이탈 시 LiDAR 및 매핑 지도를 활용한 사용자 재탐색
-- 즉각적인 경로 파악 및 회피 (사용자 경로 방해 방지)
-
-## 대화 기능
-
-**LLM 기반 챗봇**:
-
-- STT/TTS API 연동
-- 노인 음성 특화 학습 데이터 활용
-- 서버와 REST 통신으로 LLM 응답 처리
-
-## 수면 시간 측정
-
-- 활동량 감지 기반 수면 판단
-- 침대/침실 영역 체류 시간 분석
-- 대시보드에 일일/주간 수면 통계 표시
+| 카테고리 | 패키지 | 용도 |
+|----------|--------|------|
+| 딥러닝 | PyTorch + CUDA | GPU 연산 |
+| 객체 인식 | YOLOv8 (ultralytics) | 사람/객체 감지 |
+| STT | Whisper | 음성 인식 (한국어) |
+| TTS | gTTS | 음성 합성 (한국어) |
+| 영상 처리 | OpenCV | 영상 스트리밍 |
+| 모니터링 | psutil, pynvml | 리소스 측정 |
 
 ---
 
-# 데이터셋
+## 사용 방법
 
-본 프로젝트는 AI-Hub의 공공 데이터셋을 활용합니다.
+### 컨테이너 접속
 
-## 1. 독거 노인 돌봄용 위험 감지 데이터
+```bash
+docker exec -it jetson-sim bash
+```
 
-- **출처**: [AI-Hub 링크](https://aihub.or.kr/aihubdata/data/view.do?pageIndex=1&currMenu=115&topMenu=100&srchOptnCnd=OPTNCND001&searchKeyword=%EB%85%B8%EC%9D%B8&srchDetailCnd=DETAILCND001&srchOrder=ORDER001&srchPagePer=20&aihubDataSe=data&dataSetSn=71803)
-- **활용 목적**: 낙상 및 응급 상황 감지 모델 학습
+### 컨테이너 상태 확인
 
-## 2. 시나리오 기반 표정 3D 데이터
+```bash
+# 실행 상태
+docker ps
 
-- **출처**: [AI-Hub 링크](https://aihub.or.kr/aihubdata/data/view.do?pageIndex=1&currMenu=115&topMenu=100&srchOptnCnd=OPTNCND001&searchKeyword=%ED%91%9C%EC%A0%95&srchDetailCnd=DETAILCND001&srchOrder=ORDER001&srchPagePer=20&aihubDataSe=data&dataSetSn=71787)
-- **활용 목적**: 사용자 감정 상태 파악 및 응급 상황 판단 보조
+# 리소스 사용량
+docker stats jetson-sim --no-stream
 
-## 3. 명령어 음성 (노인 남여)
+# GPU 확인
+docker exec -it jetson-sim nvidia-smi
+```
 
-- **출처**: [AI-Hub 링크](https://aihub.or.kr/aihubdata/data/view.do?pageIndex=2&currMenu=115&topMenu=100&srchOptnCnd=OPTNCND001&searchKeyword=%EB%85%B8%EC%9D%B8&srchDetailCnd=DETAILCND001&srchOrder=ORDER001&srchPagePer=20&aihubDataSe=data&dataSetSn=94)
-- **활용 목적**: 노인 특화 STT 모델 학습 및 음성 인식 정확도 향상
+### 컨테이너 관리
+
+```bash
+# 중지
+docker stop jetson-sim
+
+# 시작
+docker start jetson-sim
+
+# 삭제 후 재생성
+docker rm -f jetson-sim
+./jetson-orin-nano-wsl2-setup.sh
+```
+
+---
+
+## 통합 부하 테스트
+
+Jetson Orin Nano에서 실행할 기능들을 동시에 실행하여 부하를 측정합니다.
+
+### 테스트 항목
+
+| 서비스 | 설명 | 기본 설정 |
+|--------|------|-----------|
+| 2D 라이다 | 주행용 스캔 시뮬레이션 | 10Hz |
+| 화상통화 | 영상 스트리밍 | 720p @ 30fps |
+| 객체 인식 | YOLOv8n 추론 | 10fps |
+| STT | Whisper 음성 인식 | 3초마다 |
+| TTS | gTTS 음성 합성 (한국어) | 2초마다 |
+
+### 테스트 실행
+
+```bash
+# 기본 실행 (60초)
+python3 tests/integrated_load_test.py
+
+# 시간 지정 (120초)
+python3 tests/integrated_load_test.py -d 120
+```
+
+### 테스트 결과 예시
+
+```
+============================================================
+ 테스트 결과
+============================================================
+CPU 사용률:     평균 2.7% / 최대 16.6%
+RAM 사용량:     평균 1363.9MB / 최대 1421.4MB
+GPU 메모리:     평균 4333.6MB / 최대 4409.2MB
+GPU 사용률:     평균 23.3% / 최대 62.0%
+
+처리량:
+  - 라이다 스캔:    593회 (9.9/초)
+  - 영상 프레임:    1529회 (25.5/초)
+  - 객체 인식:      506회 (8.4/초)
+  - STT 변환:       17회
+  - TTS 합성:       25회
+============================================================
+ Jetson Orin Nano 대비 평가
+============================================================
+[OK] GPU 메모리 사용량 적정 (4409MB / 6144MB)
+[OK] RAM 사용량 적정 (1421MB / 8192MB)
+============================================================
+```
+
+### 결과 해석
+
+| 항목 | 정상 범위 | 경고 |
+|------|-----------|------|
+| GPU 메모리 | < 6GB | Jetson에서 OOM 발생 가능 |
+| RAM | < 7GB | 메모리 부족 가능 |
+| CPU | < 90% | 병목 발생 가능 |
+
+---
+
+## 설정 변경
+
+`tests/config.py` 파일에서 모델 및 설정을 변경할 수 있습니다.
+
+### 커스텀 모델 사용
+
+```python
+# 객체 인식 - 커스텀 PyTorch 모델
+OBJECT_DETECTION = {
+    "type": "custom_torch",
+    "custom_model_path": "/workspace/models/my_detection.pt",
+    "input_size": (640, 640),
+    "inference_interval": 0.1,
+}
+
+# STT - Whisper 모델 크기 변경
+STT = {
+    "type": "whisper",
+    "whisper_model": "small",  # tiny, base, small, medium, large
+    "language": "ko",
+    "process_interval": 3.0,
+}
+
+# TTS - gTTS 한국어
+TTS_CONFIG = {
+    "type": "gtts",
+    "gtts_lang": "ko",
+    "synthesis_interval": 2.0,
+}
+```
+
+### 지원 모델 형식
+
+| 서비스 | 지원 형식 |
+|--------|-----------|
+| 객체 인식 | YOLO (.pt), PyTorch (.pt), TFLite (.tflite) |
+| STT | Whisper (tiny/base/small/medium/large) |
+| TTS | gTTS (한국어), Coqui TTS |
+
+---
+
+## GPU 메모리 제한 (코드 레벨)
+
+컨테이너 내부에서 PyTorch/TensorFlow 사용 시 GPU 메모리를 제한합니다.
+
+### PyTorch
+
+```python
+import torch
+torch.cuda.set_per_process_memory_fraction(0.375)  # 16GB * 0.375 = 6GB
+```
+
+### TensorFlow
+
+```python
+import tensorflow as tf
+gpus = tf.config.experimental.list_physical_devices('GPU')
+tf.config.experimental.set_virtual_device_configuration(
+    gpus[0],
+    [tf.config.experimental.VirtualDeviceConfiguration(memory_limit=6144)]
+)
+```
+
+---
+
+## ROS2 설치 (선택사항)
+
+실제 라이다 연동이 필요한 경우 ROS2를 설치합니다.
+
+```bash
+# 컨테이너 내부에서
+apt update && apt install -y curl gnupg lsb-release
+
+# ROS2 저장소 추가
+curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key \
+    -o /usr/share/keyrings/ros-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] \
+    http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" \
+    | tee /etc/apt/sources.list.d/ros2.list
+
+# ROS2 Humble 설치
+apt update && apt install -y ros-humble-desktop
+source /opt/ros/humble/setup.bash
+echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
+
+# 확인
+ros2 doctor
+```
+
+---
+
+## 디렉토리 구조
+
+```
+/workspace/
+├── jetson-orin-nano-wsl2-setup.sh  # Docker 환경 구축 스크립트
+├── README.md                        # 이 문서
+└── tests/
+    ├── install_dependencies.sh      # 의존성 설치 스크립트
+    ├── config.py                    # 테스트 설정 파일
+    └── integrated_load_test.py      # 통합 부하 테스트
+```
+
+## 디렉토리 마운트
+
+| 호스트 경로 | 컨테이너 경로 |
+|-------------|---------------|
+| (스크립트 실행 위치) | `/workspace` |
+
+## 포트 매핑
+
+| 호스트 | 컨테이너 | 용도 |
+|--------|----------|------|
+| 8080 | 8080 | 웹 서비스 |
+
+---
+
+## 문제 해결
+
+### Docker 권한 오류
+
+```bash
+# Docker 그룹에 사용자 추가
+sudo usermod -aG docker $USER
+newgrp docker
+```
+
+### GPU 인식 안 됨
+
+```bash
+# NVIDIA 드라이버 확인 (WSL2 외부에서)
+nvidia-smi
+
+# Container Toolkit 재설치
+sudo apt-get install -y nvidia-container-toolkit
+sudo nvidia-ctk runtime configure --runtime=docker
+sudo service docker restart
+```
+
+### 줄바꿈 오류 (bad interpreter)
+
+```bash
+sed -i 's/\r$//' 파일명.sh
+```
