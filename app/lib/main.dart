@@ -9,14 +9,6 @@ void main() {
 class NoIllApp extends StatelessWidget {
   const NoIllApp({super.key});
 
-  // 탭별 화면 리스트 업데이트
-  final List<Widget> _pages = [
-    const HomeScreen(),
-    const MonitorScreen(), // 추가
-    const ScheduleScreen(), // 추가
-    const SettingsScreen(), // 추가
-  ];
-
   // This widget is the root of your application.
 
   @override
