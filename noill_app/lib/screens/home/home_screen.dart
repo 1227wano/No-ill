@@ -110,16 +110,21 @@ class HomeScreen extends StatelessWidget {
       children: [
         Row(
           children: [
+            // [수정] 버튼 클릭 시 Drawer를 여는 함수 호출
             IconButton(
-              icon: const Icon(Icons.menu),
-              onPressed: () => Scaffold.of(context).openDrawer(),
+              icon: const Icon(Icons.menu, size: 28),
+              onPressed: () {
+                // 현재 context에서 가장 가까운 Scaffold(MainScreen)의 Drawer를 엽니다.
+                Scaffold.of(context).openDrawer();
+              },
             ),
+            const SizedBox(width: 8),
             const Text(
               "No-ill",
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 22,
                 fontWeight: FontWeight.bold,
-                color: NoIllColors.primary,
+                color: Color(0xFF6A85B6),
               ),
             ),
           ],
