@@ -1,7 +1,9 @@
-// 홈화면
+// 메인화면
+
 import 'package:flutter/material.dart';
 import '../../core/constants/color_constants.dart';
-import 'package:noill_app/screens/call/video_call_screen.dart';
+import '../call/video_call_screen.dart';
+import '../accident/accident_history_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -10,6 +12,9 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: NoIllColors.background, // Milky Ivory 배경
+      // 1. 햄버거 메뉴 (Drawer): 사고 기록으로 이동 가능
+      drawer: _buildDrawer(context),
+
       body: SafeArea(
         bottom: false,
         child: SingleChildScrollView(
@@ -17,19 +22,19 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildHeader(), // 1. 상단 프로필 및 알림
+              _buildHeader(context), // 상단 헤더 (메뉴 & 알림)
               const SizedBox(height: 24),
-              _buildStatusCard(), // 2. 안심 상태 카드
+              _buildStatusCard(), // 안심 상태 카드
               const SizedBox(height: 32),
-              _buildRobotSection(), // 3. 로봇 상태 및 제어
+              _buildRobotSection(context), // 로봇 상태 및 바텀시트 트리거
               const SizedBox(height: 32),
-              _buildAgendaSection(), // 4. 오늘의 일정 리스트
+              _buildAgendaSection(), // 오늘의 일정
             ],
           ),
         ),
       ),
 
-      // TEST 용 FAB버튼
+      // 2. 화상 통화 수신 테스트용 FAB
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           Navigator.push(
@@ -43,28 +48,80 @@ class HomeScreen extends StatelessWidget {
         label: const Text("수신 테스트"),
         icon: const Icon(Icons.call_received),
         backgroundColor: Colors.blueAccent,
-      ), // TEST
+      ),
     );
   }
 
-  // --- 위젯 구성 요소들 ---
+  // --- [위젯] 햄버거 메뉴 (Drawer) ---
+  Widget _buildDrawer(BuildContext context) {
+    return Drawer(
+      child: Column(
+        children: [
+          const UserAccountsDrawerHeader(
+            decoration: BoxDecoration(color: NoIllColors.primary),
+            accountName: Text(
+              "User1",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            accountEmail: Text("반갑습니다! 오늘도 안심하세요."),
+            currentAccountPicture: CircleAvatar(
+              backgroundColor: Colors.white,
+              child: Icon(Icons.person, color: NoIllColors.primary),
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.home_outlined),
+            title: const Text("홈"),
+            onTap: () => Navigator.pop(context),
+          ),
+          ListTile(
+            leading: const Icon(Icons.history),
+            title: const Text("사고 기록"),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AccidentHistoryScreen(),
+                ),
+              );
+            },
+          ),
+          const Spacer(),
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.logout, color: Colors.redAccent),
+            title: const Text(
+              "로그아웃",
+              style: TextStyle(color: Colors.redAccent),
+            ),
+            onTap: () => Navigator.pop(context),
+          ),
+          const SizedBox(height: 30),
+        ],
+      ),
+    );
+  }
 
-  Widget _buildHeader() {
+  // --- [위젯] 상단 헤더 ---
+  Widget _buildHeader(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Row(
           children: [
-            const CircleAvatar(
-              radius: 20,
-              backgroundImage: AssetImage('assets/images/user_profile.png'),
-            ), //
-            const SizedBox(width: 12),
+            IconButton(
+              icon: const Icon(Icons.menu),
+              onPressed: () => Scaffold.of(context).openDrawer(),
+            ),
             const Text(
-              "Mary Jane",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ), //
-            Icon(Icons.keyboard_arrow_down, color: Colors.grey[400]), //
+              "No-ill",
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: NoIllColors.primary,
+              ),
+            ),
           ],
         ),
         Container(
@@ -80,12 +137,13 @@ class HomeScreen extends StatelessWidget {
             Icons.notifications_none,
             size: 24,
             color: NoIllColors.primary,
-          ), //
+          ),
         ),
       ],
     );
   }
 
+  // --- [위젯] 안심 상태 카드 ---
   Widget _buildStatusCard() {
     return Container(
       width: double.infinity,
@@ -103,11 +161,20 @@ class HomeScreen extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Image.asset(
-            'assets/images/room_view.png',
-            height: 140,
-            fit: BoxFit.cover,
-          ), // 방 이미지
+          ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: Image.asset(
+              'assets/images/room_view.png',
+              height: 140,
+              width: double.infinity,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) => Container(
+                height: 140,
+                color: Colors.grey[200],
+                child: const Icon(Icons.image_not_supported),
+              ),
+            ),
+          ),
           const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -122,54 +189,82 @@ class HomeScreen extends StatelessWidget {
                   color: NoIllColors.primary,
                   letterSpacing: 1.2,
                 ),
-              ), //
+              ),
             ],
           ),
           const SizedBox(height: 8),
           const Text(
             "Everything looks good",
             style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-          ), //
-          const SizedBox(height: 4),
+          ),
           const Text(
             "Last updated: 2 minutes ago",
             style: TextStyle(color: Colors.grey, fontSize: 13),
-          ), //
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildRobotSection() {
+  // --- [위젯] 로봇 섹션 ---
+  Widget _buildRobotSection(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              "Companion: Aibo-Bot v2",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ), //
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              decoration: BoxDecoration(
-                color: NoIllColors.primary.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: const Text(
-                "ACTIVE",
-                style: TextStyle(
-                  fontSize: 10,
-                  color: NoIllColors.primary,
-                  fontWeight: FontWeight.bold,
-                ),
-              ), //
-            ),
-          ],
+        const Text(
+          "Companion: Aibo-Bot v2",
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 16),
-        // 로봇 제어 바
+        // _buildRobotSection 내 카드 디자인 수정 부분
+        InkWell(
+          onTap: () => _showModeBottomSheet(context, "순찰모드"),
+          borderRadius: BorderRadius.circular(24),
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(24),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.03),
+                  blurRadius: 10,
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                // 배터리 아이콘 대신 '순찰모드' 아이콘 적용
+                const Icon(
+                  Icons.visibility_outlined,
+                  color: NoIllColors.primary,
+                  size: 30,
+                ),
+                const SizedBox(width: 16),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    // 텍스트를 기기 모드 상태로 변경
+                    Text(
+                      "현재 모드: 순찰모드",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    Text(
+                      "정해진 구역을 이상 없이 체크 중",
+                      style: TextStyle(color: Colors.grey, fontSize: 13),
+                    ),
+                  ],
+                ),
+                const Spacer(),
+                const Icon(Icons.chevron_right, color: Colors.grey),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
         Row(
           children: [
             _buildActionBtn(Icons.videocam, "View Camera"),
@@ -207,6 +302,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
+  // --- [위젯] 오늘의 일정 ---
   Widget _buildAgendaSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -214,15 +310,10 @@ class HomeScreen extends StatelessWidget {
         const Text(
           "Today’s Agenda",
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ), //
+        ),
         const SizedBox(height: 16),
-        _buildAgendaItem("Evening Check-in", "6:00 PM", true), // High Priority
-        _buildAgendaItem(
-          "Morning Medication",
-          "8:30 AM",
-          false,
-          isDone: true,
-        ), //
+        _buildAgendaItem("Evening Check-in", "6:00 PM", true),
+        _buildAgendaItem("Morning Medication", "8:30 AM", false, isDone: true),
       ],
     );
   }
@@ -274,6 +365,139 @@ class HomeScreen extends StatelessWidget {
           ),
           const Spacer(),
           const Icon(Icons.chevron_right, color: Colors.grey),
+        ],
+      ),
+    );
+  }
+
+  // --- [함수] 기기 모드 바텀 시트 ---
+  // 1. 바텀시트를 '실행'하는 함수
+  void _showModeBottomSheet(BuildContext context, String currentMode) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true, // 전체 화면 높이 대응을 위해 필수
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+      ),
+      // 여기서 아래에 정의한 ②번 콘텐츠 위젯을 호출합니다.
+      builder: (context) => _buildModeBottomSheetContent(context, currentMode),
+    );
+  }
+
+  // 2. 바텀시트의 '내용(UI)'을 그리는 함수
+  Widget _buildModeBottomSheetContent(
+    BuildContext context,
+    String currentMode,
+  ) {
+    return Padding(
+      padding: EdgeInsets.only(
+        // 키보드나 시스템 바에 가려지지 않게 하단 여백 자동 조절
+        bottom: MediaQuery.of(context).viewInsets.bottom + 40,
+        top: 12,
+        left: 24,
+        right: 24,
+      ),
+      child: SingleChildScrollView(
+        // 내용이 길어도 픽셀이 깨지지 않게 스크롤 허용
+        child: Column(
+          mainAxisSize: MainAxisSize.min, // 내용물만큼만 높이 차지
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 상단 핸들러 바
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            const Text(
+              "기기 모드 조회",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+
+            // 각 모드 아이템들
+            _buildModeItem(
+              "취침모드",
+              "로봇이 충전기로 돌아가 소음을 줄이고 동작을 멈춥니다.",
+              Icons.nightlight_round,
+              currentMode == "취침모드",
+            ),
+            _buildModeItem(
+              "순찰모드",
+              "로봇이 정해진 구역을 일정 간격으로 돌며 어르신을 찾고, 이상 징후를 체크합니다.",
+              Icons.visibility,
+              currentMode == "순찰모드",
+            ),
+            _buildModeItem(
+              "주행모드",
+              "어르신을 따라다니며 말벗이 되어드리고 낙상 위험을 감지합니다.",
+              Icons.local_police,
+              currentMode == "주행모드",
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildModeItem(
+    String title,
+    String desc,
+    IconData icon,
+    bool isSelected,
+  ) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isSelected
+            ? NoIllColors.primary.withOpacity(0.05)
+            : Colors.grey[50],
+        borderRadius: BorderRadius.circular(20),
+        border: isSelected
+            ? Border.all(color: NoIllColors.primary, width: 1.5)
+            : null,
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(
+            icon,
+            color: isSelected ? NoIllColors.primary : Colors.grey[600],
+            size: 28,
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: isSelected ? NoIllColors.primary : Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  desc,
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                    fontSize: 13,
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );

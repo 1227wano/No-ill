@@ -5,6 +5,7 @@ import 'call/video_call_screen.dart';
 import 'schedule/schedule_screen.dart';
 import 'settings/settings_screen.dart';
 
+// 여러 위젯을 상태에 따라 전환하는 메인 스크린
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
