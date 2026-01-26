@@ -28,7 +28,7 @@ public class LlmService {
   @Value("${gms.api.url:https://gms.ssafy.io/gmsapi/api.openai.com/v1/responses}")
   private String apiUrl;
 
-  @Value("${gms.api.key}")
+  @Value("${gms.api.key:dummy_key}")
   private String apiKey;
 
   @Value("${gms.model:gpt-4.1}")
