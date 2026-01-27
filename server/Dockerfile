@@ -6,7 +6,7 @@ WORKDIR /app
 COPY gradlew . gradle/ build.gradle settings.gradle ./
 RUN chmod +x ./gradlew
 COPY src src
-RUN ./gradlew clean build -x test --no-daemon
+RUN ./gradlew clean build -x test --no-daemon -Dorg.gradle.jvmargs="-Xmx512m"
 
 # 2. Runtime Stage: JRE + JAR만
 FROM eclipse-temurin:21-jre-alpine
