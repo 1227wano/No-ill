@@ -1,8 +1,8 @@
-package com.noill.schedule.controller;
+package com.noill.domain.schedule.controller;
 
-import com.noill.schedule.dto.ScheduleRequestDto;
-import com.noill.schedule.dto.ScheduleResponseDto;
-import com.noill.schedule.service.ScheduleService;
+import com.noill.domain.schedule.dto.ScheduleRequestDto;
+import com.noill.domain.schedule.dto.ScheduleResponseDto;
+import com.noill.domain.schedule.service.ScheduleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

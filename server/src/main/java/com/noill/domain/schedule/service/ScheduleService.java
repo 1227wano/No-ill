@@ -1,11 +1,11 @@
-package com.noill.schedule.service;
+package com.noill.domain.schedule.service;
 
 import com.noill.domain.user.entity.User;
-import com.noill.schedule.dto.ScheduleAnalysisResponseDto;
-import com.noill.schedule.dto.ScheduleRequestDto;
-import com.noill.schedule.dto.ScheduleResponseDto;
-import com.noill.schedule.entity.Schedule;
-import com.noill.schedule.repository.ScheduleRepository;
+import com.noill.domain.schedule.dto.ScheduleAnalysisResponseDto;
+import com.noill.domain.schedule.dto.ScheduleRequestDto;
+import com.noill.domain.schedule.dto.ScheduleResponseDto;
+import com.noill.domain.schedule.entity.Schedule;
+import com.noill.domain.schedule.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -99,7 +99,8 @@ public class ScheduleService {
     /**
      * LLM 분석 결과(Command)를 바탕으로 실제 DB 저장
      */
-    private String registerScheduleFromCommand(ScheduleAnalysisResponseDto.Command cmd, User user, String responseMessage) {
+    private String registerScheduleFromCommand(ScheduleAnalysisResponseDto.Command cmd, User user,
+            String responseMessage) {
         try {
             if (cmd.getTitle() == null || cmd.getDatetime() == null) {
                 return "일정 정보를 정확히 이해하지 못했어요. 다시 말씀해주세요.";

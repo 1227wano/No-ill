@@ -1,4 +1,4 @@
-package com.noill.schedule;
+package com.noill.domain.schedule;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.noill.domain.user.dto.SignupRequest;

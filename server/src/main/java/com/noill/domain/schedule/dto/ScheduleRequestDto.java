@@ -1,6 +1,6 @@
-package com.noill.schedule.dto;
+package com.noill.domain.schedule.dto;
 
-import com.noill.schedule.entity.Schedule;
+import com.noill.domain.schedule.entity.Schedule;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;

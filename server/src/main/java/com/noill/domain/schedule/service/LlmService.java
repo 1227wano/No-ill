@@ -1,9 +1,9 @@
-package com.noill.schedule.service;
+package com.noill.domain.schedule.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode; // import 추가
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.noill.schedule.dto.ScheduleAnalysisResponseDto;
+import com.noill.domain.schedule.dto.ScheduleAnalysisResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

@@ -1,8 +1,8 @@
-package com.noill.schedule.controller;
+package com.noill.domain.schedule.controller;
 
 import com.noill.domain.user.entity.User;
-import com.noill.schedule.dto.ScheduleTextRequestDto;
-import com.noill.schedule.service.ScheduleService;
+import com.noill.domain.schedule.dto.ScheduleTextRequestDto;
+import com.noill.domain.schedule.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

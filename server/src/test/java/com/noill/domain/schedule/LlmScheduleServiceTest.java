@@ -1,10 +1,10 @@
-package com.noill.schedule;
+package com.noill.domain.schedule;
 
 import com.noill.domain.user.entity.User;
-import com.noill.schedule.dto.ScheduleAnalysisResponseDto;
-import com.noill.schedule.repository.ScheduleRepository;
-import com.noill.schedule.service.LlmService;
-import com.noill.schedule.service.ScheduleService;
+import com.noill.domain.schedule.dto.ScheduleAnalysisResponseDto;
+import com.noill.domain.schedule.repository.ScheduleRepository;
+import com.noill.domain.schedule.service.LlmService;
+import com.noill.domain.schedule.service.ScheduleService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

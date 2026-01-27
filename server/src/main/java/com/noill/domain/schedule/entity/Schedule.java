@@ -1,4 +1,4 @@
-package com.noill.schedule.entity;
+package com.noill.domain.schedule.entity;
 
 import jakarta.persistence.*;
 import com.noill.domain.user.entity.User;
@@ -24,9 +24,6 @@ public class Schedule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-
-
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_NO", nullable = false)

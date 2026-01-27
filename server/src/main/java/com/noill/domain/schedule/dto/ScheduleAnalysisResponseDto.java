@@ -1,4 +1,4 @@
-package com.noill.schedule.dto;
+package com.noill.domain.schedule.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
