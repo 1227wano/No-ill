@@ -6,6 +6,9 @@ spring:
       hibernate:
         show_sql: true
         format_sql: true
+  datasource:
+    hikari:
+      maximum-pool-size: 2
 
 logging:
   level:

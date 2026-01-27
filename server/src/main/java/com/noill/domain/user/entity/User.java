@@ -1,17 +1,19 @@
 package com.noill.domain.user.entity;
 
+import com.noill.domain.care.entity.Care;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 @Entity
 @Table(name = "members")
@@ -41,63 +43,33 @@ public class User implements UserDetails {
     @Column()
     private String userFamilyPhone;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 1)
-    private UserType userType;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Care> cares = new ArrayList<>();
 
     @Builder
-    public User(String userId, String userPassword, String userName, String userAddress, String userPhone, String userFamilyPhone, UserType userType) {
-        this.userId = userId;
+    public User(String userId, String userPassword, String userName, String userAddress, String userPhone, String userFamilyPhone) {
+            this.userId = userId;
         this.userPassword = userPassword;
         this.userName = userName;
         this.userAddress = userAddress;
         this.userPhone = userPhone;
         this.userFamilyPhone = userFamilyPhone;
-        this.userType = userType;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority(this.userType.getKey()));
+        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
-    @Override
-    public String getUsername() {
+    @Override public String getUsername() {
         return this.userId;
     }
-
-    @Override
-    public String getPassword() {
+    @Override public String getPassword() {
         return this.userPassword;
     }
+    @Override public boolean isAccountNonExpired() { return true; }
+    @Override public boolean isAccountNonLocked() { return true; }
+    @Override public boolean isCredentialsNonExpired() { return true; }
+    @Override public boolean isEnabled() { return true; }
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
-
-    @Getter
-    @RequiredArgsConstructor
-    public enum UserType {
-        U("ROLE_USER", "사용자"),
-        F("ROLE_FAMILY", "보호자");
-
-        private final String key;
-        private final String title;
-    }
 }

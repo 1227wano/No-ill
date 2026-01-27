@@ -33,25 +33,17 @@ public class RedisConfig {
             config.setPassword(password);
         }
 
-        LettuceClientConfiguration clientConfig = LettuceClientConfiguration.builder()
-                .clientOptions(ClientOptions.builder()
-                        .protocolVersion(ProtocolVersion.RESP2)
-                        .build())
-                .build();
+        LettuceClientConfiguration clientConfig = LettuceClientConfiguration.builder().clientOptions(ClientOptions.builder().protocolVersion(ProtocolVersion.RESP2).build()).build();
 
         return new LettuceConnectionFactory(config, clientConfig);
     }
 
-    // 2. 데이터 직렬화 설정 (1번의 핵심 로직 채택)
     @Bean
-    public RedisTemplate<String, Object> redisTemplate() {
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setConnectionFactory(redisConnectionFactory());
+        redisTemplate.setConnectionFactory(redisConnectionFactory);
 
-        // 1번 코드의 핵심: 모든 Key와 Value를 String 형식으로 직렬화
-        // 이렇게 해야 Redis-cli에서 데이터를 확인했을 때 깨지지 않고 잘 보입니다.
         StringRedisSerializer stringSerializer = new StringRedisSerializer();
-
         redisTemplate.setKeySerializer(stringSerializer);
         redisTemplate.setValueSerializer(stringSerializer);
         redisTemplate.setHashKeySerializer(stringSerializer);
