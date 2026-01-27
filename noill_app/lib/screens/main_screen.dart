@@ -9,6 +9,7 @@ import 'schedule/schedule_screen.dart';
 import 'settings/settings_screen.dart';
 import 'accident/accident_history_screen.dart'; // 사고 기록 화면 가져오기
 import 'call/video_call_screen.dart'; // 화상 통화 화면 가져오기
+import 'mypage/mypage_screen.dart'; // 마이페이지 화면 가져오기
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -80,6 +81,14 @@ class _MainScreenState extends State<MainScreen> {
             "홈",
             () => Navigator.pop(context),
           ),
+          // 2. 마이페이지 (새로 추가!)
+          _buildDrawerItem(Icons.person_outline, "마이페이지", () {
+            Navigator.pop(context); // 메뉴 먼저 닫기
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const MyPageScreen()),
+            );
+          }),
 
           _buildDrawerItem(Icons.history, "사고 기록", () {
             Navigator.pop(context); // 메뉴 닫기
