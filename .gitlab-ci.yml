@@ -127,7 +127,7 @@ deploy:
     - ssh $SERVER_DEPLOY_USER@$SERVER "docker pull $IMAGE_TAG"
     - ssh $SERVER_DEPLOY_USER@$SERVER "docker stop server || true"
     - ssh $SERVER_DEPLOY_USER@$SERVER "docker rm server || true"
-    - ssh $SERVER_DEPLOY_USER@$SERVER "docker run -d --name server --network host -e SERVER_PORT=$PORT -e SPRING_REDIS_HOST=localhost -e SPRING_REDIS_PORT=6379 --env-file /opt/server/.env $IMAGE_TAG"
+    - ssh $SERVER_DEPLOY_USER@$SERVER "docker run -d --name server --network host --env-file /opt/server/.env -e SERVER_PORT=$PORT $IMAGE_TAG"
     - sleep 5
     - ssh $SERVER_DEPLOY_USER@$SERVER "docker logs server | head -50"
     - sleep 55
