@@ -1,6 +1,5 @@
 package com.noill.domain.user.dto;
 
-import com.noill.domain.user.entity.User.UserType;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -14,16 +13,14 @@ public class LoginResponse {
     private Long expiresIn;
 
     private String userName;
-    private UserType userType;
 
-    public static LoginResponse of(String accessToken, String refreshToken, Long expiresIn, String userName, UserType userType) {
+    public static LoginResponse of(String accessToken, String refreshToken, Long expiresIn, String userName) {
         return LoginResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .tokenType("Bearer")
                 .expiresIn(expiresIn)
                 .userName(userName)
-                .userType(userType)
                 .build();
     }
 }

@@ -10,13 +10,8 @@ variables:
   IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
   GRADLE_OPTS: "-Dorg.gradle.daemon=false"
 
-
-lint:
-  stage: lint
+.gradle_setup: &gradle_setup
   image: eclipse-temurin:21-jdk-alpine
-  rules:
-    - if: $CI_MERGE_REQUEST_IID
-    - if: $CI_COMMIT_BRANCH
   cache:
     key: ${CI_COMMIT_REF_SLUG}
     paths:
@@ -24,45 +19,39 @@ lint:
   before_script:
     - cd server
     - chmod +x ./gradlew
+
+.default_rules: &default_rules
+  rules:
+    - if: $CI_MERGE_REQUEST_IID
+    - if: $CI_COMMIT_BRANCH
+
+
+
+lint:
+  <<: *gradle_setup
+  <<: *default_rules
+  stage: lint
   script:
     - ./gradlew check -x test
 
 
 security:
+  <<: *gradle_setup
+  <<: *default_rules
   stage: lint
-  image: eclipse-temurin:21-jdk-alpine
-  rules:
-    - if: $CI_MERGE_REQUEST_IID
-    - if: $CI_COMMIT_BRANCH
-  cache:
-    key: ${CI_COMMIT_REF_SLUG}
-    paths:
-      - server/.gradle/
-  before_script:
-    - cd server
-    - chmod +x ./gradlew
   script:
     - ./gradlew dependencyCheckAnalyze || true
   allow_failure: true
 
 
 test:
+  <<: *gradle_setup
+  <<: *default_rules
   stage: test
-  image: eclipse-temurin:21-jdk-alpine
   variables:
     SPRING_PROFILES_ACTIVE: test
-  rules:
-    - if: $CI_MERGE_REQUEST_IID
-    - if: $CI_COMMIT_BRANCH
-  cache:
-    key: ${CI_COMMIT_REF_SLUG}
-    paths:
-      - server/.gradle/
-  before_script:
-    - cd server
-    - chmod +x ./gradlew
   script:
-    - ./gradlew test -Dspring.profiles.active=test
+    - ./gradlew test
   artifacts:
     when: always
     reports:
@@ -70,24 +59,11 @@ test:
 
 
 build:
+  <<: *gradle_setup
+  <<: *default_rules
   stage: build
-  image: eclipse-temurin:21-jdk-alpine
-  rules:
-    - if: $CI_MERGE_REQUEST_IID
-    - if: $CI_COMMIT_BRANCH
-  cache:
-    key: ${CI_COMMIT_REF_SLUG}
-    paths:
-      - server/.gradle/
-  before_script:
-    - cd server
-    - chmod +x ./gradlew
   script:
-    - ./gradlew build -x test
-  artifacts:
-    paths:
-      - server/build/libs/
-    expire_in: 1 hour
+    - ./gradlew clean build -x test
 
 
 docker:
@@ -102,9 +78,15 @@ docker:
     DOCKER_TLS_CERTDIR: ""
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker buildx create --use --name multiarch --driver docker-container
+    - docker buildx create --use --name multiarch --driver docker-container --bootstrap
   script:
-    - docker buildx build --platform linux/amd64,linux/arm64 -t $IMAGE_TAG --push ./server
+    - docker buildx build 
+        --platform linux/amd64,linux/arm64 
+        --tag $IMAGE_TAG 
+        --push 
+        --cache-from=type=registry,ref=$CI_REGISTRY_IMAGE/cache
+        --cache-to=type=registry,ref=$CI_REGISTRY_IMAGE/cache,mode=max
+        ./server
 
 
 deploy:
@@ -123,13 +105,18 @@ deploy:
     SERVER: "$SERVER_HOST_2"
     PORT: "8080"
   script:
-    - ssh $SERVER_DEPLOY_USER@$SERVER "docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY"
-    - ssh $SERVER_DEPLOY_USER@$SERVER "docker pull $IMAGE_TAG"
-    - ssh $SERVER_DEPLOY_USER@$SERVER "docker stop server || true"
-    - ssh $SERVER_DEPLOY_USER@$SERVER "docker rm server || true"
-    - ssh $SERVER_DEPLOY_USER@$SERVER "docker run -d --name server --network host --env-file /opt/server/.env -e SERVER_PORT=$PORT $IMAGE_TAG"
-    - sleep 5
-    - ssh $SERVER_DEPLOY_USER@$SERVER "docker logs server | head -50"
-    - sleep 55
-    - ssh $SERVER_DEPLOY_USER@$SERVER "curl -f http://localhost:$PORT/actuator/health --retry 10 --retry-delay 5 --retry-all-errors || (docker logs server && exit 1)"
-  timeout: 5 minutes
+    - |
+      ssh $SERVER_DEPLOY_USER@$SERVER << EOF
+      docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+      docker pull $IMAGE_TAG
+      docker stop server || true && docker rm server || true
+      docker run -d --name server \
+        --add-host=host.docker.internal:host-gateway \
+        -p $PORT:$PORT \
+        -e SERVER_PORT=$PORT \
+        --env-file /opt/server/.env \
+        $IMAGE_TAG
+      sleep 30
+      curl -f http://localhost:$PORT/actuator/health \
+        --retry 5 --retry-delay 10 --retry-all-errors
+      EOF

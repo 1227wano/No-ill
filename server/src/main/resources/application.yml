@@ -1,25 +1,31 @@
+# 공통 설정
+
 server:
-  port: ${SERVER_PORT:8081}
+  port: ${SERVER_PORT:8080}
 
 spring:
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:dev}
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
   data:
     redis:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
       password: ${REDIS_PASSWORD:}
 
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
-    hikari: # 로컬에서 DB 확인용 서버 가부화 감소
-      maximum-pool-size: 2
+    hikari:
+      maximum-pool-size: 10
 
 management:
   endpoints:
@@ -30,10 +36,10 @@ management:
 jwt:
   secret: ${JWT_SECRET}
   expiration: ${JWT_EXPIRATION:86400000}
-  refresh-expiration: ${JWT_EXPIRATION:604800000}
+  refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000}
 
 gms:
   api:
     key: ${GMS_API_KEY}
-    url: https://gms.ssafy.io/gmsapi/api.openai.com/v1/responses
+    url: ${GMS_API_URL}
     model: gpt-4.1

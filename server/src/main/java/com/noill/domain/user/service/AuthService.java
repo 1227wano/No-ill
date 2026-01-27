@@ -1,5 +1,10 @@
 package com.noill.domain.user.service;
 
+import com.noill.domain.care.entity.Care;
+import com.noill.domain.care.repository.CareRepository;
+import com.noill.domain.pet.dto.PetRegisterRequest;
+import com.noill.domain.pet.entity.Pet;
+import com.noill.domain.pet.repository.PetRepository;
 import com.noill.domain.user.dto.LoginRequest;
 import com.noill.domain.user.dto.LoginResponse;
 import com.noill.domain.user.dto.SignupRequest;
@@ -21,6 +26,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthService {
 
     private final UserRepository userRepository;
+    private final PetRepository petRepository;
+    private final CareRepository careRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
@@ -28,10 +35,12 @@ public class AuthService {
 
     @Transactional
     public void signup(SignupRequest request) {
+        // 1. 중복 아이디 체크
         if (userRepository.existsByUserId(request.getUserId())) {
             throw CustomException.conflict("이미 사용 중인 아이디입니다");
         }
 
+        // 2. User Entity 생성
         User user = User.builder()
                 .userId(request.getUserId())
                 .userPassword(passwordEncoder.encode(request.getUserPassword()))
@@ -39,10 +48,41 @@ public class AuthService {
                 .userAddress(request.getUserAddress())
                 .userPhone(request.getUserPhone())
                 .userFamilyPhone(request.getUserFamilyPhone())
-                .userType(request.getUserType())
                 .build();
 
         userRepository.save(user);
+
+        // 3. 펫 정보 저장 로직 (N:M)
+        if (request.getPets() != null && !request.getPets().isEmpty()) {
+            for (PetRegisterRequest petDto : request.getPets()) {
+
+                // 3-1. 기기(Pet)가 이미 있는지 확인
+                Pet pet = petRepository.findByPetId(petDto.getPetId())
+                        .orElse(null);
+
+                // 3-2. 없으면 새로 생성
+                if (pet == null) {
+                    pet = Pet.builder()
+                            .petId(petDto.getPetId())
+                            .petName(petDto.getPetName())
+                            .petOwner(petDto.getPetOwner())
+                            .petAddress(petDto.getPetAddress())
+                            .petPhone(petDto.getPetPhone())
+                            .build();
+                    petRepository.save(pet);
+                }
+
+                // 3-3. Care(중간 테이블) 생성 및 저장
+                if (!careRepository.existsByUserAndPet(user, pet)) {
+                    Care care = Care.builder()
+                            .user(user)
+                            .pet(pet)
+                            .careName(petDto.getCareName())
+                            .build();
+                    careRepository.save(care);
+                }
+            }
+        }
     }
 
     @Transactional
@@ -59,8 +99,7 @@ public class AuthService {
         long refreshTokenExpiration = jwtTokenProvider.getRefreshTokenValidityInMilliseconds();
         redisService.setRefreshToken(user.getUserId(), refreshToken, refreshTokenExpiration);
 
-
-        return LoginResponse.of(accessToken, refreshToken, jwtTokenProvider.getExpiration(), user.getUsername(), user.getUserType());
+        return LoginResponse.of(accessToken, refreshToken, jwtTokenProvider.getExpiration(), user.getUsername());
     }
 
     @Transactional
@@ -70,7 +109,7 @@ public class AuthService {
         }
 
         Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
-        String userId = authentication.getName(); // UserDetails의 username(여기선 userId)
+        String userId = authentication.getName();
 
         if (redisService.getRefreshToken(userId) != null) {
             redisService.deleteRefreshToken(userId);

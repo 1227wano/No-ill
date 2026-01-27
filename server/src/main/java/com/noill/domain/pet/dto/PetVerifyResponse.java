@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 @Builder
 public class PetVerifyResponse {
-    private Long petId;
-    private String petNo;
-    private String name;
+    private Long petNo;
+    private String petId;
+    private String petName;
 }
