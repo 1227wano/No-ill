@@ -1,4 +1,5 @@
 // 위젯 트리의 최상위 스크린 (메인 스크린)
+// 각 내비게이션의 실제 화면 전환 로직
 
 import 'package:flutter/material.dart';
 import '../widgets/molecules/bottom_nav_bar.dart';
@@ -6,6 +7,7 @@ import 'home/home_screen.dart';
 import 'schedule/schedule_screen.dart';
 import 'settings/settings_screen.dart';
 import 'accident/accident_history_screen.dart'; // 사고 기록 화면 가져오기
+import 'call/video_call_screen.dart'; // 화상 통화 화면 가져오기
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -38,6 +40,7 @@ class _MainScreenState extends State<MainScreen> {
         onTap: (index) {
           if (index == 1) {
             // 화상통화 팝업 로직 (기존 유지)
+            _showContactSelection(context);
           } else {
             setState(() => _currentIndex = index);
           }
@@ -103,6 +106,77 @@ class _MainScreenState extends State<MainScreen> {
       leading: Icon(icon, color: Colors.grey[700]),
       title: Text(title, style: const TextStyle(fontSize: 16)),
       onTap: onTap,
+    );
+  }
+
+  void _showContactSelection(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      // 기획안의 둥근 모서리 디자인 반영
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+      ),
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min, // 내용물 높이만큼만 차지
+          children: [
+            // 상단 핸들 바
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(height: 24),
+            const Text(
+              "누구에게 연락할까요?",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 24),
+
+            // 연락처 리스트: Mary Jane 할머니
+            ListTile(
+              contentPadding: const EdgeInsets.symmetric(
+                vertical: 8,
+                horizontal: 12,
+              ),
+              leading: const CircleAvatar(
+                radius: 28,
+                backgroundImage: AssetImage('assets/images/user_profile.png'),
+              ),
+              title: const Text(
+                "Mary Jane (할머니)",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+              ),
+              subtitle: const Text("최근 통화: 2시간 전"),
+              trailing: const Icon(
+                Icons.videocam,
+                color: Color(0xFF6A85B6),
+              ), // NoIllColors.primary
+              onTap: () {
+                // 1. 먼저 바텀 시트를 닫습니다.
+                Navigator.pop(context);
+
+                // 2. 발신(calling) 상태로 화상 통화 전체 화면으로 이동합니다.
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        const VideoCallScreen(initialState: CallState.calling),
+                  ),
+                );
+              },
+            ),
+
+            // 추가 연락처가 있다면 여기에 ListTile을 더 추가할 수 있습니다.
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
     );
   }
 }
