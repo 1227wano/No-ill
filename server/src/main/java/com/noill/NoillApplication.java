@@ -14,5 +14,4 @@ public class NoillApplication {
 
         SpringApplication.run(NoillApplication.class, args);
     }
-
 }
