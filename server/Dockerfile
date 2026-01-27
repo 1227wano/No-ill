@@ -1,8 +1,3 @@
-# Multi-stage Dockerfile
-LABEL version="1.0"
-LABEL description="No ill Spring boot backend"
-
-
 # 1. Builder Stage: Gradle 빌드
 FROM eclipse-temurin:21-jdk-alpine AS builder
 WORKDIR /app
@@ -15,6 +10,7 @@ RUN ./gradlew clean build -x test --no-daemon
 
 # 2. Runtime Stage: JRE + JAR만
 FROM eclipse-temurin:21-jre-alpine
+LABEL version="1.0" description="No ill Spring boot backend"
 WORKDIR /app
 COPY --from=builder /app/build/libs/*.jar app.jar
 
