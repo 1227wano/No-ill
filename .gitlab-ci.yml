@@ -84,8 +84,6 @@ docker:
         --platform linux/amd64
         --tag $IMAGE_TAG
         --push
-        --cache-from=type=registry,ref=$CI_REGISTRY_IMAGE/cache
-        --cache-to=type=registry,ref=$CI_REGISTRY_IMAGE/cache,mode=max
         ./server
 
 
