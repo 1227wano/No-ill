@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 public class RobotStatusIntegrationTest {
-d
+
         @Autowired
         private MockMvc mockMvc;
 
