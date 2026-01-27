@@ -1,13 +1,37 @@
 // 회원가입 페이지
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:noill_app/screens/main_screen.dart';
 import 'package:noill_app/widgets/atoms/gradient_background.dart';
 import '../../widgets/atoms/custom_input_field.dart';
 import '../../widgets/atoms/solid_button.dart';
+import '../../providers/auth_provider.dart';
+import '../../models/auth_models.dart';
 import '../onboarding/device_pairing_screen.dart';
 
-class SignupScreen extends StatelessWidget {
+class SignupScreen extends ConsumerStatefulWidget {
   const SignupScreen({super.key});
+
+  @override
+  ConsumerState<SignupScreen> createState() => _SignupScreenState();
+}
+
+class _SignupScreenState extends ConsumerState<SignupScreen> {
+  final TextEditingController _idController = TextEditingController();
+  final TextEditingController _pwController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+
+  @override
+  void dispose() {
+    _idController.dispose();
+    _pwController.dispose();
+    _nameController.dispose();
+    _addressController.dispose();
+    _phoneController.dispose();
+    super.dispose();
+  }
 
   // 가입 완료 팝업 함수
   void _showWelcomeDialog(BuildContext context) {
@@ -60,6 +84,51 @@ class SignupScreen extends StatelessWidget {
     );
   }
 
+  Future<void> _handleSignup() async {
+    final id = _idController.text.trim();
+    final password = _pwController.text.trim();
+    final name = _nameController.text.trim();
+    final address = _addressController.text.trim();
+    final phone = _phoneController.text.trim();
+
+    // 로그: 서버로 넘길 데이터 확인
+    print("회원가입 데이터 수집:");
+    print("userId: $id");
+    print("userPassword: $password");
+    print("userName: $name");
+    print("userAddress: $address");
+    print("userPhone: $phone");
+
+    if (id.isEmpty ||
+        password.isEmpty ||
+        name.isEmpty ||
+        address.isEmpty ||
+        phone.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("모든 필드를 입력해주세요.")));
+      return;
+    }
+
+    final request = SignupRequest(
+      userId: id,
+      userPassword: password,
+      userName: name,
+      userAddress: address,
+      userPhone: phone,
+    );
+
+    final success = await ref.read(authProvider.notifier).signUp(request);
+
+    if (success) {
+      _showWelcomeDialog(context);
+    } else {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("회원가입에 실패했습니다. 다시 시도해주세요.")));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return DualDiffusionBackground(
@@ -74,20 +143,38 @@ class SignupScreen extends StatelessWidget {
           padding: const EdgeInsets.all(24.0),
           child: Column(
             children: [
-              const CustomInputField(label: "이름", hintText: "이름을 입력하세요"),
+              CustomInputField(
+                label: "아이디",
+                hintText: "아이디를 입력하세요",
+                controller: _idController,
+              ),
               const SizedBox(height: 16),
-              const CustomInputField(label: "이메일", hintText: "이메일을 입력하세요"),
-              const SizedBox(height: 16),
-              const CustomInputField(
+              CustomInputField(
                 label: "비밀번호",
                 hintText: "비밀번호를 입력하세요",
                 obscureText: true,
+                controller: _pwController,
               ),
-              const SizedBox(height: 32),
-              SolidButton(
-                text: "가입하기",
-                onPressed: () => _showWelcomeDialog(context),
+              const SizedBox(height: 16),
+              CustomInputField(
+                label: "이름",
+                hintText: "이름을 입력하세요",
+                controller: _nameController,
               ),
+              const SizedBox(height: 16),
+              CustomInputField(
+                label: "주소",
+                hintText: "주소를 입력하세요",
+                controller: _addressController,
+              ),
+              const SizedBox(height: 16),
+              CustomInputField(
+                label: "전화번호",
+                hintText: "전화번호를 입력하세요",
+                controller: _phoneController,
+              ),
+              const SizedBox(height: 16),
+              SolidButton(text: "가입하기", onPressed: _handleSignup),
             ],
           ),
         ),
