@@ -5,9 +5,11 @@ stages:
   - docker
   - deploy
 
+
 variables:
   IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
   GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+
 
 lint:
   stage: lint
@@ -25,6 +27,7 @@ lint:
   script:
     - ./gradlew check -x test
 
+
 security:
   stage: lint
   image: eclipse-temurin:21-jdk-alpine
@@ -41,6 +44,7 @@ security:
   script:
     - ./gradlew dependencyCheckAnalyze || true
   allow_failure: true
+
 
 test:
   stage: test
@@ -64,6 +68,7 @@ test:
     reports:
       junit: server/build/test-results/test/*.xml
 
+
 build:
   stage: build
   image: eclipse-temurin:21-jdk-alpine
@@ -84,6 +89,7 @@ build:
       - server/build/libs/
     expire_in: 1 hour
 
+
 docker:
   stage: docker
   image: docker:latest
@@ -99,6 +105,7 @@ docker:
     - docker buildx create --use --name multiarch --driver docker-container
   script:
     - docker buildx build --platform linux/amd64,linux/arm64 -t $IMAGE_TAG --push ./server
+
 
 deploy:
   stage: deploy
@@ -120,6 +127,9 @@ deploy:
     - ssh $SERVER_DEPLOY_USER@$SERVER "docker pull $IMAGE_TAG"
     - ssh $SERVER_DEPLOY_USER@$SERVER "docker stop server || true"
     - ssh $SERVER_DEPLOY_USER@$SERVER "docker rm server || true"
-    - ssh $SERVER_DEPLOY_USER@$SERVER "docker run -d --name server --add-host=host.docker.internal:host-gateway -p $PORT:$PORT -e SERVER_PORT=$PORT --env-file /opt/server/.env $IMAGE_TAG"
-    - sleep 30
-    - ssh $SERVER_DEPLOY_USER@$SERVER "curl -f http://localhost:$PORT/actuator/health --retry 5 --retry-delay 10 --retry-all-errors || exit 1"
+    - ssh $SERVER_DEPLOY_USER@$SERVER "docker run -d --name server --network host -e SERVER_PORT=$PORT -e SPRING_REDIS_HOST=localhost -e SPRING_REDIS_PORT=6379 --env-file /opt/server/.env $IMAGE_TAG"
+    - sleep 5
+    - ssh $SERVER_DEPLOY_USER@$SERVER "docker logs server | head -50"
+    - sleep 55
+    - ssh $SERVER_DEPLOY_USER@$SERVER "curl -f http://localhost:$PORT/actuator/health --retry 10 --retry-delay 5 --retry-all-errors || (docker logs server && exit 1)"
+  timeout: 5 minutes
