@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import '../../core/constants/color_constants.dart';
+import '../../widgets/atoms/light_diffusion_background.dart';
 import '../call/video_call_screen.dart';
 import '../accident/accident_history_screen.dart';
 
@@ -10,44 +11,46 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: NoIllColors.background, // Milky Ivory 배경
-      // 1. 햄버거 메뉴 (Drawer): 사고 기록으로 이동 가능
-      drawer: _buildDrawer(context),
+    return LightDiffusionBackground(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        // 1. 햄버거 메뉴 (Drawer): 사고 기록으로 이동 가능
+        drawer: _buildDrawer(context),
 
-      body: SafeArea(
-        bottom: false,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 10, 20, 120), // 내비바 공간 확보
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(context), // 상단 헤더 (메뉴 & 알림)
-              const SizedBox(height: 24),
-              _buildStatusCard(), // 안심 상태 카드
-              const SizedBox(height: 32),
-              _buildRobotSection(context), // 로봇 상태 및 바텀시트 트리거
-              const SizedBox(height: 32),
-              _buildAgendaSection(), // 오늘의 일정
-            ],
+        body: SafeArea(
+          bottom: false,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(20, 10, 20, 120), // 내비바 공간 확보
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeader(context), // 상단 헤더 (메뉴 & 알림)
+                const SizedBox(height: 24),
+                _buildStatusCard(), // 안심 상태 카드
+                const SizedBox(height: 32),
+                _buildRobotSection(context), // 로봇 상태 및 바텀시트 트리거
+                const SizedBox(height: 32),
+                _buildAgendaSection(), // 오늘의 일정
+              ],
+            ),
           ),
         ),
-      ),
 
-      // 2. 화상 통화 수신 테스트용 FAB
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) =>
-                  const VideoCallScreen(initialState: CallState.incoming),
-            ),
-          );
-        },
-        label: const Text("수신 테스트"),
-        icon: const Icon(Icons.call_received),
-        backgroundColor: Colors.blueAccent,
+        // 2. 화상 통화 수신 테스트용 FAB
+        floatingActionButton: FloatingActionButton.extended(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    const VideoCallScreen(initialState: CallState.incoming),
+              ),
+            );
+          },
+          label: const Text("수신 테스트"),
+          icon: const Icon(Icons.call_received),
+          backgroundColor: Colors.blueAccent,
+        ),
       ),
     );
   }

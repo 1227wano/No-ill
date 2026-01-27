@@ -6,6 +6,7 @@ import '../../widgets/atoms/solid_button.dart';
 import '../../widgets/atoms/custom_input_field.dart';
 import '../../widgets/atoms/gradient_background.dart';
 import '../main_screen.dart'; // 메인 스크린 임포트
+import '../../widgets/molecules/welcome_dialog.dart'; // 환영 팝업 임포트
 
 class ElderlyProfileRegistrationScreen extends StatelessWidget {
   const ElderlyProfileRegistrationScreen({super.key});
@@ -98,14 +99,17 @@ class ElderlyProfileRegistrationScreen extends StatelessWidget {
                 SolidButton(
                   text: "등록 완료하고 시작하기",
                   onPressed: () {
-                    // 온보딩 완료 후 메인 화면으로 이동 (뒤로가기 방지)
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const MainScreen(),
-                      ),
-                      (route) => false,
-                    );
+                    // 팝업을 먼저 띄우고, 확인을 누르면 홈으로 이동
+                    showWelcomeDialog(context, () {
+                      // 온보딩 완료 후 메인 화면으로 이동 (뒤로가기 방지)
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const MainScreen(),
+                        ),
+                        (route) => false,
+                      );
+                    });
                   },
                 ),
                 const SizedBox(height: 20),

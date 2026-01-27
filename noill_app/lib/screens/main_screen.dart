@@ -3,6 +3,7 @@
 
 import 'package:flutter/material.dart';
 import '../widgets/molecules/bottom_nav_bar.dart';
+import '../widgets/atoms/light_diffusion_background.dart';
 import 'home/home_screen.dart';
 import 'schedule/schedule_screen.dart';
 import 'settings/settings_screen.dart';
@@ -29,22 +30,25 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // --- [중요] 햄버거 메뉴 등록 ---
-      drawer: _buildDrawer(context),
+    return LightDiffusionBackground(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        // --- [중요] 햄버거 메뉴 등록 ---
+        drawer: _buildDrawer(context),
 
-      extendBody: true,
-      body: IndexedStack(index: _currentIndex, children: _pages),
-      bottomNavigationBar: CustomBottomNavBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          if (index == 1) {
-            // 화상통화 팝업 로직 (기존 유지)
-            _showContactSelection(context);
-          } else {
-            setState(() => _currentIndex = index);
-          }
-        },
+        extendBody: true,
+        body: IndexedStack(index: _currentIndex, children: _pages),
+        bottomNavigationBar: CustomBottomNavBar(
+          currentIndex: _currentIndex,
+          onTap: (index) {
+            if (index == 1) {
+              // 화상통화 팝업 로직 (기존 유지)
+              _showContactSelection(context);
+            } else {
+              setState(() => _currentIndex = index);
+            }
+          },
+        ),
       ),
     );
   }

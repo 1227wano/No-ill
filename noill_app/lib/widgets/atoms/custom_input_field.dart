@@ -40,6 +40,14 @@ class CustomInputField extends StatelessWidget {
           obscureText: obscureText,
           style: const TextStyle(fontSize: 16, color: NoIllColors.textMain),
           decoration: InputDecoration(
+            // 스타일
+            filled: true,
+            fillColor: Colors.white.withOpacity(0.6), // 배경 살짝 비침
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide.none, // 기본 테두리 없음
+            ),
+            // 힌트
             hintText: hintText,
             hintStyle: const TextStyle(color: NoIllColors.textBody),
             errorText: errorText, // 에러 메시지가 있으면 빨간색으로 자동 표시
