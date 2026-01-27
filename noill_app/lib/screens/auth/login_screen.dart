@@ -10,7 +10,7 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GradientBackground(
+    return DualDiffusionBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: SafeArea(

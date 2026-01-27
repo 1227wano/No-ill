@@ -30,7 +30,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return GradientBackground(
+    return DualDiffusionBackground(
       child: Scaffold(
         backgroundColor: NoIllColors.background,
         body: Center(
