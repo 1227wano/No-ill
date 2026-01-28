@@ -25,7 +25,7 @@ server_deploy:
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
     # 2. 변수 내용을 파일로 직접 쓰고, 불필요한 공백과 줄바꿈 정리
-    - echo "$SERVER_SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+    - echo "$SERVER_SSH_PRIVATE_KEY" | base64 -d > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
     # 3. 파일로부터 열쇠 등록
     - ssh-add ~/.ssh/id_rsa
