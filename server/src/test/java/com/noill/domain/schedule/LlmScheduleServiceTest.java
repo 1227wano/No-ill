@@ -1,6 +1,6 @@
 package com.noill.domain.schedule;
 
-import com.noill.domain.user.entity.User;
+import com.noill.domain.pet.entity.Pet;
 import com.noill.domain.schedule.dto.ScheduleAnalysisResponseDto;
 import com.noill.domain.schedule.repository.ScheduleRepository;
 import com.noill.domain.schedule.service.LlmService;
@@ -11,8 +11,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -36,7 +34,7 @@ class LlmScheduleServiceTest {
     @DisplayName("필수 정보(시간)가 누락되면 DB에 저장하지 않고 되묻는 메시지를 반환한다")
     void shouldAskForTime_WhenTimeIsMissing() {
         // Given
-        User user = User.builder().userId("testUser").build();
+        Pet pet = Pet.builder().petId("testPet").petName("멍멍이").build();
         String userText = "나 친구랑 약속 잡아줘";
         System.out.println("\n[Test 1] 시간 정보 누락 케이스");
         System.out.println("User Input: " + userText);
@@ -55,7 +53,7 @@ class LlmScheduleServiceTest {
         given(llmService.analyzeUserCommand(userText)).willReturn(mockResponse);
 
         // When
-        String resultMessage = scheduleService.processUserCommand(userText, user);
+        String resultMessage = scheduleService.processUserCommand(userText, pet);
         System.out.println("Service Result: " + resultMessage);
 
         // Then
@@ -69,7 +67,7 @@ class LlmScheduleServiceTest {
     @DisplayName("필수 정보(제목)가 누락되면 DB에 저장하지 않고 되묻는 메시지를 반환한다")
     void shouldAskForTitle_WhenTitleIsMissing() {
         // Given
-        User user = User.builder().userId("testUser").build();
+        Pet pet = Pet.builder().petId("testPet").petName("멍멍이").build();
         String userText = "내일 오후 2시에 일정 잡아줘";
         System.out.println("\n[Test 2] 제목 정보 누락 케이스");
         System.out.println("User Input: " + userText);
@@ -88,7 +86,7 @@ class LlmScheduleServiceTest {
         given(llmService.analyzeUserCommand(userText)).willReturn(mockResponse);
 
         // When
-        String resultMessage = scheduleService.processUserCommand(userText, user);
+        String resultMessage = scheduleService.processUserCommand(userText, pet);
         System.out.println("Service Result: " + resultMessage);
 
         // Then

@@ -13,6 +13,7 @@ import java.util.List;
  * ScheduleController
  * 수정(PUT) 및 삭제(DELETE) API가 추가되었습니다.
  */
+import com.noill.domain.pet.entity.Pet;
 import com.noill.domain.user.entity.User;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
@@ -32,7 +33,15 @@ public class ScheduleController {
         if (user == null) {
             throw new IllegalArgumentException("로그인 정보가 유효하지 않습니다. (User principal is null)");
         }
-        return scheduleService.addSchedule(requestDto, user);
+
+        if (user.getCares().isEmpty()) {
+            throw new IllegalArgumentException("등록된 반려동물(로봇)이 없습니다.");
+        }
+
+        // 임시: 첫 번째 반려동물(로봇)을 선택
+        Pet pet = user.getCares().get(0).getPet();
+
+        return scheduleService.addSchedule(requestDto, pet);
     }
 
     // 일정 목록 조회

@@ -3,7 +3,7 @@ package com.noill.domain.robot;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.noill.domain.robot.dto.RobotStatusRequestDto;
 import com.noill.domain.user.dto.SignupRequest;
-import com.noill.domain.user.entity.User;
+
 import com.noill.global.redis.RedisService;
 import com.noill.domain.schedule.service.LlmService;
 import org.junit.jupiter.api.DisplayName;
@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -36,10 +36,10 @@ public class RobotStatusIntegrationTest {
         @Autowired
         private ObjectMapper objectMapper;
 
-        @MockBean
+        @MockitoBean
         private RedisService redisService;
 
-        @MockBean
+        @MockitoBean
         private LlmService llmService;
 
         private String getAccessToken() throws Exception {

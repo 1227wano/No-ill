@@ -12,7 +12,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import com.noill.domain.care.entity.Care;
+import com.noill.domain.care.repository.CareRepository;
+import com.noill.domain.pet.entity.Pet;
+import com.noill.domain.pet.repository.PetRepository;
+import com.noill.domain.user.repository.UserRepository;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -30,149 +35,201 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 public class ScheduleIntegrationTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+        @Autowired
+        private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+        @Autowired
+        private ObjectMapper objectMapper;
 
-    @MockBean
-    private RedisService redisService;
+        @Autowired
+        private UserRepository userRepository;
 
-    @MockBean
-    private com.noill.domain.schedule.service.LlmService llmService;
+        @Autowired
+        private PetRepository petRepository;
 
-    @Test
-    @DisplayName("회원가입 -> 로그인 -> 일정 생성 전체 흐름 테스트")
-    void createScheduleFlowTest() throws Exception {
-        // ... (기존 코드 유지) ...
-        // 1. 회원가입 (Sign Up)
-        SignupRequest signupRequest = new SignupRequest();
-        signupRequest.setUserId("testuser999");
-        signupRequest.setUserPassword("Password123!");
-        signupRequest.setUserName("테스트유저");
-        signupRequest.setUserAddress("서울시 테스트구");
-        signupRequest.setUserPhone("010-0000-0000");
-        signupRequest.setUserFamilyPhone("010-1111-1111");
-        signupRequest.setUserName("RobotTester_U");
+        @Autowired
+        private CareRepository careRepository;
 
-        mockMvc.perform(post("/api/auth/signup")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(signupRequest)))
-                .andDo(print())
-                .andExpect(status().isCreated()); // 201 Created 확인
+        @MockitoBean
+        private RedisService redisService;
 
-        // 2. 로그인 및 토큰 발급 (Login)
-        String loginJson = """
-                    {
-                        "userId": "testuser999",
-                        "userPassword": "Password123!"
-                    }
-                """;
+        @MockitoBean
+        private com.noill.domain.schedule.service.LlmService llmService;
 
-        MvcResult loginResult = mockMvc.perform(post("/api/auth/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(loginJson)) // JSON 문자열 전달
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andReturn();
+        @Test
+        @DisplayName("회원가입 -> 로그인 -> 일정 생성 전체 흐름 테스트")
+        void createScheduleFlowTest() throws Exception {
+                // ... (기존 코드 유지) ...
+                // 1. 회원가입 (Sign Up)
+                SignupRequest signupRequest = new SignupRequest();
+                signupRequest.setUserId("testuser999");
+                signupRequest.setUserPassword("Password123!");
+                signupRequest.setUserName("테스트유저");
+                signupRequest.setUserAddress("서울시 테스트구");
+                signupRequest.setUserPhone("010-0000-0000");
+                signupRequest.setUserFamilyPhone("010-1111-1111");
 
-        // 토큰 추출
-        String responseBody = loginResult.getResponse().getContentAsString();
-        JsonNode jsonNode = objectMapper.readTree(responseBody);
-        String accessToken = jsonNode.get("data").get("accessToken").asText();
+                mockMvc.perform(post("/api/auth/signup")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(signupRequest)))
+                                .andDo(print())
+                                .andExpect(status().isCreated()); // 201 Created 확인
 
-        System.out.println(">>> 발급된 토큰: " + accessToken);
+                // 2. 로그인 및 토큰 발급 (Login)
+                String loginJson = """
+                                    {
+                                        "userId": "testuser999",
+                                        "userPassword": "Password123!"
+                                    }
+                                """;
 
-        // 3. 일정 생성 (Create Schedule) - userNo 없이 토큰만으로 요청
-        ScheduleRequestDto scheduleRequest = new ScheduleRequestDto();
-        scheduleRequest.setSchName("통합 테스트 일정");
-        scheduleRequest.setSchTime(LocalDateTime.now().plusDays(1)); // 내일
-        scheduleRequest.setSchMemo("테스트 코드로 생성된 일정입니다.");
+                MvcResult loginResult = mockMvc.perform(post("/api/auth/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(loginJson)) // JSON 문자열 전달
+                                .andDo(print())
+                                .andExpect(status().isOk())
+                                .andReturn();
 
-        mockMvc.perform(post("/api/schedules")
-                .header("Authorization", "Bearer " + accessToken) // 토큰 헤더 추가
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(scheduleRequest)))
-                .andDo(print())
-                .andExpect(status().isOk()) // 200 OK 확인
-                .andExpect(jsonPath("$.schName").value("통합 테스트 일정")) // 응답 데이터 검증
-                .andExpect(jsonPath("$.userNo").exists()); // userNo가 응답에 포함되었는지 확인
-    }
+                // 토큰 추출
+                String responseBody = loginResult.getResponse().getContentAsString();
+                JsonNode jsonNode = objectMapper.readTree(responseBody);
+                String accessToken = jsonNode.get("data").get("accessToken").asText();
 
-    @Test
-    @DisplayName("LLM 연동 일정 등록 통합 테스트 (Mock API 호출)")
-    void createScheduleWithLlm() throws Exception {
-        // 1. 회원가입 (Sign Up)
-        SignupRequest signupRequest = new SignupRequest();
-        signupRequest.setUserId("llmuser1");
-        signupRequest.setUserPassword("Password123!");
-        signupRequest.setUserName("LLM유저");
-        signupRequest.setUserAddress("서울시 강남구");
-        signupRequest.setUserPhone("010-1234-5678");
-        signupRequest.setUserFamilyPhone("010-9876-5432");
-        signupRequest.setUserName("RobotTester_U");
+                System.out.println(">>> 발급된 토큰: " + accessToken);
 
-        mockMvc.perform(post("/api/auth/signup")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(signupRequest)))
-                .andExpect(status().isCreated());
+                // [추가] 2.5: User에게 Pet 연결 (Care 생성)
+                // 실제 운영 환경에서는 로봇 등록 API를 통해 이루어지겠지만, 여기서는 Repository로 직접 주입
+                User user = userRepository.findAll().stream()
+                                .filter(u -> "testuser999".equals(u.getUserId()))
+                                .findFirst()
+                                .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        // 2. 로그인 (Login)
-        String loginJson = """
-                    {
-                        "userId": "llmuser1",
-                        "userPassword": "Password123!"
-                    }
-                """;
-        MvcResult loginResult = mockMvc.perform(post("/api/auth/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(loginJson))
-                .andExpect(status().isOk())
-                .andReturn();
+                Pet pet = Pet.builder()
+                                .petId("robot_test_999")
+                                .petName("테스트로봇")
+                                .petAddress("서울")
+                                .petPhone("010-0000-0000")
+                                .petOwner("테스트유저")
+                                .build();
+                petRepository.save(pet);
 
-        String accessToken = objectMapper.readTree(loginResult.getResponse().getContentAsString())
-                .get("data").get("accessToken").asText();
+                Care care = Care.builder()
+                                .user(user)
+                                .pet(pet)
+                                .careName("우리집로봇")
+                                .build();
+                careRepository.save(care);
 
-        System.out.println(">>> LLM 테스트용 토큰 발급 완료");
+                // 3. 일정 생성 (Create Schedule) - userNo 없이 토큰만으로 요청
+                ScheduleRequestDto scheduleRequest = new ScheduleRequestDto();
+                scheduleRequest.setSchName("통합 테스트 일정");
+                scheduleRequest.setSchTime(LocalDateTime.now().plusDays(1)); // 내일
+                scheduleRequest.setSchMemo("테스트 코드로 생성된 일정입니다.");
 
-        // Mock LlmService 설정
-        com.noill.domain.schedule.dto.ScheduleAnalysisResponseDto mockResponse = new com.noill.domain.schedule.dto.ScheduleAnalysisResponseDto();
-        com.noill.domain.schedule.dto.ScheduleAnalysisResponseDto.Command cmd = new com.noill.domain.schedule.dto.ScheduleAnalysisResponseDto.Command();
-        cmd.setCmdType("add_schedule");
-        cmd.setTitle("회식");
-        cmd.setDatetime(LocalDateTime.now().plusDays(1).withHour(18).withMinute(0).toString()); // 내일 오후 6시
-        cmd.setMemo("장소: 강남역, 내용: 회식");
-        mockResponse.setCmd(cmd);
-        mockResponse.setMessage("네, 내일 오후 6시에 강남역에서 회식 일정 등록했어요.");
+                mockMvc.perform(post("/api/schedules")
+                                .header("Authorization", "Bearer " + accessToken) // 토큰 헤더 추가
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(scheduleRequest)))
+                                .andDo(print())
+                                .andExpect(status().isOk()) // 200 OK 확인
+                                .andExpect(jsonPath("$.schName").value("통합 테스트 일정")) // 응답 데이터 검증
+                                .andExpect(jsonPath("$.petNo").exists()); // petNo가 응답에 포함되었는지 확인
+        }
 
-        org.mockito.BDDMockito.given(llmService.analyzeUserCommand(org.mockito.ArgumentMatchers.anyString()))
-                .willReturn(mockResponse);
+        @Test
+        @DisplayName("LLM 연동 일정 등록 통합 테스트 (Mock API 호출)")
+        void createScheduleWithLlm() throws Exception {
+                // 1. 회원가입 (Sign Up)
+                SignupRequest signupRequest = new SignupRequest();
+                signupRequest.setUserId("llmuser1");
+                signupRequest.setUserPassword("Password123!");
+                signupRequest.setUserName("LLM유저");
+                signupRequest.setUserAddress("서울시 강남구");
+                signupRequest.setUserPhone("010-1234-5678");
+                signupRequest.setUserFamilyPhone("010-9876-5432");
 
-        // 3. LLM 명령 전송 (Command)
-        String commandText = "내일 오후 6시에 강남역에서 회식 있어";
-        String commandJson = "{\"text\": \"" + commandText + "\"}";
+                mockMvc.perform(post("/api/auth/signup")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(signupRequest)))
+                                .andExpect(status().isCreated());
 
-        System.out.println(">>> LLM 요청 전송: " + commandText);
+                // 2. 로그인 (Login)
+                String loginJson = """
+                                    {
+                                        "userId": "llmuser1",
+                                        "userPassword": "Password123!"
+                                    }
+                                """;
+                MvcResult loginResult = mockMvc.perform(post("/api/auth/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(loginJson))
+                                .andExpect(status().isOk())
+                                .andReturn();
 
-        MvcResult commandResult = mockMvc.perform(post("/api/schedules/command")
-                .header("Authorization", "Bearer " + accessToken)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(commandJson))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andReturn();
+                String accessToken = objectMapper.readTree(loginResult.getResponse().getContentAsString())
+                                .get("data").get("accessToken").asText();
 
-        String responseContent = commandResult.getResponse().getContentAsString();
-        System.out.println(">>> LLM 응답 결과: " + responseContent);
+                System.out.println(">>> LLM 테스트용 토큰 발급 완료");
 
-        // 4. DB 저장 확인 (Verification)
-        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-                .get("/api/schedules")
-                .header("Authorization", "Bearer " + accessToken))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[-1].schName").value("회식"))
-                .andExpect(jsonPath("$[-1].schMemo").value("장소: 강남역, 내용: 회식"));
-    }
+                // [추가] 2.5: User에게 Pet 연결 (Care 생성)
+                User user = userRepository.findAll().stream()
+                                .filter(u -> "llmuser1".equals(u.getUserId()))
+                                .findFirst()
+                                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+                Pet pet = Pet.builder()
+                                .petId("robot_llm_1")
+                                .petName("LLM로봇")
+                                .petAddress("서울")
+                                .petPhone("010-1234-5678")
+                                .petOwner("LLM유저")
+                                .build();
+                petRepository.save(pet);
+
+                Care care = Care.builder()
+                                .user(user)
+                                .pet(pet)
+                                .careName("똑똑한로봇")
+                                .build();
+                careRepository.save(care);
+
+                // Mock LlmService 설정
+                com.noill.domain.schedule.dto.ScheduleAnalysisResponseDto mockResponse = new com.noill.domain.schedule.dto.ScheduleAnalysisResponseDto();
+                com.noill.domain.schedule.dto.ScheduleAnalysisResponseDto.Command cmd = new com.noill.domain.schedule.dto.ScheduleAnalysisResponseDto.Command();
+                cmd.setCmdType("add_schedule");
+                cmd.setTitle("회식");
+                cmd.setDatetime(LocalDateTime.now().plusDays(1).withHour(18).withMinute(0).toString()); // 내일 오후 6시
+                cmd.setMemo("장소: 강남역, 내용: 회식");
+                mockResponse.setCmd(cmd);
+                mockResponse.setMessage("네, 내일 오후 6시에 강남역에서 회식 일정 등록했어요.");
+
+                org.mockito.BDDMockito.given(llmService.analyzeUserCommand(org.mockito.ArgumentMatchers.anyString()))
+                                .willReturn(mockResponse);
+
+                // 3. LLM 명령 전송 (Command)
+                String commandText = "내일 오후 6시에 강남역에서 회식 있어";
+                String commandJson = "{\"text\": \"" + commandText + "\"}";
+
+                System.out.println(">>> LLM 요청 전송: " + commandText);
+
+                MvcResult commandResult = mockMvc.perform(post("/api/schedules/command")
+                                .header("Authorization", "Bearer " + accessToken)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(commandJson))
+                                .andDo(print())
+                                .andExpect(status().isOk())
+                                .andReturn();
+
+                String responseContent = commandResult.getResponse().getContentAsString();
+                System.out.println(">>> LLM 응답 결과: " + responseContent);
+
+                // 4. DB 저장 확인 (Verification)
+                mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                                .get("/api/schedules")
+                                .header("Authorization", "Bearer " + accessToken))
+                                .andDo(print())
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$[-1].schName").value("회식"))
+                                .andExpect(jsonPath("$[-1].schMemo").value("장소: 강남역, 내용: 회식"));
+        }
 }

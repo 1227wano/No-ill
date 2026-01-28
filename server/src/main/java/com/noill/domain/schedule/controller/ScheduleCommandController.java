@@ -1,5 +1,6 @@
 package com.noill.domain.schedule.controller;
 
+import com.noill.domain.pet.entity.Pet;
 import com.noill.domain.user.entity.User;
 import com.noill.domain.schedule.dto.ScheduleTextRequestDto;
 import com.noill.domain.schedule.service.ScheduleService;
@@ -26,8 +27,16 @@ public class ScheduleCommandController {
     public ResponseEntity<Map<String, String>> processCommand(
             @RequestBody ScheduleTextRequestDto requestDto,
             @AuthenticationPrincipal User user) {
+
+        if (user.getCares().isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("message", "등록된 반려동물(로봇)이 없습니다."));
+        }
+
+        // 임시: 첫 번째 반려동물(로봇)을 선택
+        Pet pet = user.getCares().get(0).getPet();
+
         // 음성 명령 분석 및 처리 후 LLM이 생성한 응답 메시지 반환
-        String resultMessage = scheduleService.processUserCommand(requestDto.getText(), user);
+        String resultMessage = scheduleService.processUserCommand(requestDto.getText(), pet);
 
         // 노일이(로봇)는 JSON 응답을 기대하므로 Map으로 감싸서 반환
         // {"message": "네, 내일 오후 2시에 일정을 잡았어요."}

@@ -1,6 +1,6 @@
 package com.noill.domain.schedule.service;
 
-import com.noill.domain.user.entity.User;
+import com.noill.domain.pet.entity.Pet;
 import com.noill.domain.schedule.dto.ScheduleAnalysisResponseDto;
 import com.noill.domain.schedule.dto.ScheduleRequestDto;
 import com.noill.domain.schedule.dto.ScheduleResponseDto;
@@ -21,15 +21,11 @@ import java.util.List;
 public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
-    private final LlmService llmService; // 1번의 LLM 연동 기능 추가
+    private final LlmService llmService;
 
     // 1. 일정 등록 (기본 CRUD)
-    public ScheduleResponseDto addSchedule(ScheduleRequestDto requestDto, User user) {
-        if (requestDto.getSchName().contains("금지어")) {
-            throw new IllegalArgumentException("적절하지 않은 일정 이름입니다.");
-        }
-
-        Schedule savedSchedule = scheduleRepository.save(requestDto.toEntity(user));
+    public ScheduleResponseDto addSchedule(ScheduleRequestDto requestDto, Pet pet) {
+        Schedule savedSchedule = scheduleRepository.save(requestDto.toEntity(pet));
         return new ScheduleResponseDto(savedSchedule);
     }
 
@@ -68,12 +64,12 @@ public class ScheduleService {
         scheduleRepository.delete(schedule);
     }
 
-    // ================== 1번 코드에서 추가된 LLM 연동 기능 ==================
+    // ================== LLM 연동 기능 ==================
 
     /**
      * 사용자 음성/텍스트 명령 처리 (AIoT 연동 핵심)
      */
-    public String processUserCommand(String userText, User user) {
+    public String processUserCommand(String userText, Pet pet) {
         if (userText == null || userText.trim().isEmpty()) {
             return "죄송해요, 잘 못 들었어요. 다시 한 번 말씀해주세요.";
         }
@@ -84,7 +80,7 @@ public class ScheduleService {
 
             // 2. 명령어 타입이 일정 등록인 경우 처리
             if (analysis.getCmd() != null && "add_schedule".equalsIgnoreCase(analysis.getCmd().getCmdType())) {
-                return registerScheduleFromCommand(analysis.getCmd(), user, analysis.getMessage());
+                return registerScheduleFromCommand(analysis.getCmd(), pet, analysis.getMessage());
             }
 
             // 3. 그 외 답변 (단순 대화 등) 반환
@@ -99,7 +95,7 @@ public class ScheduleService {
     /**
      * LLM 분석 결과(Command)를 바탕으로 실제 DB 저장
      */
-    private String registerScheduleFromCommand(ScheduleAnalysisResponseDto.Command cmd, User user,
+    private String registerScheduleFromCommand(ScheduleAnalysisResponseDto.Command cmd, Pet pet,
             String responseMessage) {
         try {
             if (cmd.getTitle() == null || cmd.getDatetime() == null) {
@@ -110,7 +106,7 @@ public class ScheduleService {
             LocalDateTime schTime = LocalDateTime.parse(cmd.getDatetime());
 
             Schedule schedule = new Schedule();
-            schedule.setUser(user);
+            schedule.setPet(pet);
             schedule.setSchName(cmd.getTitle());
             schedule.setSchTime(schTime);
             schedule.setSchMemo(cmd.getMemo());
