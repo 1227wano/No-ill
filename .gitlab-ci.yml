@@ -29,15 +29,15 @@ server_deploy:
     - chmod 600 ~/.ssh/id_rsa
     # 3. 파일로부터 열쇠 등록
     - ssh-add ~/.ssh/id_rsa
-    - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+    - echo -e "$SERVER_SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
   script:
     # 💡 ubuntu 대신 $SERVER_DEPLOY_USER 를 사용하고, $SERVER_IP 대신 $SERVER_HOST_2(또는 백엔드 변수)를 써보세요.
-    - ssh $SERVER_DEPLOY_USER@$SERVER_IP "mkdir -p /home/$SERVER_DEPLOY_USER/temp_build"
+    - ssh $SERVER_DEPLOY_USER@$SERVER_HOST_2 "mkdir -p /home/$SERVER_DEPLOY_USER/temp_build"
     
     # 💡 파일 전송 시에도 계정명을 변수로 바꿉니다.
-    - scp -r noill_app/build/web/* $SERVER_DEPLOY_USER@$SERVER_IP:/home/$SERVER_DEPLOY_USER/temp_build/
+    - scp -r noill_app/build/web/* $SERVER_DEPLOY_USER@$SERVER_HOST_2:/home/$SERVER_DEPLOY_USER/temp_build/
     
     # 💡 실전 배치 명령어에서도 계정명을 수정합니다.
-    - ssh $SERVER_DEPLOY_USER@$SERVER_IP "sudo rm -rf /var/www/html/* && sudo cp -r /home/$SERVER_DEPLOY_USER/temp_build/* /var/www/html/ && sudo rm -rf /home/$SERVER_DEPLOY_USER/temp_build && sudo systemctl restart nginx"
+    - ssh $SERVER_DEPLOY_USER@$SERVER_HOST_2 "sudo rm -rf /var/www/html/* && sudo cp -r /home/$SERVER_DEPLOY_USER/temp_build/* /var/www/html/ && sudo rm -rf /home/$SERVER_DEPLOY_USER/temp_build && sudo systemctl restart nginx"
   only:
     - app
