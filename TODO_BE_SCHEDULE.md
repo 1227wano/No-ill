@@ -25,10 +25,10 @@
 
 
 ### 1.2 Repository 구현
-- [ ] **Session Repository**
+- [x] **Session Repository**
   - **마지막 활성 세션 조회**: 특정 반려동물의 가장 최근 활성화된 세션을 조회하는 기능.
   - **과거 기억 검색**: 키워드를 포함하는 과거 세션 제목을 검색하는 기능.
-- [ ] **Message Repository**
+- [x] **Message Repository**
   - **오래된 메시지 정리**: 특정 세션의 메시지가 일정 개수를 초과할 경우, 가장 오래된 질의응답 쌍을 삭제하는 기능.
 
 ---
@@ -36,9 +36,9 @@
 ## � 2. 범용 응답 객체 및 DTO 설계
 LLM과 각 서비스 간의 "계약서"를 먼저 정의합니다.
 
-- [ ] **범용 응답 객체 (`LlmAnalysisResult`) 생성**: 
+- [x] **범용 응답 객체 (`LlmAnalysisResult`) 생성**: 
   - 필드: `intent` (Enum: SCHEDULE, TALK), `payload` (Map/JsonNode), `rawMessage` (String).
-- [ ] **Legacy DTO 분리**: 기존 `ScheduleAnalysisResponseDto`는 `Schedule` 도메인으로 격리하고, `LlmService`는 이를 반환하지 않도록 수정.
+- [x] **Legacy DTO 분리**: 기존 `ScheduleAnalysisResponseDto`는 `Schedule` 도메인으로 격리하고, `LlmService`는 이를 반환하지 않도록 수정.
 
 ---
 

@@ -1,9 +1,10 @@
-package com.noill.domain.schedule.service;
+package com.noill.domain.conversation.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode; // import 추가
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.noill.domain.schedule.dto.ScheduleAnalysisResponseDto;
+import com.noill.domain.conversation.dto.LlmAnalysisResult;
+import com.noill.domain.conversation.dto.LlmIntent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,11 +51,14 @@ public class LlmService {
       [대화 및 명령어 규칙]
       모든 응답은 JSON 형식을 따릅니다.
 
-      규칙 0: 일반 대화 (명령어 없음)
+      규칙 0: 일반 대화 (daily_talk)
+      - 사용자의 발화가 일상적인 대화나 안부 인사일 경우 사용합니다.
       {
+        "cmd": {
+           "cmdType": "daily_talk"
+        },
         "message": "(자연어 응답)"
       }
-
 
       규칙 1: 일정 추가 (add_schedule)
       - 사용자가 특정 날짜/시간에 일정을 추가하려 할 때 사용합니다.
@@ -72,13 +76,13 @@ public class LlmService {
       [Few-shot Examples]
 
       User: 내일 오후 2시에 병원 가야 돼.
-      Assistant: {"cmd": {"cmdType": "add_schedule", "title": "병원 방문", "datetime": "2026-01-22T14:00:00"}, "message": "네, 내일 오후 2시 병원 일정을 잡았어요."}
+      Assistant: {"cmd": {"cmdType": "add_schedule", "title": "병원 방문", "datetime": "2026-01-22T14:00:00", "memo": "병원 진료"}, "message": "네, 내일 오후 2시 병원 일정을 잡았어요."}
 
       User: 오늘 뭐 했어?
-      Assistant: {"message": "저는 하루 종일 어르신 기다리고 있었죠. 오늘 하루는 어떠셨어요?"}
+      Assistant: {"cmd": {"cmdType": "daily_talk"}, "message": "저는 하루 종일 어르신 기다리고 있었죠. 오늘 하루는 어떠셨어요?"}
       """;
 
-  public ScheduleAnalysisResponseDto analyzeUserCommand(String userText) {
+  public LlmAnalysisResult analyzeUserCommand(String userText) {
     if (userText == null || userText.trim().isEmpty()) {
       throw new IllegalArgumentException("입력 텍스트가 비어있습니다.");
     }
@@ -99,7 +103,9 @@ public class LlmService {
 
       // 2. API 호출
       String responseString = restTemplate.postForObject(apiUrl, entity, String.class);
-      log.info("LLM 원본 응답: {}", responseString); // 디버깅을 위해 INFO로 // 3. 파싱 (GMS/OpenAI 응답 구조 처리)
+      log.info("LLM 원본 응답: {}", responseString);
+
+      // 3. 파싱 (GMS/OpenAI 응답 구조 처리)
       // 응답 구조: { "output": [ { "content": [ { "text": "{ ... }" } ] } ] }
       JsonNode rootNode = objectMapper.readTree(responseString);
 
@@ -119,8 +125,8 @@ public class LlmService {
       String realContentJson = textNode.asText();
       log.info("LLM 추출된 콘텐츠: {}", realContentJson);
 
-      // 4. 추출한 JSON 문자열을 DTO로 변환
-      return objectMapper.readValue(realContentJson, ScheduleAnalysisResponseDto.class);
+      // 4. 추출한 JSON 문자열을 통해 LlmAnalysisResult 빌드
+      return parseLlmResponse(realContentJson);
 
     } catch (JsonProcessingException e) {
       log.error("LLM 응답 파싱 실패", e);
@@ -129,6 +135,36 @@ public class LlmService {
       log.error("LLM API 호출 중 오류 발생", e);
       throw new RuntimeException("LLM 서비스 오류", e);
     }
+  }
+
+  private LlmAnalysisResult parseLlmResponse(String jsonString) throws JsonProcessingException {
+    JsonNode root = objectMapper.readTree(jsonString);
+
+    String message = root.path("message").asText("");
+    JsonNode cmdNode = root.path("cmd");
+    String cmdType = cmdNode.path("cmdType").asText("daily_talk");
+
+    LlmIntent intent = LlmIntent.fromCode(cmdType);
+
+    LlmAnalysisResult.LlmAnalysisResultBuilder resultBuilder = LlmAnalysisResult.builder()
+        .intent(intent)
+        .content(message);
+
+    if (intent == LlmIntent.SCHEDULE) {
+      String title = cmdNode.path("title").asText("일정");
+      String datetimeStr = cmdNode.path("datetime").asText();
+      String memo = cmdNode.path("memo").asText("");
+
+      LocalDateTime schTime = LocalDateTime.parse(datetimeStr);
+
+      resultBuilder.scheduleData(LlmAnalysisResult.ScheduleData.builder()
+          .schName(title)
+          .schTime(schTime)
+          .schMemo(memo)
+          .build());
+    }
+
+    return resultBuilder.build();
   }
 
   private String createPrompt(String userText) {

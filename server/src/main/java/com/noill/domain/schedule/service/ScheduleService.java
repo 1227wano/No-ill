@@ -1,10 +1,12 @@
 package com.noill.domain.schedule.service;
 
+import com.noill.domain.conversation.dto.LlmAnalysisResult;
+import com.noill.domain.conversation.dto.LlmIntent;
+import com.noill.domain.conversation.service.LlmService;
 import com.noill.domain.pet.entity.Pet;
 import com.noill.domain.pet.repository.PetRepository;
 import com.noill.domain.care.repository.CareRepository;
 import com.noill.domain.user.entity.User;
-import com.noill.domain.schedule.dto.ScheduleAnalysisResponseDto;
 import com.noill.domain.schedule.dto.ScheduleRequestDto;
 import com.noill.domain.schedule.dto.ScheduleResponseDto;
 import com.noill.domain.schedule.entity.Schedule;
@@ -129,15 +131,15 @@ public class ScheduleService {
 
         try {
             // 1. LLM 분석 서비스 호출
-            ScheduleAnalysisResponseDto analysis = llmService.analyzeUserCommand(userText);
+            LlmAnalysisResult analysis = llmService.analyzeUserCommand(userText);
 
             // 2. 명령어 타입이 일정 등록인 경우 처리
-            if (analysis.getCmd() != null && "add_schedule".equalsIgnoreCase(analysis.getCmd().getCmdType())) {
-                return registerScheduleFromCommand(analysis.getCmd(), pet, analysis.getMessage());
+            if (analysis.getIntent() == LlmIntent.SCHEDULE && analysis.getScheduleData() != null) {
+                return registerScheduleFromCommand(analysis.getScheduleData(), pet, analysis.getContent());
             }
 
             // 3. 그 외 답변 (단순 대화 등) 반환
-            return (analysis.getMessage() != null) ? analysis.getMessage() : "네, 알겠어요.";
+            return (analysis.getContent() != null) ? analysis.getContent() : "네, 알겠어요.";
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -148,21 +150,18 @@ public class ScheduleService {
     /**
      * LLM 분석 결과(Command)를 바탕으로 실제 DB 저장
      */
-    private String registerScheduleFromCommand(ScheduleAnalysisResponseDto.Command cmd, Pet pet,
+    private String registerScheduleFromCommand(LlmAnalysisResult.ScheduleData scheduleData, Pet pet,
             String responseMessage) {
         try {
-            if (cmd.getTitle() == null || cmd.getDatetime() == null) {
+            if (scheduleData.getSchName() == null || scheduleData.getSchTime() == null) {
                 return "일정 정보를 정확히 이해하지 못했어요. 다시 말씀해주세요.";
             }
 
-            // ISO-8601 형식(yyyy-MM-ddTHH:mm:ss) 문자열을 LocalDateTime으로 변환
-            LocalDateTime schTime = LocalDateTime.parse(cmd.getDatetime());
-
             Schedule schedule = new Schedule();
             schedule.setPet(pet);
-            schedule.setSchName(cmd.getTitle());
-            schedule.setSchTime(schTime);
-            schedule.setSchMemo(cmd.getMemo());
+            schedule.setSchName(scheduleData.getSchName());
+            schedule.setSchTime(scheduleData.getSchTime());
+            schedule.setSchMemo(scheduleData.getSchMemo());
             schedule.setSchStatus("Y");
 
             scheduleRepository.save(schedule);
@@ -170,7 +169,7 @@ public class ScheduleService {
             return (responseMessage != null) ? responseMessage : "일정을 등록했어요.";
 
         } catch (Exception e) {
-            return "일정 날짜 형식이 올바르지 않아요.";
+            return "일정 처리에 실패했어요.";
         }
     }
 }
