@@ -1,6 +1,7 @@
 package com.noill.domain.schedule.dto;
 
 import com.noill.domain.schedule.entity.Schedule;
+import com.noill.domain.user.entity.User;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -26,7 +27,7 @@ public class ScheduleRequestDto {
 
     private String schMemo;
 
-    public Schedule toEntity(com.noill.domain.user.entity.User user) {
+    public Schedule toEntity(User user) {
         Schedule schedule = new Schedule();
         schedule.setUser(user);
         schedule.setSchName(this.schName);

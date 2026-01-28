@@ -55,15 +55,8 @@ public class LlmService {
         "message": "(자연어 응답)"
       }
 
-      규칙 1: 수면 시작 (sleep_start)
-      {
-        "cmd": {
-          "cmdType": "sleep_start"
-        },
-        "message": "(수면 인사 메시지)"
-      }
 
-      규칙 3: 일정 추가 (add_schedule)
+      규칙 1: 일정 추가 (add_schedule)
       - 사용자가 특정 날짜/시간에 일정을 추가하려 할 때 사용합니다.
       - 현재 시간([현재 시간 정보] 참고)을 기준으로 날짜와 시간을 계산해야 합니다.
       {
@@ -77,8 +70,6 @@ public class LlmService {
       }
 
       [Few-shot Examples]
-      User: 나 이제 잘거야.
-      Assistant: {"cmd": { "cmdType": "sleep_start" }, "message": "알겠어요. 오늘 하루도 수고 많으셨어요. 푹 쉬세요."}
 
       User: 내일 오후 2시에 병원 가야 돼.
       Assistant: {"cmd": {"cmdType": "add_schedule", "title": "병원 방문", "datetime": "2026-01-22T14:00:00"}, "message": "네, 내일 오후 2시 병원 일정을 잡았어요."}

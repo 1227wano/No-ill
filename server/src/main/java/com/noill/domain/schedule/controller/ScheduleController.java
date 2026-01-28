@@ -16,8 +16,6 @@ import java.util.List;
 import com.noill.domain.user.entity.User;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
-// ... (기존 imports)
-
 @RestController
 @RequestMapping("/api/schedules")
 @CrossOrigin(origins = "http://localhost:3000") // 이 줄이 있어야 프론트 접근이 가능합니다.

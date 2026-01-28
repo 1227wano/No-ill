@@ -52,7 +52,7 @@ public class RobotStatusIntegrationTest {
                 signupRequest.setUserAddress("TestAddress");
                 signupRequest.setUserPhone("010-0000-0000");
                 signupRequest.setUserFamilyPhone("010-1111-1111");
-                signupRequest.setUserType(User.UserType.U);
+                signupRequest.setUserName("RobotTester_U");
 
                 try {
                         mockMvc.perform(post("/api/auth/signup")

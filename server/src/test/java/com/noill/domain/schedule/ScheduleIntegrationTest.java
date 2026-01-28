@@ -54,7 +54,7 @@ public class ScheduleIntegrationTest {
         signupRequest.setUserAddress("서울시 테스트구");
         signupRequest.setUserPhone("010-0000-0000");
         signupRequest.setUserFamilyPhone("010-1111-1111");
-        signupRequest.setUserType(User.UserType.U);
+        signupRequest.setUserName("RobotTester_U");
 
         mockMvc.perform(post("/api/auth/signup")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -111,7 +111,7 @@ public class ScheduleIntegrationTest {
         signupRequest.setUserAddress("서울시 강남구");
         signupRequest.setUserPhone("010-1234-5678");
         signupRequest.setUserFamilyPhone("010-9876-5432");
-        signupRequest.setUserType(User.UserType.U);
+        signupRequest.setUserName("RobotTester_U");
 
         mockMvc.perform(post("/api/auth/signup")
                 .contentType(MediaType.APPLICATION_JSON)

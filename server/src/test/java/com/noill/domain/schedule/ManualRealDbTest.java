@@ -50,7 +50,7 @@ public class ManualRealDbTest {
                 signupRequest.setUserAddress("서울시 테스트구");
                 signupRequest.setUserPhone("010-" + (int) (Math.random() * 9000 + 1000) + "-1234");
                 signupRequest.setUserFamilyPhone("010-1111-2222");
-                signupRequest.setUserType(User.UserType.U);
+                signupRequest.setUserName("RobotTester_U");
 
                 mockMvc.perform(post("/api/auth/signup")
                                 .contentType(MediaType.APPLICATION_JSON)
