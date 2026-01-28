@@ -37,4 +37,5 @@ public class SignupRequest {
     // @Valid로 @NotBlank 조건도 같이 검사
     @Valid
     private List<PetRegisterRequest> pets;
+
 }

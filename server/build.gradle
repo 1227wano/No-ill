@@ -25,21 +25,26 @@ repositories {
 }
 
 dependencies {
+    // 기본 스타터
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
-    // Spring Security
+    // JSON 날짜/시간 처리를 위한 Jackson 모듈 (LocalDateTime 등을 위해 필수)
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
+    // Spring Security & Redis (로그인 및 토큰 저장)
     implementation 'org.springframework.boot:spring-boot-starter-security'
     // Redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
-    // JWT
+    // JWT (최신 0.12.6 버전)
     implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
 
-    // Validation
+    // Validation (입력값 검증)
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
     // WebSocket
@@ -56,8 +61,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-admin:9.2.0'
 
     compileOnly 'org.projectlombok:lombok'
-    runtimeOnly 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.projectlombok:lombok'
+    runtimeOnly 'com.mysql:mysql-connector-j'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
@@ -67,6 +72,7 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
 // 불필요한 plain jar 생성 방지 (용량 절약)
 tasks.named("jar") {
     enabled = false

@@ -1,7 +1,7 @@
-package com.noill.schedule.entity;
+package com.noill.domain.schedule.entity;
 
+import com.noill.domain.pet.entity.Pet;
 import jakarta.persistence.*;
-import com.noill.domain.user.entity.User;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -23,14 +23,12 @@ public class Schedule {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "SCH_NO") // ERD의 '일정번호' 컬럼명 반영
     private Long id;
 
-
-
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USER_NO", nullable = false)
-    private User user;
+    @JoinColumn(name = "PET_NO", nullable = false)
+    private Pet pet;
 
     @NotBlank(message = "일정 이름은 필수입니다.")
     @Column(name = "SCH_NAME", length = 100, nullable = false)

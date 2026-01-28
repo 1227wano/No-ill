@@ -1,6 +1,6 @@
-package com.noill.schedule.dto;
+package com.noill.domain.schedule.dto;
 
-import com.noill.schedule.entity.Schedule;
+import com.noill.domain.schedule.entity.Schedule;
 import lombok.Getter;
 import java.time.LocalDateTime;
 
@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 public class ScheduleResponseDto {
     private Long id;
-    private Long userNo;
+    private Long petNo;
     private String schName;
     private LocalDateTime schTime;
     private String schMemo;
@@ -19,7 +19,7 @@ public class ScheduleResponseDto {
 
     public ScheduleResponseDto(Schedule schedule) {
         this.id = schedule.getId();
-        this.userNo = schedule.getUser().getUserNo();
+        this.petNo = schedule.getPet().getPetNo();
         this.schName = schedule.getSchName();
         this.schTime = schedule.getSchTime();
         this.schMemo = schedule.getSchMemo();

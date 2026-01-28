@@ -1,6 +1,6 @@
-package com.noill.schedule.repository;
+package com.noill.domain.schedule.repository;
 
-import com.noill.schedule.entity.Schedule;
+import com.noill.domain.schedule.entity.Schedule;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;

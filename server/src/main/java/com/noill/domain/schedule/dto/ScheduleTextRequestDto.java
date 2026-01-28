@@ -1,4 +1,4 @@
-package com.noill.schedule.dto;
+package com.noill.domain.schedule.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
