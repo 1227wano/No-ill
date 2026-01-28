@@ -31,7 +31,7 @@ server_deploy:
     - ssh-add ~/.ssh/id_rsa
     - echo -e "$SERVER_SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
   script:
-    - ssh -o StrictHostKeyChecking=no $SERVER_DEPLOY_USER@$SERVER_HOST_2 "sudo whoami"
+    - ssh -o StrictHostKeyChecking=no $SERVER_DEPLOY_USER@$SERVER_HOST_2 "whoami"
     - ssh -o StrictHostKeyChecking=no $SERVER_DEPLOY_USER@$SERVER_HOST_2 "mkdir -p /home/$SERVER_DEPLOY_USER/temp_build"
     
     - scp -o StrictHostKeyChecking=no -r noill_app/build/web/* $SERVER_DEPLOY_USER@$SERVER_HOST_2:/home/$SERVER_DEPLOY_USER/temp_build/
