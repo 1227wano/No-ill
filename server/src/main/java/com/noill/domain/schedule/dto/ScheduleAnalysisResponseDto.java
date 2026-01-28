@@ -32,6 +32,5 @@ public class ScheduleAnalysisResponseDto {
         private String datetime; // 일정 시간 (add_schedule 시)
         private String memo; // 일정 메모 (선택사항)
 
-        // 약 관련 필드는 필요 시 추가하거나 ignoreUnknown으로 무시
     }
 }

@@ -25,6 +25,9 @@ public class ScheduleRequestDto {
     @Future(message = "일정은 미래 시간이어야 합니다.")
     private LocalDateTime schTime;
 
+    private String petId; // 디스플레이 식별자 (필수)
+    private Long petNo; // 내부용 (선택)
+
     private String schMemo;
 
     public Schedule toEntity(Pet pet) {
