@@ -62,6 +62,15 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error(e.getMessage()));
     }
 
+    @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+    public ResponseEntity<ApiResponse<Void>> handleAccessDeniedException(
+            org.springframework.security.access.AccessDeniedException e) {
+        log.error("AccessDeniedException: {}", e.getMessage(), e);
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(ApiResponse.error("접근 권한이 없습니다"));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleException(Exception e) {
         log.error("Unhandled exception: {}", e.getMessage(), e);
