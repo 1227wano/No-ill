@@ -46,6 +46,7 @@ app.*.map.json
 
 # git에 업로드할 때 방해됨
 display/
+keys/
 
 # 환경변수
 config/
