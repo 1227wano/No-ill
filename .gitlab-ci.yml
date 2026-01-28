@@ -31,11 +31,14 @@ server_deploy:
     - ssh-add ~/.ssh/id_rsa
     - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
   script:
-    # 1. 서버에 temp_build 폴더가 없을 수도 있으니 미리 만듭니다.
-    - ssh ubuntu@$SERVER_IP "mkdir -p /home/ubuntu/temp_build"
-    # 2. 파일 전송
-    - scp -r noill_app/build/web/* ubuntu@$SERVER_IP:/home/ubuntu/temp_build/
-    # 3. 실전 배치
-    - ssh ubuntu@$SERVER_IP "sudo rm -rf /var/www/html/* && sudo cp -r /home/ubuntu/temp_build/* /var/www/html/ && sudo rm -rf /home/ubuntu/temp_build && sudo systemctl restart nginx"
+    script:
+    # 💡 ubuntu 대신 $SERVER_DEPLOY_USER 를 사용하고, $SERVER_IP 대신 $SERVER_HOST_2(또는 백엔드 변수)를 써보세요.
+    - ssh $SERVER_DEPLOY_USER@$SERVER_IP "mkdir -p /home/$SERVER_DEPLOY_USER/temp_build"
+    
+    # 💡 파일 전송 시에도 계정명을 변수로 바꿉니다.
+    - scp -r noill_app/build/web/* $SERVER_DEPLOY_USER@$SERVER_IP:/home/$SERVER_DEPLOY_USER/temp_build/
+    
+    # 💡 실전 배치 명령어에서도 계정명을 수정합니다.
+    - ssh $SERVER_DEPLOY_USER@$SERVER_IP "sudo rm -rf /var/www/html/* && sudo cp -r /home/$SERVER_DEPLOY_USER/temp_build/* /var/www/html/ && sudo rm -rf /home/$SERVER_DEPLOY_USER/temp_build && sudo systemctl restart nginx"
   only:
     - app
