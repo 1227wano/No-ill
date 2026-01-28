@@ -31,7 +31,6 @@ server_deploy:
     - ssh-add ~/.ssh/id_rsa
     - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
   script:
-    script:
     # 💡 ubuntu 대신 $SERVER_DEPLOY_USER 를 사용하고, $SERVER_IP 대신 $SERVER_HOST_2(또는 백엔드 변수)를 써보세요.
     - ssh $SERVER_DEPLOY_USER@$SERVER_IP "mkdir -p /home/$SERVER_DEPLOY_USER/temp_build"
     
