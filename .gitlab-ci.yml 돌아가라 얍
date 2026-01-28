@@ -35,7 +35,6 @@ server_deploy:
     
     - scp -o StrictHostKeyChecking=no -r noill_app/build/web/* $SERVER_DEPLOY_USER@$SERVER_HOST_2:/home/$SERVER_DEPLOY_USER/temp_build/
     
-    # 💡 sudo를 모두 빼고, 정적 파일 배포이므로 Nginx 재시작(restart)도 뺍니다. (파일만 바뀌면 바로 반영됩니다.)
-    - ssh -o StrictHostKeyChecking=no $SERVER_DEPLOY_USER@$SERVER_HOST_2 "rm -rf /var/www/html/* && cp -r /home/$SERVER_DEPLOY_USER/temp_build/* /var/www/html/ && rm -rf /home/$SERVER_DEPLOY_USER/temp_build"
+    - ssh -o StrictHostKeyChecking=no $SERVER_DEPLOY_USER@$SERVER_HOST_2 "sudo rm -rf /var/www/html/* && sudo cp -r /home/$SERVER_DEPLOY_USER/temp_build/* /var/www/html/ && sudo chown -R $SERVER_DEPLOY_USER:$SERVER_DEPLOY_USER /var/www/html/ && rm -rf /home/$SERVER_DEPLOY_USER/temp_build
   only:
     - app
