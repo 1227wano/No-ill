@@ -40,20 +40,16 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String userPhone;
 
-    @Column()
-    private String userFamilyPhone;
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Care> cares = new ArrayList<>();
 
     @Builder
-    public User(String userId, String userPassword, String userName, String userAddress, String userPhone, String userFamilyPhone) {
-            this.userId = userId;
+    public User(String userId, String userPassword, String userName, String userAddress, String userPhone) {
+        this.userId = userId;
         this.userPassword = userPassword;
         this.userName = userName;
         this.userAddress = userAddress;
         this.userPhone = userPhone;
-        this.userFamilyPhone = userFamilyPhone;
     }
 
     @Override

@@ -34,9 +34,6 @@ public class SignupRequest {
     @Size(max = 20, message = "전화번호는 20자 이하로 입력해주세요")
     private String userPhone;
 
-    @Size(max = 20, message = "비상전화번호는 20자 이하로 입력해주세요")
-    private String userFamilyPhone;
-
     // @Valid로 @NotBlank 조건도 같이 검사
     @Valid
     private List<PetRegisterRequest> pets;
