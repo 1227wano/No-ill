@@ -9,7 +9,7 @@ flutter_build:
   script:
     - cd noill_app
     - flutter pub get
-    - flutter build web --release --no-tree-shake-icons --no-wasm-dry-run --worker=1
+    - flutter build web --release --no-tree-shake-icons --no-wasm-dry-run
   artifacts: # 👈 보물 상자에 빌드 결과물을 담는 과정입니다.
     paths:
       - noill_app/build/web/
