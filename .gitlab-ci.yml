@@ -1,0 +1,35 @@
+stages:
+  - build
+  - deploy
+
+# 1. 빌드 (CI)
+flutter_build:
+  stage: build
+  image: ghcr.io/cirruslabs/flutter:stable # Flutter가 설치된 공식 이미지 사용
+  script:
+    - cd noill_app
+    - flutter pub get
+    - flutter build web --release
+  artifacts:
+    paths:
+      - noill_app/build/web/ # 빌드 결과물을 다음 단계로 전달
+
+# 2. 배포 (CD)
+server_deploy:
+  stage: deploy
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache openssh-client # SSH 접속을 위한 도구 설치
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - # 서버 열쇠 등록
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config # 보안 경고 무시
+  script:
+    # 파일을 서버 임시 폴더로 전송 (SCP 대신 rsync나 scp 사용)
+    - scp -r noill_app/build/web/* ubuntu@$SERVER_IP:/home/ubuntu/temp_build/
+    # 서버 내부 명령어 실행 (파일 이동 및 Nginx 재시작)
+    - ssh ubuntu@$SERVER_IP "sudo rm -rf /var/www/html/* && sudo cp -r /home/ubuntu/temp_build/* /var/www/html/ && sudo rm -rf /home/ubuntu/temp_build && sudo systemctl restart nginx"
+  only:
+    - main # 메인 브랜치에 푸시될 때만 작동
+    - app
