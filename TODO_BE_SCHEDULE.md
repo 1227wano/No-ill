@@ -46,12 +46,12 @@ LLM과 각 서비스 간의 "계약서"를 먼저 정의합니다.
 기존 `LlmService`가 일정(Schedule) 도메인에 종속된 문제를 해결하고, 대화의 의도를 먼저 파악하여 적절한 서비스로 분기하는 구조를 확립합니다.
 
 ### 3.1 LLM 서비스 범용화 (Refactoring)
-- [ ] **`LlmService` 위치 이동 및 패키지 신설**: `domain.schedule.service` -> **`domain.conversation.service`** (핵심 도메인으로 격상)
+- [x] **`LlmService` 위치 이동 및 패키지 신설**: `domain.schedule.service` -> **`domain.conversation.service`** (핵심 도메인으로 격상)
   - `Schedule`, `User`, `Pet`과 동등한 레벨의 `Conversation` 도메인 정의.
-- [ ] **`Intent` 판별 프롬프트 수정**: 
+- [x] **`Intent` 판별 프롬프트 수정**: 
   - **엄격한 분류**: 구체적 날짜/시간 + 할 일이 모두 있을 때만 `add_schedule`.
   - **기본값**: 단순 감정 표현, 인사 등은 무조건 `daily_talk`.
-- [ ] **프롬프트 명세 동기화**: `NOILL_PROMPT_SYSTEM.md` 파일 업데이트 및 코드 내 시스템 프롬프트와 일치시키기.
+- [x] **프롬프트 명세 동기화**: `NOILL_PROMPT_SYSTEM.md` 파일 업데이트 및 코드 내 시스템 프롬프트와 일치시키기.
 - [ ] **Multi-Prompt 구조 지원**: `LlmService` 내에서 목적에 따라 다른 시스템 프롬프트를 사용할 수 있도록 메소드 분리.
   - `analyzeUserCommand`: 사용자 발화 의도 분석 (일정 vs 대화).
   - `generateSessionTitle`: 대화 내용을 바탕으로 50자 이내의 세션 제목 생성 (요약).
