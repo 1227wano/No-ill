@@ -10,14 +10,14 @@
 > ⚠️ **엔티티 구현/수정 시 반드시 `erd.png`를 참고하여 테이블 관계를 확인하세요.**
 
 ### 1.1 Entity 구현
-- [ ] **`Schedule` Entity 수정 (`User` -> `Pet` 연결 변경)**
+- [x] **`Schedule` Entity 수정 (`User` -> `Pet` 연결 변경)**
   - 현재 `User`와 직접 연결된 FK를 `Pet`(`petNo`) 연결로 수정 (ERD 준수).
-- [ ] **`Talks` Entity (세션)**
+- [x] **`Talks` Entity (세션)**
   - `talkNo` (PK), `petNo` (FK - `Pets` 테이블 참조)
   - `talkName` (Not Null, 초기값 필요)
   - `status` (Enum: `Y`=Active, `N`=Closed)
-- [ ] **`Messages` Entity (대화)**
-  - `mseNo` (PK)
+- [x] **`Messages` Entity (대화)**
+  - `msgNo` (PK)
   - `talks` (ManyToOne, FK: `talk_no`): **어떤 세션의 대화인지 식별**
   - `msgType` (Enum/Char: `Q`=User, `A`=Bot)
   - `msgContent` (Text)
