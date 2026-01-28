@@ -31,13 +31,11 @@ server_deploy:
     - ssh-add ~/.ssh/id_rsa
     - echo -e "$SERVER_SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
   script:
-    # 💡 ubuntu 대신 $SERVER_DEPLOY_USER 를 사용하고, $SERVER_IP 대신 $SERVER_HOST_2(또는 백엔드 변수)를 써보세요.
-    - ssh $SERVER_DEPLOY_USER@$SERVER_HOST_2 "mkdir -p /home/$SERVER_DEPLOY_USER/temp_build"
+    - ssh -o StrictHostKeyChecking=no $SERVER_DEPLOY_USER@$SERVER_HOST_2 "mkdir -p /home/$SERVER_DEPLOY_USER/temp_build"
     
-    # 💡 파일 전송 시에도 계정명을 변수로 바꿉니다.
-    - scp -r noill_app/build/web/* $SERVER_DEPLOY_USER@$SERVER_HOST_2:/home/$SERVER_DEPLOY_USER/temp_build/
+    - scp -o StrictHostKeyChecking=no -r noill_app/build/web/* $SERVER_DEPLOY_USER@$SERVER_HOST_2:/home/$SERVER_DEPLOY_USER/temp_build/
     
-    # 💡 실전 배치 명령어에서도 계정명을 수정합니다.
-    - ssh $SERVER_DEPLOY_USER@$SERVER_HOST_2 "sudo rm -rf /var/www/html/* && sudo cp -r /home/$SERVER_DEPLOY_USER/temp_build/* /var/www/html/ && sudo rm -rf /home/$SERVER_DEPLOY_USER/temp_build && sudo systemctl restart nginx"
+    # 💡 sudo를 모두 빼고, 정적 파일 배포이므로 Nginx 재시작(restart)도 뺍니다. (파일만 바뀌면 바로 반영됩니다.)
+    - ssh -o StrictHostKeyChecking=no $SERVER_DEPLOY_USER@$SERVER_HOST_2 "rm -rf /var/www/html/* && cp -r /home/$SERVER_DEPLOY_USER/temp_build/* /var/www/html/ && rm -rf /home/$SERVER_DEPLOY_USER/temp_build"
   only:
     - app
