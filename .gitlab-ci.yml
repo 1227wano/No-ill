@@ -33,5 +33,4 @@ server_deploy:
     # 3. 실전 배치
     - ssh ubuntu@$SERVER_IP "sudo rm -rf /var/www/html/* && sudo cp -r /home/ubuntu/temp_build/* /var/www/html/ && sudo rm -rf /home/ubuntu/temp_build && sudo systemctl restart nginx"
   only:
-    - master
     - app
