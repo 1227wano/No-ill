@@ -10,6 +10,7 @@ flutter_build:
     - cd noill_app
     - flutter pub get
     - flutter build web --release --no-tree-shake-icons --no-wasm-dry-run --worker=1
+  artifacts:
     paths:
       - noill_app/build/web/ # 빌드 결과물을 다음 단계로 전달
 
