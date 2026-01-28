@@ -8,6 +8,8 @@ flutter_build:
   image: ghcr.io/cirruslabs/flutter:stable
   script:
     - cd noill_app
+    # gitlab 변수에 저장된 BASE_URL 값을 flutter 환경변수로 설정
+    - echo "BASE_URL=$PROD_BASE_URL" > .env
     - flutter pub get
     - flutter build web --release --no-tree-shake-icons --no-wasm-dry-run
   artifacts: # 👈 보물 상자에 빌드 결과물을 담는 과정입니다.
@@ -33,9 +35,9 @@ server_deploy:
   script:
     - ssh -o StrictHostKeyChecking=no $SERVER_DEPLOY_USER@$SERVER_HOST_2 "whoami"
     - ssh -o StrictHostKeyChecking=no $SERVER_DEPLOY_USER@$SERVER_HOST_2 "mkdir -p /home/$SERVER_DEPLOY_USER/temp_build"
-    
+
     - scp -o StrictHostKeyChecking=no -r noill_app/build/web/* $SERVER_DEPLOY_USER@$SERVER_HOST_2:/home/$SERVER_DEPLOY_USER/temp_build/
-    
+
     - ssh -o StrictHostKeyChecking=no $SERVER_DEPLOY_USER@$SERVER_HOST_2 "sudo rm -rf /var/www/html/* && sudo cp -r /home/$SERVER_DEPLOY_USER/temp_build/* /var/www/html/ && sudo chown -R $SERVER_DEPLOY_USER:$SERVER_DEPLOY_USER /var/www/html/ && rm -rf /home/$SERVER_DEPLOY_USER/temp_build"
   only:
     - app
