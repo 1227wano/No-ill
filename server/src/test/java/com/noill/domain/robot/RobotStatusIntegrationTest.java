@@ -3,7 +3,6 @@ package com.noill.domain.robot;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.noill.domain.robot.dto.RobotStatusRequestDto;
 import com.noill.domain.user.dto.SignupRequest;
-
 import com.noill.global.redis.RedisService;
 import com.noill.domain.schedule.service.LlmService;
 import org.junit.jupiter.api.DisplayName;
@@ -51,7 +50,7 @@ public class RobotStatusIntegrationTest {
                 signupRequest.setUserName("RobotTester");
                 signupRequest.setUserAddress("TestAddress");
                 signupRequest.setUserPhone("010-0000-0000");
-                signupRequest.setUserFamilyPhone("010-1111-1111");
+
                 signupRequest.setUserName("RobotTester_U");
 
                 try {

@@ -38,6 +38,4 @@ public class SignupRequest {
     @Valid
     private List<PetRegisterRequest> pets;
 
-    public void setUserFamilyPhone(String s) {
-    }
 }
