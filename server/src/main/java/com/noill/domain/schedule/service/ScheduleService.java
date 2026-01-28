@@ -133,9 +133,8 @@ public class ScheduleService {
             // 1. LLM 분석 서비스 호출
             LlmAnalysisResult analysis = llmService.analyzeUserCommand(userText);
 
-            // 2. 명령어 타입이 일정 등록인 경우 처리
             if (analysis.getIntent() == LlmIntent.SCHEDULE && analysis.getScheduleData() != null) {
-                return registerScheduleFromCommand(analysis.getScheduleData(), pet, analysis.getContent());
+                return addScheduleFromLlm(analysis.getScheduleData(), pet, analysis.getContent());
             }
 
             // 3. 그 외 답변 (단순 대화 등) 반환
@@ -148,9 +147,9 @@ public class ScheduleService {
     }
 
     /**
-     * LLM 분석 결과(Command)를 바탕으로 실제 DB 저장
+     * LLM 분석 결과(Command)를 바탕으로 실제 DB 저장 (Dispatcher 호출용)
      */
-    private String registerScheduleFromCommand(LlmAnalysisResult.ScheduleData scheduleData, Pet pet,
+    public String addScheduleFromLlm(LlmAnalysisResult.ScheduleData scheduleData, Pet pet,
             String responseMessage) {
         try {
             if (scheduleData.getSchName() == null || scheduleData.getSchTime() == null) {

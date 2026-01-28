@@ -52,20 +52,20 @@ LLM과 각 서비스 간의 "계약서"를 먼저 정의합니다.
   - **엄격한 분류**: 구체적 날짜/시간 + 할 일이 모두 있을 때만 `add_schedule`.
   - **기본값**: 단순 감정 표현, 인사 등은 무조건 `daily_talk`.
 - [x] **프롬프트 명세 동기화**: `NOILL_PROMPT_SYSTEM.md` 파일 업데이트 및 코드 내 시스템 프롬프트와 일치시키기.
-- [ ] **Multi-Prompt 구조 지원**: `LlmService` 내에서 목적에 따라 다른 시스템 프롬프트를 사용할 수 있도록 메소드 분리.
+- [x] **Multi-Prompt 구조 지원**: `LlmService` 내에서 목적에 따라 다른 시스템 프롬프트를 사용할 수 있도록 메소드 분리.
   - `analyzeUserCommand`: 사용자 발화 의도 분석 (일정 vs 대화).
   - `generateSessionTitle`: 대화 내용을 바탕으로 50자 이내의 세션 제목 생성 (요약).
-- [ ] **장애 대응 전략 (Fallback)**: LLM API 타임아웃/에러 시 즉시 "잠시 문제가 생겼어요" 등의 기본 안전 응답 반환 로직 구현.
+- [x] **장애 대응 전략 (Fallback)**: LLM API 타임아웃/에러 시 즉시 "잠시 문제가 생겼어요" 등의 기본 안전 응답 반환 로직 구현.
 
 ### 3.2 대화 분기 처리 (Dispatcher Service)
-- [ ] **진입점 구현 (Facade Pattern)**: 클라이언트(로봇)의 요청을 받는 단일 진입점(`RobotInteractionService`) 생성.
-- [ ] **분기 로직 (Routing Logic)**:
+- [x] **진입점 구현 (Facade Pattern)**: 클라이언트(로봇)의 요청을 받는 단일 진입점(`RobotInteractionService`) 생성.
+- [x] **분기 로직 (Routing Logic)**:
   - **Case 1 (Schedule)**: `cmdType='add_schedule'` 식별 -> `ScheduleService` 호출 (DB 저장).
-  - **Case 2 (Chat)**: `cmdType='daily_talk'` 식별 -> `ConversationService` 호출 (대화 기억 및 세션 저장).
-- [ ] **통합 엔드포인트 설계 (Unified Endpoint)**:
+  - **Case 2 (Chat)**: `cmdType='daily_talk'` 식별 -> `ConversationService` 호출 (대화 기억 및 세션 저장). - *(`ConversationService` 연결은 TODO 상태)*
+- [x] **통합 엔드포인트 설계 (Unified Endpoint)**:
   - 로봇/클라이언트는 `POST /api/conversation/talk` (가칭) 하나의 경로로만 모든 발화를 전송.
   - "일정 등록"을 위해 별도의 `/api/schedules`를 클라이언트가 직접 호출하지 않음 (Dispatcher가 내부적으로 처리).
-- [ ] **로봇 응답 표준화**: DB 저장 로직과 무관하게 로봇은 일관된 포맷(TTS 메시지 등)을 수신.
+- [x] **로봇 응답 표준화**: DB 저장 로직과 무관하게 로봇은 일관된 포맷(TTS 메시지 등)을 수신.
 
 ---
 

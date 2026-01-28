@@ -35,86 +35,154 @@ public class LlmService {
   @Value("${gms.model:gpt-4.1}")
   private String model;
 
-  // TODO: 시스템 프롬프트 로딩 방식 고민 (파일 읽기 or 하드코딩) -> 일단 상수로 정의하되 추후 파일 로딩 고려
-  private static final String SYSTEM_PROMPT = """
-            [페르소나 / 상황]
-            너는 독거 노인들의 정서 안정을 돕는 어시스턴스야.
-            최우선 목표는 노인과의 소통이야.
-            네 이름은 "노일" 혹은 "노일이"야.
+  // 분석용 시스템 프롬프트 (JSON 응답)
+  private static final String SYSTEM_PROMPT_ANALYSIS = """
+      [페르소나 / 상황]
+      너는 독거 노인들의 정서 안정을 돕는 어시스턴스야.
+      최우선 목표는 노인과의 소통이야.
+      네 이름은 "노일" 혹은 "노일이"야.
 
-            [캐릭터 성향]
-            - 기본적으로 정중하고 부드러운 존댓말(해요체)을 사용한다.
-            - 어르신의 말벗이자 비서로서 예의를 갖춘다.
-            - 단, 위급하거나 매우 강조해야 할 때만 친근한 반말을 섞어 쓴다.
-            - 답변은 간결하게 2~3문장으로 끝낸다.
+      [캐릭터 성향]
+      - 기본적으로 정중하고 부드러운 존댓말(해요체)을 사용한다.
+      - 어르신의 말벗이자 비서로서 예의를 갖춘다.
+      - 단, 위급하거나 매우 강조해야 할 때만 친근한 반말을 섞어 쓴다.
+      - 답변은 간결하게 2~3문장으로 끝낸다.
 
-            [말투]
-            - 전체적으로 존댓말을 쓴다.
-            - 주기적으로 안부를 묻는 말을 섞어 말한다.
+      [말투]
+      - 전체적으로 존댓말을 쓴다.
+      - 주기적으로 안부를 묻는 말을 섞어 말한다.
       - 분위기는 유머러스하게 유지한다. 대체로 부드럽게 대화한다.
 
-            [대화 및 명령어 규칙]
-            모든 응답은 JSON 형식을 따릅니다.
+      [대화 및 명령어 규칙]
+      모든 응답은 JSON 형식을 따릅니다.
 
-            규칙 0: 일반 대화 (daily_talk)
-            - 사용자의 발화가 일상적인 대화나 안부 인사일 경우 사용합니다.
-            {
-              "cmd": {
-                 "cmdType": "daily_talk"
-              },
-              "message": "(자연어 응답)"
-            }
+      규칙 0: 일반 대화 (daily_talk)
+      - 사용자가 특정 날짜/시간의 일정을 말하지 않고, 일상적인 대화나 안부 인사일 경우 사용합니다.
+      {
+        "cmd": {
+           "cmdType": "daily_talk"
+        },
+        "message": "(자연어 응답)"
+      }
 
-            규칙 1: 일정 추가 (add_schedule)
-            - 사용자가 특정 날짜/시간에 일정을 추가하려 할 때 사용합니다.
-            - 현재 시간([현재 시간 정보] 참고)을 기준으로 날짜와 시간을 계산해야 합니다.
-            {
-              "cmd": {
-                "cmdType": "add_schedule",
-                "title": "일정 제목",
-                "datetime": "YYYY-MM-DDTHH:mm:ss",
-                "memo": "일정 내용(장소, 사람 등)을 요약하여 필수로 작성"
-              },
-              "message": "(일정 등록 확인 메시지)"
-            }
+      규칙 1: 일정 추가 (add_schedule)
+      - 사용자가 특정 날짜/시간에 일정을 추가하려 할 때 사용합니다.
+      - 현재 시간([현재 시간 정보] 참고)을 기준으로 날짜와 시간을 계산해야 합니다.
+      {
+        "cmd": {
+          "cmdType": "add_schedule",
+          "title": "일정 제목",
+          "datetime": "YYYY-MM-DDTHH:mm:ss",
+          "memo": "일정 내용(장소, 사람 등)을 요약하여 필수로 작성"
+        },
+        "message": "(일정 등록 확인 메시지)"
+      }
 
-            [Few-shot Examples]
+      [Few-shot Examples]
 
-            User: 내일 오후 2시에 병원 가야 돼.
-            Assistant: {"cmd": {"cmdType": "add_schedule", "title": "병원 방문", "datetime": "2026-01-22T14:00:00", "memo": "병원 진료"}, "message": "네, 내일 오후 2시 병원 일정을 잡았어요."}
+      User: 내일 오후 2시에 병원 가야 돼.
+      Assistant: {"cmd": {"cmdType": "add_schedule", "title": "병원 방문", "datetime": "2026-01-22T14:00:00", "memo": "병원 진료"}, "message": "네, 내일 오후 2시 병원 일정을 잡았어요."}
 
-            User: 오늘 뭐 했어?
-            Assistant: {"cmd": {"cmdType": "daily_talk"}, "message": "저는 하루 종일 어르신 기다리고 있었죠. 오늘 하루는 어떠셨어요?"}
-            """;
+      User: 오늘 뭐 했어?
+      Assistant: {"cmd": {"cmdType": "daily_talk"}, "message": "저는 하루 종일 어르신 기다리고 있었죠. 오늘 하루는 어떠셨어요?"}
+      """;
 
+  // 요약용 시스템 프롬프트 (Plain Text 응답)
+  private static final String SYSTEM_PROMPT_SUMMARY = """
+      [지시사항]
+      다음 대화 내용을 읽고 핵심 주제를 요약하여 50자 이내의 제목으로 만들어줘.
+      따옴표나 설명 같은 사족 없이 오직 '제목 텍스트'만 출력해.
+      """;
+
+  /**
+   * 사용자 발화 의도 분석 (JSON 응답 파싱)
+   */
+  private static final String FALLBACK_MESSAGE = "죄송해요, 잠시 머리가 아파서 생각을 정리하는 중이에요. 조금 뒤에 다시 말씀해 주시겠어요?";
+
+  /**
+   * 사용자 발화 의도 분석 (JSON 응답 파싱)
+   */
   public LlmAnalysisResult analyzeUserCommand(String userText) {
     if (userText == null || userText.trim().isEmpty()) {
-      throw new IllegalArgumentException("입력 텍스트가 비어있습니다.");
+      // 빈 입력에 대해서는 예외보다는 안내 메시지 반환이 더 자연스러움
+      return LlmAnalysisResult.builder()
+          .intent(LlmIntent.UNKNOWN)
+          .content("잘 못 들었어요. 다시 한 번 말씀해 주시겠어요?")
+          .build();
     }
 
-    log.info("LLM 요청: {}", userText);
+    String fullPrompt = createAnalysisPrompt(userText);
+    log.info("LLM 분석 요청: {}", userText);
 
     try {
-      // 1. 요청 페이로드 구성
-      Map<String, Object> requestBody = new HashMap<>();
-      requestBody.put("model", model);
-      requestBody.put("input", createPrompt(userText));
+      // 1. 공통 API 호출 (String 반환)
+      String jsonResponse = callLlmApi(fullPrompt);
+      log.info("LLM 분석 결과(Raw): {}", jsonResponse);
 
-      HttpHeaders headers = new HttpHeaders();
-      headers.setContentType(MediaType.APPLICATION_JSON);
-      headers.setBearerAuth(apiKey);
+      // 2. JSON 파싱 및 DTO 변환
+      return parseLlmResponse(jsonResponse);
 
-      HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
+    } catch (Exception e) {
+      log.error("LLM 분석 중 오류 발생: {}", e.getMessage(), e);
 
-      // 2. API 호출
-      String responseString = restTemplate.postForObject(apiUrl, entity, String.class);
-      log.info("LLM 원본 응답: {}", responseString);
+      // 장애 대응(Fallback): 시스템 오류가 발생해도 안전한 답변 반환
+      return LlmAnalysisResult.builder()
+          .intent(LlmIntent.UNKNOWN)
+          .content(FALLBACK_MESSAGE)
+          .build();
+    }
+  }
 
-      // 3. 파싱 (GMS/OpenAI 응답 구조 처리)
-      // 응답 구조: { "output": [ { "content": [ { "text": "{ ... }" } ] } ] }
+  /**
+   * 대화 세션 제목 생성 (Plain Text 응답 사용)
+   */
+  public String generateSessionTitle(String conversationContext) {
+    if (conversationContext == null || conversationContext.trim().isEmpty()) {
+      return "새로운 대화";
+    }
+
+    String fullPrompt = String.format("%s\n\n[대화 내용]\n%s", SYSTEM_PROMPT_SUMMARY, conversationContext);
+    log.info("LLM 요약 요청");
+
+    try {
+      // 1. 공통 API 호출 (String 반환)
+      String title = callLlmApi(fullPrompt);
+      log.info("LLM 요약 결과: {}", title);
+
+      // 2. 파싱 없이 텍스트 그대로 반환 (다듬기만 함)
+      return title.trim().replace("\"", "");
+
+    } catch (Exception e) {
+      log.error("LLM 요약 중 오류 발생", e);
+      return "일반 대화"; // Fallback 제목
+    }
+  }
+
+  // ================== Private Methods ==================
+
+  /**
+   * 공통 Low-Level API 호출 메서드
+   * 입력: 완성된 프롬프트
+   * 출력: 순수 텍스트 결과 (JSON 파싱 전)
+   */
+  private String callLlmApi(String fullPrompt) {
+    // 1. 요청 페이로드 구성
+    Map<String, Object> requestBody = new HashMap<>();
+    requestBody.put("model", model);
+    requestBody.put("input", fullPrompt);
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    headers.setBearerAuth(apiKey);
+
+    HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
+
+    // 2. API 호출
+    String responseString = restTemplate.postForObject(apiUrl, entity, String.class);
+
+    // 3. GMS/OpenAI 응답 구조에서 실제 텍스트 추출
+    try {
       JsonNode rootNode = objectMapper.readTree(responseString);
-
-      // GMS/OpenAI 래퍼 구조에서 실제 알맹이 JSON 문자열 추출
       JsonNode textNode = rootNode
           .path("output")
           .path(0)
@@ -123,23 +191,28 @@ public class LlmService {
           .path("text");
 
       if (textNode.isMissingNode() || textNode.isNull()) {
-        log.error("LLM 응답에서 text 필드를 찾을 수 없습니다: {}", responseString);
-        throw new RuntimeException("LLM 응답 구조가 올바르지 않습니다.");
+        log.error("LLM 응답에서 text 필드 누락: {}", responseString);
+        throw new RuntimeException("LLM 응답 구조 오류");
       }
 
-      String realContentJson = textNode.asText();
-      log.info("LLM 추출된 콘텐츠: {}", realContentJson);
-
-      // 4. 추출한 JSON 문자열을 통해 LlmAnalysisResult 빌드
-      return parseLlmResponse(realContentJson);
+      return textNode.asText();
 
     } catch (JsonProcessingException e) {
-      log.error("LLM 응답 파싱 실패", e);
-      throw new RuntimeException("LLM 응답을 파싱할 수 없습니다.", e);
-    } catch (Exception e) {
-      log.error("LLM API 호출 중 오류 발생", e);
-      throw new RuntimeException("LLM 서비스 오류", e);
+      throw new RuntimeException("API 응답 파싱 실패", e);
     }
+  }
+
+  private String createAnalysisPrompt(String userText) {
+    String currentTime = LocalDateTime.now().toString();
+    return String.format("""
+        %s
+
+        [현재 시간 정보]
+        %s
+
+        User: %s
+        Assistant:
+        """, SYSTEM_PROMPT_ANALYSIS, currentTime, userText);
   }
 
   private LlmAnalysisResult parseLlmResponse(String jsonString) throws JsonProcessingException {
@@ -170,20 +243,5 @@ public class LlmService {
     }
 
     return resultBuilder.build();
-  }
-
-  private String createPrompt(String userText) {
-    // 현재 시간 주입
-    String currentTime = LocalDateTime.now().toString();
-
-    return String.format("""
-        %s
-
-        [현재 시간 정보]
-        %s
-
-        User: %s
-        Assistant:
-        """, SYSTEM_PROMPT, currentTime, userText);
   }
 }
