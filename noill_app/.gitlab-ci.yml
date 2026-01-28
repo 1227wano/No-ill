@@ -31,3 +31,4 @@ server_deploy:
     - ssh ubuntu@$SERVER_IP "sudo rm -rf /var/www/html/* && sudo cp -r /home/ubuntu/temp_build/* /var/www/html/ && sudo rm -rf /home/ubuntu/temp_build && sudo systemctl restart nginx"
   only:
     - main # 메인 브랜치에 푸시될 때만 작동
+    - app
