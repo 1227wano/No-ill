@@ -2,23 +2,27 @@
 // 각 내비게이션의 실제 화면 전환 로직
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../widgets/molecules/bottom_nav_bar.dart';
 import '../widgets/atoms/light_diffusion_background.dart';
+import '../providers/auth_provider.dart';
+import '../core/constants/color_constants.dart';
 import 'home/home_screen.dart';
 import 'schedule/schedule_screen.dart';
 import 'settings/settings_screen.dart';
 import 'accident/accident_history_screen.dart'; // 사고 기록 화면 가져오기
 import 'call/video_call_screen.dart'; // 화상 통화 화면 가져오기
 import 'mypage/mypage_screen.dart'; // 마이페이지 화면 가져오기
+import 'auth/splash_screen.dart'; // Splash 화면으로 로그아웃 후 이동
 
-class MainScreen extends StatefulWidget {
+class MainScreen extends ConsumerStatefulWidget {
   const MainScreen({super.key});
 
   @override
-  State<MainScreen> createState() => _MainScreenState();
+  ConsumerState<MainScreen> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _MainScreenState extends ConsumerState<MainScreen> {
   int _currentIndex = 0;
 
   // 1:1 매칭을 위한 페이지 리스트
@@ -49,6 +53,21 @@ class _MainScreenState extends State<MainScreen> {
               setState(() => _currentIndex = index);
             }
           },
+        ),
+        // Move the FAB here so it's visible along with the BottomNavigationBar
+        floatingActionButton: FloatingActionButton.extended(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    const VideoCallScreen(initialState: CallState.incoming),
+              ),
+            );
+          },
+          label: const Text("수신 테스트"),
+          icon: const Icon(Icons.call_received),
+          backgroundColor: Colors.blueAccent,
         ),
       ),
     );
@@ -107,19 +126,65 @@ class _MainScreenState extends State<MainScreen> {
 
           const Spacer(),
           const Divider(),
-          _buildDrawerItem(Icons.logout, "로그아웃", () => Navigator.pop(context)),
+          _buildDrawerItem(
+            Icons.logout,
+            "로그아웃",
+            () => _handleLogout(context),
+            color: Colors.redAccent,
+          ),
           const SizedBox(height: 30),
         ],
       ),
     );
   }
 
-  Widget _buildDrawerItem(IconData icon, String title, VoidCallback onTap) {
+  Widget _buildDrawerItem(
+    IconData icon,
+    String title,
+    VoidCallback onTap, {
+    Color? color,
+  }) {
     return ListTile(
-      leading: Icon(icon, color: Colors.grey[700]),
-      title: Text(title, style: const TextStyle(fontSize: 16)),
+      leading: Icon(icon, color: color ?? Colors.grey[700]),
+      title: Text(title, style: TextStyle(fontSize: 16, color: color)),
       onTap: onTap,
     );
+  }
+
+  // --- [로직] 로그아웃 실행 함수 ---
+  Future<void> _handleLogout(BuildContext context) async {
+    // 1. 확인 다이얼로그 띄우기 (실수 방지)
+    final bool? confirm = await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("로그아웃"),
+        content: const Text("정말로 로그아웃 하시겠습니까?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text("취소"),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text("확인", style: TextStyle(color: Colors.redAccent)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      // 2. AuthProvider를 통해 로그아웃 실행 (서버 통신 및 상태 초기화)
+      await ref.read(authProvider.notifier).logout();
+
+      // 3. 시작 화면(Splash)으로 이동 (앱 초기 상태로 되돌리기)
+      if (context.mounted) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const SplashScreen()),
+          (route) => false,
+        );
+      }
+    }
   }
 
   void _showContactSelection(BuildContext context) {

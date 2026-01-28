@@ -116,6 +116,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
       userName: name,
       userAddress: address,
       userPhone: phone,
+      pets: [],
     );
 
     final success = await ref.read(authProvider.notifier).signUp(request);

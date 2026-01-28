@@ -129,8 +129,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final success = await ref.read(authProvider.notifier).login(id, pw);
 
     if (success && mounted) {
-      // 로그인 성공 시 메인 화면으로 이동 (스택 제거)
-      Navigator.pushNamedAndRemoveUntil(context, '/main', (route) => false);
+      // 로그인 성공 시 홈 화면으로 이동 (스택 제거)
+      Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
     } else if (mounted) {
       _showSnackBar("로그인 실패: 정보를 다시 확인해 주세요.");
     }

@@ -2,11 +2,16 @@
 // 모든 화면의 일관성 담당
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 import 'package:noill_app/core/theme/app_theme.dart';
 import 'package:noill_app/screens/auth/splash_screen.dart';
-import 'screens/home/home_screen.dart';
+import 'screens/main_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await dotenv.load(fileName: ".env");
   // provider: 전역 저장소
   runApp(const ProviderScope(child: NoIllApp()));
 }
@@ -25,7 +30,9 @@ class NoIllApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const SplashScreen(), // 시작점 설정
-        '/home': (context) => const HomeScreen(),
+        '/home': (context) => const MainScreen(),
+        // alias used in some places
+        '/main': (context) => const MainScreen(),
       },
     );
   }

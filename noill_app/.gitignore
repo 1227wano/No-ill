@@ -49,6 +49,6 @@ display/
 keys/
 
 # 환경변수
-config/
-config/env.json
+.env
+.env/
 

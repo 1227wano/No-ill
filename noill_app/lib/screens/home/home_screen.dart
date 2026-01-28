@@ -1,62 +1,81 @@
 // 메인화면
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../providers/auth_provider.dart'; // 3. AuthProvider 추가/ 1. Riverpod 추가
+
 import '../../core/constants/color_constants.dart';
 import '../../widgets/atoms/light_diffusion_background.dart';
+
 import '../call/video_call_screen.dart';
 import '../accident/accident_history_screen.dart';
+import '../auth/splash_screen.dart'; // Splash 화면으로 이동하도록 수정
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return LightDiffusionBackground(
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        // 1. 햄버거 메뉴 (Drawer): 사고 기록으로 이동 가능
-        drawer: _buildDrawer(context),
-
-        body: SafeArea(
-          bottom: false,
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(20, 10, 20, 120), // 내비바 공간 확보
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildHeader(context), // 상단 헤더 (메뉴 & 알림)
-                const SizedBox(height: 24),
-                _buildStatusCard(), // 안심 상태 카드
-                const SizedBox(height: 32),
-                _buildRobotSection(context), // 로봇 상태 및 바텀시트 트리거
-                const SizedBox(height: 32),
-                _buildAgendaSection(), // 오늘의 일정
-              ],
-            ),
+  // --- [로직] 로그아웃 실행 함수 ---
+  Future<void> _handleLogout(BuildContext context, WidgetRef ref) async {
+    // 1. 확인 다이얼로그 띄우기 (실수 방지)
+    final bool? confirm = await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("로그아웃"),
+        content: const Text("정말로 로그아웃 하시겠습니까?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text("취소"),
           ),
-        ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text("확인", style: TextStyle(color: Colors.redAccent)),
+          ),
+        ],
+      ),
+    );
 
-        // 2. 화상 통화 수신 테스트용 FAB
-        floatingActionButton: FloatingActionButton.extended(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) =>
-                    const VideoCallScreen(initialState: CallState.incoming),
-              ),
-            );
-          },
-          label: const Text("수신 테스트"),
-          icon: const Icon(Icons.call_received),
-          backgroundColor: Colors.blueAccent,
+    if (confirm == true) {
+      // 2. AuthProvider를 통해 로그아웃 실행 (서버 통신 및 상태 초기화)
+      await ref.read(authProvider.notifier).logout();
+
+      // 3. 시작 화면(Splash)으로 이동 (앱 초기 상태로 되돌리기)
+      if (context.mounted) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const SplashScreen()),
+          (route) => false,
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Return only the page content so `MainScreen`'s Scaffold
+    // (which provides the Drawer and BottomNavigationBar) can host it.
+    return SafeArea(
+      bottom: false,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(20, 10, 20, 120), // 내비바 공간 확보
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildHeader(context), // 상단 헤더 (메뉴 & 알림)
+            const SizedBox(height: 24),
+            _buildStatusCard(), // 안심 상태 카드
+            const SizedBox(height: 32),
+            _buildRobotSection(context), // 로봇 상태 및 바텀시트 트리거
+            const SizedBox(height: 32),
+            _buildAgendaSection(), // 오늘의 일정
+          ],
         ),
       ),
     );
   }
 
   // --- [위젯] 햄버거 메뉴 (Drawer) ---
-  Widget _buildDrawer(BuildContext context) {
+  Widget _buildDrawer(BuildContext context, WidgetRef ref) {
     return Drawer(
       child: Column(
         children: [
@@ -92,14 +111,19 @@ class HomeScreen extends StatelessWidget {
           ),
           const Spacer(),
           const Divider(),
-          ListTile(
-            leading: const Icon(Icons.logout, color: Colors.redAccent),
-            title: const Text(
-              "로그아웃",
-              style: TextStyle(color: Colors.redAccent),
+          if (ref.watch(authProvider).value != null) ...[
+            ListTile(
+              leading: const Icon(Icons.logout, color: Colors.redAccent),
+              title: const Text(
+                "로그아웃",
+                style: TextStyle(color: Colors.redAccent),
+              ),
+              onTap: () {
+                Navigator.pop(context); // drawer 닫기
+                _handleLogout(context, ref); // 로그아웃 확인 창 띄우기
+              },
             ),
-            onTap: () => Navigator.pop(context),
-          ),
+          ],
           const SizedBox(height: 30),
         ],
       ),

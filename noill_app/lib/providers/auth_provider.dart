@@ -1,10 +1,14 @@
 // lib/providers/auth_provider.dart
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart'; // 👈 추가
 import '../services/auth_service.dart';
 import '../models/auth_models.dart';
 
 final authServiceProvider = Provider((ref) => AuthService());
+
+// 💡 보안 저장소 인스턴스 생성
+const _storage = FlutterSecureStorage();
 
 class AuthNotifier extends Notifier<AsyncValue<LoginData?>> {
   @override
@@ -18,27 +22,50 @@ class AuthNotifier extends Notifier<AsyncValue<LoginData?>> {
     state = const AsyncValue.loading();
     try {
       final response = await ref.read(authServiceProvider).login(id, password);
+
       if (response.success && response.data != null) {
+        // Debug log: 로그인 응답 확인
+        // ignore: avoid_print
+        print('AuthNotifier: login success, storing tokens');
+        // ✅ [핵심] 토큰을 기기에 안전하게 저장합니다.
+        await _storage.write(
+          key: 'accessToken',
+          value: response.data!.accessToken,
+        );
+        await _storage.write(
+          key: 'refreshToken',
+          value: response.data!.refreshToken,
+        );
+
+        // Debug log: 토큰 저장 완료
+        // ignore: avoid_print
+        print(
+          'AuthNotifier: tokens saved (accessToken length=${response.data!.accessToken?.length ?? 0})',
+        );
         state = AsyncValue.data(response.data);
-        // TODO: 여기서 SecureStorage에 accessToken 저장 로직을 추가하세요.
         return true;
       } else {
+        // Debug log: 로그인 실패 원인 출력
+        // ignore: avoid_print
+        print('AuthNotifier: login failed - ${response.message}');
         state = AsyncValue.error(response.message, StackTrace.current);
         return false;
       }
     } catch (e, stack) {
+      // Debug log: 예외 발생
+      // ignore: avoid_print
+      print('AuthNotifier: login exception - $e');
       state = AsyncValue.error(e, stack);
       return false;
     }
   }
 
-  // 2. 회원가입 로직 (추가됨)
+  // 2. 회원가입 로직
   Future<bool> signUp(SignupRequest request) async {
     state = const AsyncValue.loading();
     try {
+      // 💡 여기서 전달되는 request.pets는 이미 []로 처리되어 있겠죠?
       final response = await ref.read(authServiceProvider).signUp(request);
-
-      // 가입 후엔 다시 빈 데이터 상태로 되돌려 로그인을 유도합니다.
       state = const AsyncValue.data(null);
       return response.success;
     } catch (e, stack) {
@@ -53,9 +80,10 @@ class AuthNotifier extends Notifier<AsyncValue<LoginData?>> {
       // 서버 로그아웃 호출
       await ref.read(authServiceProvider).logout();
     } catch (e) {
-      // 로그아웃은 서버 응답과 관계없이 클라이언트 상태를 먼저 비우는 것이 UX상 좋습니다.
+      // 서버 에러와 무관하게 클라이언트는 청소합니다.
     } finally {
-      // 로컬 토큰 삭제 로직을 여기에 추가하세요.
+      // ✅ [핵심] 저장된 모든 토큰을 삭제합니다.
+      await _storage.deleteAll();
       state = const AsyncValue.data(null);
     }
   }
