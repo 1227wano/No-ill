@@ -15,5 +15,9 @@ import java.util.List;
 @Repository
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 
-    List<Schedule> findAllBySchTimeBetween(LocalDateTime start, LocalDateTime end);
+    // 특정 펫의 일정만 조회 (FK: petNo)
+    List<Schedule> findAllByPetPetNo(Long petNo);
+
+    // 특정 펫의 날짜 범위 일정 조회
+    List<Schedule> findAllByPetPetNoAndSchTimeBetween(Long petNo, LocalDateTime start, LocalDateTime end);
 }
