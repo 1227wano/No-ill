@@ -1,3 +1,15 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+.eggs/
+
+# ROS2 빌드 결과물
+build/
+install/
+log/
+
 # .idea 폴더 전체 제외
 .idea/
 

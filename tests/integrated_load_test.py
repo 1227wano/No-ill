@@ -8,7 +8,7 @@ Jetson Orin Nano 통합 부하 테스트
 
 모든 기능을 동시에 실행하여 리소스 부하를 측정합니다.
 
-설정 변경: tests/config.py 파일을 수정하세요.
+설정 변경: config.py 파일을 수정하세요.
 """
 
 import threading
