@@ -20,8 +20,9 @@ class OtpInput extends StatelessWidget {
       height: 56,
       child: TextFormField(
         onChanged: (value) {
-          if (value.length == 1 && index < 5)
+          if (value.length == 1 && index < 5) {
             FocusScope.of(context).nextFocus(); // 다음 칸 이동
+          }
         },
         textAlign: TextAlign.center,
         keyboardType: TextInputType.number,

@@ -2,53 +2,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../providers/auth_provider.dart'; // 3. AuthProvider 추가/ 1. Riverpod 추가
 
 import '../../core/constants/color_constants.dart';
-import '../../widgets/atoms/light_diffusion_background.dart';
-
-import '../call/video_call_screen.dart';
-import '../accident/accident_history_screen.dart';
-import '../auth/splash_screen.dart'; // Splash 화면으로 이동하도록 수정
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
-
-  // --- [로직] 로그아웃 실행 함수 ---
-  Future<void> _handleLogout(BuildContext context, WidgetRef ref) async {
-    // 1. 확인 다이얼로그 띄우기 (실수 방지)
-    final bool? confirm = await showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("로그아웃"),
-        content: const Text("정말로 로그아웃 하시겠습니까?"),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text("취소"),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text("확인", style: TextStyle(color: Colors.redAccent)),
-          ),
-        ],
-      ),
-    );
-
-    if (confirm == true) {
-      // 2. AuthProvider를 통해 로그아웃 실행 (서버 통신 및 상태 초기화)
-      await ref.read(authProvider.notifier).logout();
-
-      // 3. 시작 화면(Splash)으로 이동 (앱 초기 상태로 되돌리기)
-      if (context.mounted) {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => const SplashScreen()),
-          (route) => false,
-        );
-      }
-    }
-  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -70,62 +28,6 @@ class HomeScreen extends ConsumerWidget {
             _buildAgendaSection(), // 오늘의 일정
           ],
         ),
-      ),
-    );
-  }
-
-  // --- [위젯] 햄버거 메뉴 (Drawer) ---
-  Widget _buildDrawer(BuildContext context, WidgetRef ref) {
-    return Drawer(
-      child: Column(
-        children: [
-          const UserAccountsDrawerHeader(
-            decoration: BoxDecoration(color: NoIllColors.primary),
-            accountName: Text(
-              "User1",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            accountEmail: Text("반갑습니다! 오늘도 안심하세요."),
-            currentAccountPicture: CircleAvatar(
-              backgroundColor: Colors.white,
-              child: Icon(Icons.person, color: NoIllColors.primary),
-            ),
-          ),
-          ListTile(
-            leading: const Icon(Icons.home_outlined),
-            title: const Text("홈"),
-            onTap: () => Navigator.pop(context),
-          ),
-          ListTile(
-            leading: const Icon(Icons.history),
-            title: const Text("사고 기록"),
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const AccidentHistoryScreen(),
-                ),
-              );
-            },
-          ),
-          const Spacer(),
-          const Divider(),
-          if (ref.watch(authProvider).value != null) ...[
-            ListTile(
-              leading: const Icon(Icons.logout, color: Colors.redAccent),
-              title: const Text(
-                "로그아웃",
-                style: TextStyle(color: Colors.redAccent),
-              ),
-              onTap: () {
-                Navigator.pop(context); // drawer 닫기
-                _handleLogout(context, ref); // 로그아웃 확인 창 띄우기
-              },
-            ),
-          ],
-          const SizedBox(height: 30),
-        ],
       ),
     );
   }

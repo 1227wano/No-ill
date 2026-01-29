@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/color_constants.dart';
 import '../../widgets/atoms/light_diffusion_background.dart';
-import '../../widgets/atoms/solid_button.dart';
 import 'elderly_profile_edit_screen.dart'; // 수정 화면
 import 'protector_profile_edit_screen.dart'; // 보호자 정보 수정 화면
 
