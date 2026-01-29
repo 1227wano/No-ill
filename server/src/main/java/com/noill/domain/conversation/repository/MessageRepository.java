@@ -18,4 +18,7 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
 
     // 최근 메시지 10개 조회 (History 구성용)
     java.util.List<Message> findTop10ByTalk_TalkNoOrderByCreatedAtDesc(Long talkNo);
+
+    // [Batch] 세션 전체 대화 조회 (요약용)
+    java.util.List<Message> findAllByTalk_TalkNoOrderByCreatedAtAsc(Long talkNo);
 }

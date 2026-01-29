@@ -9,7 +9,6 @@ import lombok.Getter;
 public class PetResponse {
     private Long petNo;
     private String petId;
-    private String petOwner;
 
     private String careName;
     private String careStart;
@@ -19,7 +18,6 @@ public class PetResponse {
         return PetResponse.builder()
                 .petNo(care.getPet().getPetNo())
                 .petId(care.getPet().getPetId())
-                .petOwner(care.getPet().getPetOwner())
                 .careName(care.getCareName())
                 .careStart(care.getCareStart().toString())
                 .build();

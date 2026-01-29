@@ -150,40 +150,72 @@ public class ConversationService {
     }
 
     /**
-     * 사용자 발화와 관련된 과거 기억(Memory) 검색
-     * - Status='N' (종료된 세션) 대상
-     * - 제목(TalkName) 유사도 검색 (LIKE)
+     * [Memory] 과거 기억 키워드 검색
+     * - 검색 결과 3개까지 조회 -> "1. 제목\n2. 제목..."
      */
     @Transactional(readOnly = true)
     public String getRelatedMemories(Pet pet, String userText) {
-        // [키워드 추출 전략: 단순 공백 분리 후 2글자 이상 명사 추정 단어 검색]
-        String[] tokens = userText.split("\\s+");
-        StringBuilder memories = new StringBuilder();
-        java.util.Set<String> addedTalkNames = new java.util.HashSet<>();
+        if (userText == null || userText.length() < 2) {
+            return "관련된 과거 기억이 없습니다.";
+        }
 
+        // 1. 키워드 추출 (간단히 띄어쓰기 기준 + 2글자 이상)
+        // 예: "오늘 병원 갔어" -> "병원"
+        String[] words = userText.split("\\s+");
+        StringBuilder resultBuilder = new StringBuilder();
         int count = 0;
-        for (String token : tokens) {
-            if (token.length() < 2)
-                continue; // 조사 등 제외 (단순)
 
-            java.util.List<Talk> found = talkRepository.findByPet_PetNoAndStatusAndTalkNameContaining(
-                    pet.getPetNo(), "N", token); // 제목에 키워드 포함 검색
+        for (String word : words) {
+            if (word.length() < 2)
+                continue;
 
-            for (Talk t : found) {
-                // 중복 제거 및 최대 3개까지만
-                if (!addedTalkNames.contains(t.getTalkName()) && count < 3) {
-                    memories.append("- [기억] ").append(t.getTalkName()).append("\n");
-                    addedTalkNames.add(t.getTalkName());
-                    count++;
-                }
+            // 2. 키워드로 종료된 세션 제목 검색
+            java.util.List<Talk> memories = talkRepository.findByPet_PetNoAndStatusAndTalkNameContaining(
+                    pet.getPetNo(), "N", word);
+
+            for (Talk memory : memories) {
+                if (count >= 3)
+                    break; // 최대 3개
+                resultBuilder.append("- ").append(memory.getTalkName()).append("\n");
+                count++;
             }
             if (count >= 3)
                 break;
         }
 
-        if (memories.length() == 0) {
-            return "관련된 과거 기억이 없습니다.";
+        return resultBuilder.length() > 0 ? resultBuilder.toString() : "관련된 과거 기억이 없습니다.";
+    }
+
+    /**
+     * [Batch] 세션 전체 대화 내용 조회 (요약용)
+     */
+    @Transactional(readOnly = true)
+    public String getConversationFullContext(Talk talk) {
+        java.util.List<Message> messages = messageRepository.findAllByTalk_TalkNoOrderByCreatedAtAsc(talk.getTalkNo());
+
+        if (messages.isEmpty()) {
+            return "";
         }
-        return memories.toString();
+
+        StringBuilder sb = new StringBuilder();
+        for (Message msg : messages) {
+            String role = "Q".equals(msg.getMsgType()) ? "User" : "Noyle";
+            sb.append(role).append(": ").append(msg.getMsgContent()).append("\n");
+        }
+        return sb.toString();
+    }
+
+    /**
+     * [Batch] 세션 종료 및 제목 업데이트 (별도 트랜잭션)
+     * Propagation.REQUIRES_NEW: 배치 처리 중 독립적으로 커밋하기 위함
+     */
+    @Transactional(propagation = org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
+    public void closeSessionAndUpdateTitle(Long talkNo, String summaryTitle) {
+        Talk talk = talkRepository.findById(talkNo)
+                .orElseThrow(() -> new IllegalArgumentException("Talk not found: " + talkNo));
+
+        talk.close(summaryTitle);
+        // Dirty Checking으로 자동 Update
+        log.info("[Batch] 세션 종료 완료: TalkNo={}, Title={}", talkNo, summaryTitle);
     }
 }

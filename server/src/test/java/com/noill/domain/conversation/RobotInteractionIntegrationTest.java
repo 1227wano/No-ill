@@ -95,7 +95,6 @@ public class RobotInteractionIntegrationTest {
                 .petName("노일이")
                 .petAddress("서울시 강남구")
                 .petPhone("010-9876-5432")
-                .petOwner("김철수")
                 .petBirth(LocalDateTime.now())
                 .build());
 
@@ -125,7 +124,7 @@ public class RobotInteractionIntegrationTest {
                         .build())
                 .build();
 
-        given(llmService.analyzeUserCommand(anyString())).willReturn(mockResult);
+        given(llmService.analyzeUserCommand(anyString(), anyString(), anyString())).willReturn(mockResult);
 
         TalkRequestDto request = new TalkRequestDto(testPet.getPetNo(), userText);
 
@@ -153,7 +152,7 @@ public class RobotInteractionIntegrationTest {
                 .content("멍멍! 안녕하세요 어르신!")
                 .build();
 
-        given(llmService.analyzeUserCommand(anyString())).willReturn(mockResult);
+        given(llmService.analyzeUserCommand(anyString(), anyString(), anyString())).willReturn(mockResult);
 
         TalkRequestDto request = new TalkRequestDto(testPet.getPetNo(), userText);
 
@@ -181,7 +180,7 @@ public class RobotInteractionIntegrationTest {
                 .content("오늘은 맑아요!")
                 .build();
 
-        given(llmService.analyzeUserCommand(anyString())).willReturn(mockResult);
+        given(llmService.analyzeUserCommand(anyString(), anyString(), anyString())).willReturn(mockResult);
 
         TalkRequestDto request = new TalkRequestDto(testPet.getPetNo(), userText);
 
@@ -206,10 +205,10 @@ public class RobotInteractionIntegrationTest {
         // Given
         // 1. 초기 세션 생성
         Talk oldTalk = conversationService.getValidTalk(testPet);
-        
+
         // 2. 메시지 생성 (User Msg)
         conversationService.saveUserMessage(testPet, "3시간 전 대화입니다.");
-        
+
         // 3. 강제로 메시지 시간을 4시간 전으로 변경 (JPA Auditing 우회)
         // native query update
         jakarta.persistence.Query query = em.createNativeQuery(
@@ -217,7 +216,7 @@ public class RobotInteractionIntegrationTest {
         query.setParameter("time", LocalDateTime.now().minusHours(4));
         query.setParameter("talkNo", oldTalk.getTalkNo());
         query.executeUpdate();
-        
+
         em.flush();
         em.clear(); // 영속성 컨텍스트 초기화 (DB에서 다시 조회하도록)
 
@@ -229,7 +228,7 @@ public class RobotInteractionIntegrationTest {
         // 5. 세션이 달라야 함
         assertThat(newTalk.getTalkNo()).isNotEqualTo(oldTalk.getTalkNo());
         assertThat(newTalk.getStatus()).isEqualTo("Y");
-        
+
         // 6. 이전 세션은 닫혔는지 확인 (단, getValidTalk 로직상 닫힘 처리됨)
         // 다시 조회해서 확인
         Talk closedTalk = em.find(Talk.class, oldTalk.getTalkNo());
@@ -242,7 +241,7 @@ public class RobotInteractionIntegrationTest {
     void whenMessageCountExceedsLimit_thenDeleteOldestMessages() {
         // Given
         Talk talk = conversationService.getValidTalk(testPet);
-        
+
         // 1. 메시지 50개 생성
         for (int i = 1; i <= 50; i++) {
             conversationService.saveBotMessage(talk, "메시지 " + i);

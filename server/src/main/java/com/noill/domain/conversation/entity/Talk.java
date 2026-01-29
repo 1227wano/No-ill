@@ -7,6 +7,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "TALKS")
@@ -26,6 +27,9 @@ public class Talk {
     @JoinColumn(name = "PET_NO", nullable = false)
     private Pet pet;
 
+    @OneToMany(mappedBy = "talk", cascade = CascadeType.ALL)
+    private List<Message> messages;
+
     @Builder.Default
     @Column(name = "TALK_NAME", nullable = false, length = 100)
     private String talkName = "새로운 대화";
@@ -39,6 +43,14 @@ public class Talk {
     private LocalDateTime createdAt;
 
     // --- 비즈니스 로직 ---
+    public void close(String summaryTitle) {
+        this.status = "N";
+        if (summaryTitle != null && !summaryTitle.isBlank()) {
+            this.talkName = summaryTitle;
+        }
+    }
+
+    // Deprecated: close(summaryTitle) 사용 권장
     public void close() {
         this.status = "N";
     }

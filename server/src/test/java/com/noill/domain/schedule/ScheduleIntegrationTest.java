@@ -3,6 +3,7 @@ package com.noill.domain.schedule;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.noill.domain.care.entity.Care;
 import com.noill.domain.care.repository.CareRepository;
+import com.noill.domain.conversation.service.LlmService;
 import com.noill.domain.pet.entity.Pet;
 import com.noill.domain.pet.repository.PetRepository;
 import com.noill.domain.schedule.dto.ScheduleRequestDto;
@@ -18,6 +19,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,164 +32,165 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @Transactional
 @ActiveProfiles("test")
-class ScheduleIntegrationTest {
+public class ScheduleIntegrationTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+        @Autowired
+        private MockMvc mockMvc;
 
-    @Autowired
-    private UserRepository userRepository;
+        @Autowired
+        private UserRepository userRepository;
 
-    @Autowired
-    private PetRepository petRepository;
+        @Autowired
+        private PetRepository petRepository;
 
-    @Autowired
-    private CareRepository careRepository;
+        @Autowired
+        private CareRepository careRepository;
 
-    @Autowired
-    private ScheduleRepository scheduleRepository;
+        @Autowired
+        private ScheduleRepository scheduleRepository;
 
-    @Autowired
-    private JwtTokenProvider jwtTokenProvider;
+        @Autowired
+        private JwtTokenProvider jwtTokenProvider;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+        @Autowired
+        private ObjectMapper objectMapper;
 
-    private User userA;
-    private User userB;
-    private Pet petA;
-    private Pet petB;
-    private String tokenUserA;
+        @MockitoBean
+        private LlmService llmService;
 
-    @BeforeEach
-    void setUp() {
-        // 1. User 생성
-        userA = userRepository.save(User.builder()
-                .userId("userA")
-                .userPassword("password")
-                .userName("User A")
-                .userAddress("Seoul")
-                .userPhone("010-1111-1111")
-                .build());
+        private User userA;
+        private User userB;
+        private Pet petA;
+        private Pet petB;
+        private String tokenUserA;
 
-        userB = userRepository.save(User.builder()
-                .userId("userB")
-                .userPassword("password")
-                .userName("User B")
-                .userAddress("Busan")
-                .userPhone("010-2222-2222")
-                .build());
+        @BeforeEach
+        void setUp() {
+                // 1. User 생성
+                userA = userRepository.save(User.builder()
+                                .userId("userA")
+                                .userPassword("password")
+                                .userName("User A")
+                                .userAddress("Seoul")
+                                .userPhone("010-1111-1111")
+                                .build());
 
-        // 2. Pet 생성
-        petA = petRepository.save(Pet.builder()
-                .petId("petA")
-                .petName("Pet A")
-                .petAddress("Seoul")
-                .petPhone("010-3333-3333")
-                .petOwner("Owner A")
-                .build());
+                userB = userRepository.save(User.builder()
+                                .userId("userB")
+                                .userPassword("password")
+                                .userName("User B")
+                                .userAddress("Busan")
+                                .userPhone("010-2222-2222")
+                                .build());
 
-        // Pet B는 아무와도 연결하지 않거나, User B와 연결
-        petB = petRepository.save(Pet.builder()
-                .petId("petB")
-                .petName("Pet B")
-                .petAddress("Busan")
-                .petPhone("010-4444-4444")
-                .petOwner("Owner B")
-                .build());
+                // 2. Pet 생성
+                petA = petRepository.save(Pet.builder()
+                                .petId("petA")
+                                .petName("Pet A")
+                                .petAddress("Seoul")
+                                .petPhone("010-3333-3333")
+                                .build());
 
-        // 3. Care 관계 설정 (UserA <-> PetA) 수정
-        careRepository.save(Care.builder()
-                .user(userA)
-                .pet(petA)
-                .careName("My Pet A")
-                .build());
+                // Pet B는 아무와도 연결하지 않거나, User B와 연결
+                petB = petRepository.save(Pet.builder()
+                                .petId("petB")
+                                .petName("Pet B")
+                                .petAddress("Busan")
+                                .petPhone("010-4444-4444")
+                                .build());
 
-        // UserB는 PetB와 연결 수정
-        careRepository.save(Care.builder()
-                .user(userB)
-                .pet(petB)
-                .careName("My Pet B")
-                .build());
+                // 3. Care 관계 설정 (UserA <-> PetA) 수정
+                careRepository.save(Care.builder()
+                                .user(userA)
+                                .pet(petA)
+                                .careName("My Pet A")
+                                .build());
 
-        // 4. Token 발급
-        tokenUserA = jwtTokenProvider.generateToken(userA.getUserId());
-    }
+                // UserB는 PetB와 연결 수정
+                careRepository.save(Care.builder()
+                                .user(userB)
+                                .pet(petB)
+                                .careName("My Pet B")
+                                .build());
 
-    @Test
-    @DisplayName("[App] 정상 등록: 보호자가 본인의 펫 일정 등록")
-    void createSchedule_App_Success() throws Exception {
-        ScheduleRequestDto requestDto = new ScheduleRequestDto();
-        requestDto.setSchName("Hospital Visit");
-        requestDto.setSchTime(LocalDateTime.now().plusDays(1));
-        requestDto.setSchMemo("Checkup");
-        requestDto.setPetNo(petA.getPetNo()); // UserA's Pet
+                // 4. Token 발급
+                tokenUserA = jwtTokenProvider.generateToken(userA.getUserId());
+        }
 
-        mockMvc.perform(post("/api/schedules")
-                .header("Authorization", "Bearer " + tokenUserA)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(requestDto)))
-                .andExpect(status().isOk());
-    }
+        @Test
+        @DisplayName("[App] 정상 등록: 보호자가 본인의 펫 일정 등록")
+        void createSchedule_App_Success() throws Exception {
+                ScheduleRequestDto requestDto = new ScheduleRequestDto();
+                requestDto.setSchName("Hospital Visit");
+                requestDto.setSchTime(LocalDateTime.now().plusDays(1));
+                requestDto.setSchMemo("Checkup");
+                requestDto.setPetNo(petA.getPetNo()); // UserA's Pet
 
-    @Test
-    @DisplayName("[App] 권한 실패: 보호자가 타인의 펫 일정 등록")
-    void createSchedule_App_Forbidden_OtherPet() throws Exception {
-        ScheduleRequestDto requestDto = new ScheduleRequestDto();
-        requestDto.setSchName("Stolen Schedule");
-        requestDto.setSchTime(LocalDateTime.now().plusDays(1));
-        requestDto.setPetNo(petB.getPetNo()); // UserA tries to add for PetB
+                mockMvc.perform(post("/api/schedules")
+                                .header("Authorization", "Bearer " + tokenUserA)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(requestDto)))
+                                .andExpect(status().isOk());
+        }
 
-        mockMvc.perform(post("/api/schedules")
-                .header("Authorization", "Bearer " + tokenUserA)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(requestDto)))
-                .andExpect(status().isForbidden()); // Expect 403
-    }
+        @Test
+        @DisplayName("[App] 권한 실패: 보호자가 타인의 펫 일정 등록")
+        void createSchedule_App_Forbidden_OtherPet() throws Exception {
+                ScheduleRequestDto requestDto = new ScheduleRequestDto();
+                requestDto.setSchName("Stolen Schedule");
+                requestDto.setSchTime(LocalDateTime.now().plusDays(1));
+                requestDto.setPetNo(petB.getPetNo()); // UserA tries to add for PetB
 
-    @Test
-    @DisplayName("[Display] 정상 등록: 로그인 없이 기기에서 일정 등록 (Display Mode uses petId)")
-    void createSchedule_Display_Success() throws Exception {
-        ScheduleRequestDto requestDto = new ScheduleRequestDto();
-        requestDto.setSchName("Display Schedule");
-        requestDto.setSchTime(LocalDateTime.now().plusDays(2));
-        requestDto.setPetId(petA.getPetId()); // Use petId for display mode
+                mockMvc.perform(post("/api/schedules")
+                                .header("Authorization", "Bearer " + tokenUserA)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(requestDto)))
+                                .andExpect(status().isForbidden()); // Expect 403
+        }
 
-        // No Authorization Header
-        mockMvc.perform(post("/api/schedules")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(requestDto)))
-                .andExpect(status().isOk());
-    }
+        @Test
+        @DisplayName("[Display] 정상 등록: 로그인 없이 기기에서 일정 등록 (Display Mode uses petId)")
+        void createSchedule_Display_Success() throws Exception {
+                ScheduleRequestDto requestDto = new ScheduleRequestDto();
+                requestDto.setSchName("Display Schedule");
+                requestDto.setSchTime(LocalDateTime.now().plusDays(2));
+                requestDto.setPetId(petA.getPetId()); // Use petId for display mode
 
-    @Test
-    @DisplayName("[App] 조회: 내 펫의 일정만 조회")
-    void listSchedule_App_Success() throws Exception {
-        // Given: Existing schedule for Pet A
-        createScheduleFor(petA, "Pet A Schedule");
+                // No Authorization Header
+                mockMvc.perform(post("/api/schedules")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(requestDto)))
+                                .andExpect(status().isOk());
+        }
 
-        mockMvc.perform(get("/api/schedules")
-                .header("Authorization", "Bearer " + tokenUserA)
-                .param("petNo", String.valueOf(petA.getPetNo())))
-                .andExpect(status().isOk());
-    }
+        @Test
+        @DisplayName("[App] 조회: 내 펫의 일정만 조회")
+        void listSchedule_App_Success() throws Exception {
+                // Given: Existing schedule for Pet A
+                createScheduleFor(petA, "Pet A Schedule");
 
-    @Test
-    @DisplayName("[App] 조회 실패: 남의 펫 일정 조회 시도")
-    void listSchedule_App_Forbidden() throws Exception {
-        mockMvc.perform(get("/api/schedules")
-                .header("Authorization", "Bearer " + tokenUserA)
-                .param("petNo", String.valueOf(petB.getPetNo()))) // Accessing PetB
-                .andExpect(status().isForbidden());
-    }
+                mockMvc.perform(get("/api/schedules")
+                                .header("Authorization", "Bearer " + tokenUserA)
+                                .param("petNo", String.valueOf(petA.getPetNo())))
+                                .andExpect(status().isOk());
+        }
 
-    private void createScheduleFor(Pet pet, String name) {
-        com.noill.domain.schedule.entity.Schedule s = new com.noill.domain.schedule.entity.Schedule();
-        s.setPet(pet);
-        s.setSchName(name);
-        s.setSchTime(LocalDateTime.now().plusDays(1));
-        s.setSchStatus("Y"); // 이 값이 확실히 들어가는지 확인
-        s.setSchMemo("Test Memo"); // nullable이더라도 값을 넣어주는 것이 안전합니다.
-        scheduleRepository.save(s);
-    }
+        @Test
+        @DisplayName("[App] 조회 실패: 남의 펫 일정 조회 시도")
+        void listSchedule_App_Forbidden() throws Exception {
+                mockMvc.perform(get("/api/schedules")
+                                .header("Authorization", "Bearer " + tokenUserA)
+                                .param("petNo", String.valueOf(petB.getPetNo()))) // Accessing PetB
+                                .andExpect(status().isForbidden());
+        }
+
+        private void createScheduleFor(Pet pet, String name) {
+                com.noill.domain.schedule.entity.Schedule s = new com.noill.domain.schedule.entity.Schedule();
+                s.setPet(pet);
+                s.setSchName(name);
+                s.setSchTime(LocalDateTime.now().plusDays(1));
+                s.setSchStatus("Y"); // 이 값이 확실히 들어가는지 확인
+                s.setSchMemo("Test Memo"); // nullable이더라도 값을 넣어주는 것이 안전합니다.
+                scheduleRepository.save(s);
+        }
 }

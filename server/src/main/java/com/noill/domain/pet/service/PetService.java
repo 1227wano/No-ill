@@ -46,7 +46,6 @@ public class PetService {
             pet = Pet.builder()
                     .petId(request.getPetId())
                     .petName(request.getPetName())
-                    .petOwner(request.getPetOwner())
                     .petAddress(request.getPetAddress())
                     .petPhone(request.getPetPhone())
                     .build();

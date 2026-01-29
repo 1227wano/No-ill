@@ -109,7 +109,7 @@ LLM과 각 서비스 간의 "계약서"를 먼저 정의합니다.
 ## ⏰ 5. 배치 스케줄러 (Batch Job)
 대화가 끝난 세션을 정리하고 기억을 강화합니다.
 
-- [ ] **세션 종료 및 요약 스케줄러**
+- [x] **세션 종료 및 요약 스케줄러**
   - **주기:** 1시간마다 실행
   - **대상:** `STATUS='Y'` 이면서 마지막 대화로부터 3시간이 지난 세션 조회.
   - **동작:** 
@@ -118,6 +118,14 @@ LLM과 각 서비스 간의 "계약서"를 먼저 정의합니다.
     3. `Talks` 엔티티의 `talkName` 업데이트 및 `STATUS='N'` 변경.
     4. 해당 로직을 처리하는 배치 서비스 호출 (순차 처리).
 
+  - **구현 단계 (Implementation Steps):**
+    - [x] **Step 5-1. Repository**: `TalkRepository`에 `JOIN` 및 `GROUP BY`를 사용하여 마지막 메시지가 3시간 지난 세션 조회 쿼리(JPQL) 구현.
+    - [x] **Step 5-2. Entity Logic**: `Talk` 엔티티에 `close(String summaryTitle)` 메서드 추가.
+    - [x] **Step 5-3. Batch Service**: `ConversationBatchService` 구현.
+      - `closeExpiredSessions()`: 대상 조회 및 루프 (No Transaction).
+      - `processSingleSession()`: 개별 LLM 요약 및 DB 업데이트 (Service 위임으로 `REQUIRES_NEW` 적용).
+    - [x] **Step 5-4. Config**: `@EnableScheduling` 추가.
+    
 ---
 
 ## ✅ 6. 통합 테스트 및 검증
