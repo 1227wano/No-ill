@@ -87,7 +87,6 @@ class ScheduleIntegrationTest {
                 .petName("Pet A")
                 .petAddress("Seoul")
                 .petPhone("010-3333-3333")
-                .petOwner("Owner A")
                 .build());
 
         // Pet B는 아무와도 연결하지 않거나, User B와 연결
@@ -96,7 +95,6 @@ class ScheduleIntegrationTest {
                 .petName("Pet B")
                 .petAddress("Busan")
                 .petPhone("010-4444-4444")
-                .petOwner("Owner B")
                 .build());
 
         // 3. Care 관계 설정 (UserA <-> PetA) 수정
