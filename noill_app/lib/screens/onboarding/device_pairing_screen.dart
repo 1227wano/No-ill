@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:noill_app/widgets/atoms/custom_input_field.dart';
 import '../../widgets/atoms/gradient_background.dart';
 import '../../widgets/atoms/otp_input.dart';
 import '../../widgets/atoms/solid_button.dart';
@@ -20,6 +21,7 @@ class _DevicePairingScreenState extends ConsumerState<DevicePairingScreen>
   late AnimationController _controller;
   bool _isFound = false;
   String _inputSerial = ""; // 입력된 5자리 번호 저장
+  final _petNameController = TextEditingController(text: "노일이");
 
   @override
   void initState() {
@@ -37,6 +39,7 @@ class _DevicePairingScreenState extends ConsumerState<DevicePairingScreen>
   @override
   void dispose() {
     _controller.dispose();
+    _petNameController.dispose();
     super.dispose();
   }
 
@@ -53,7 +56,8 @@ class _DevicePairingScreenState extends ConsumerState<DevicePairingScreen>
           backgroundColor: Colors.transparent,
           elevation: 0,
         ),
-        body: Padding(
+        body: SingleChildScrollView(
+          // 키보드 올라와도 화면이 올라가도록
           padding: const EdgeInsets.all(24.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -68,6 +72,15 @@ class _DevicePairingScreenState extends ConsumerState<DevicePairingScreen>
               _buildStatusCard(),
 
               const SizedBox(height: 48),
+
+              const SizedBox(height: 12),
+              CustomInputField(
+                label: '로봇펫의 이름을 지어주세요.',
+                controller: _petNameController,
+                hintText: "노일이",
+              ),
+
+              const SizedBox(height: 32),
 
               const Text(
                 "기기 시리얼 번호 입력 (5자리)",
@@ -89,7 +102,7 @@ class _DevicePairingScreenState extends ConsumerState<DevicePairingScreen>
                   });
                 },
               ),
-              const Spacer(),
+              const SizedBox(height: 24),
 
               // ✅ 수정: 5자리가 입력되었을 때만 버튼이 활성화되도록 로직 연결
               SolidButton(
@@ -97,6 +110,9 @@ class _DevicePairingScreenState extends ConsumerState<DevicePairingScreen>
                 onPressed: _inputSerial.length == 5
                     ? () {
                         // 1. Provider에 기기 번호(petId) 저장
+                        ref
+                            .read(petRegistrationProvider.notifier)
+                            .updatePetName(_petNameController.text);
                         ref
                             .read(petRegistrationProvider.notifier)
                             .updatePetId(_inputSerial);
