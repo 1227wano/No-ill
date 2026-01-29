@@ -114,8 +114,7 @@ deploy:
         -p $PORT:$PORT \
         -e SERVER_PORT=$PORT \
         --env-file /opt/server/.env \
-        -v /opt/server/firebase-service-account.json:/app/firebase-service-account.json:ro \
-        -e GOOGLE_APPLICATION_CREDENTIALS=/app/firebase-service-account.json \
+        -v /opt/server/firebase-service-account.json:/config/firebase-service-account.json:ro \
         $IMAGE_TAG
       sleep 30
       curl -f http://localhost:$PORT/actuator/health \
