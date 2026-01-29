@@ -75,7 +75,7 @@ const mockVerifyToken = async () => {
 
 // 실제 API 함수들
 const realLogin = async (petNo) => {
-    const response = await client.post('/api/auth/pet/login', { petNo });
+    const response = await client.post('/api/auth/pets/login', { petNo });
     const data = response.data.data;
     // 백엔드 응답을 프론트엔드 형식으로 변환
     return {
