@@ -1,3 +1,4 @@
+
 # 노일(No-ill) - Jetson Orin Nano 로봇 시스템
 
 독거노인 돌봄 로봇 "노일"의 Jetson Orin Nano 구동 코드 및 WSL2 시뮬레이션 환경입니다.
@@ -6,6 +7,7 @@
 
 ```
 ├── jetson/                            # 실제 Jetson Orin Nano 구동 코드
+│   ├── setup.sh                       # 환경 세팅 스크립트
 │   └── ros2_ws/                       # ROS2 워크스페이스
 │       ├── src/                       # 소스 패키지 (18개)
 │       ├── config/                    # Nav2, twist_mux 설정
@@ -56,16 +58,28 @@
               └→ chat_stop_gate → 주행 정지
 ```
 
+### 환경 세팅
+
+```bash
+# Jetson Orin Nano에서 (Ubuntu 22.04 + JetPack 6.0)
+cd jetson
+chmod +x setup.sh
+./setup.sh
+
+# 재부팅 (I2C 권한 적용)
+sudo reboot
+```
+
 ### 실행 방법
 
 ```bash
-# Jetson Orin Nano에서
-cd ~/ros2_ws
-colcon build
-source install/setup.bash
-
 # 전체 시스템 실행
 ros2 launch no_ill_bringup no_ill_full.launch.py
+
+# 개별 노드 테스트
+ros2 run yolo_detector yolo_detector_node
+ros2 run stt stt_node
+ros2 run tts tts_node
 ```
 
 ---

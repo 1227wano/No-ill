@@ -1,4 +1,0 @@
-source;share/chat_stop_gate/local_setup.bash
-source;share/chat_stop_gate/local_setup.dsv
-source;share/chat_stop_gate/local_setup.sh
-source;share/chat_stop_gate/local_setup.zsh

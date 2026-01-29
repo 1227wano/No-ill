@@ -1,3 +1,0 @@
-[console_scripts]
-steer_from_saram = tracking_test.steer_from_saram:main
-

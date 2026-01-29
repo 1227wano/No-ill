@@ -1,8 +1,0 @@
-source;share/pca_drive/hook/cmake_prefix_path.ps1
-source;share/pca_drive/hook/cmake_prefix_path.dsv
-source;share/pca_drive/hook/cmake_prefix_path.sh
-source;share/pca_drive/local_setup.bash
-source;share/pca_drive/local_setup.dsv
-source;share/pca_drive/local_setup.ps1
-source;share/pca_drive/local_setup.sh
-source;share/pca_drive/local_setup.zsh

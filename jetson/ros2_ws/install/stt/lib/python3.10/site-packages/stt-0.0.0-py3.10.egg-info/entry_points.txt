@@ -1,3 +1,0 @@
-[console_scripts]
-stt_node = stt.stt_node:main
-

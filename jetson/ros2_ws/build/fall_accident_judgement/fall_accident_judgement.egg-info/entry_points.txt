@@ -1,3 +1,0 @@
-[console_scripts]
-judgement_node = fall_accident_judgement.judgement_node:main
-

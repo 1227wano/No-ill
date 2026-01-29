@@ -1,3 +1,0 @@
-[console_scripts]
-upload_accident_node = upload_accident.upload_accident_node:main
-

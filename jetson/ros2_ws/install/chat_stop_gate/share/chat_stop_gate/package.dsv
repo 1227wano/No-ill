@@ -1,8 +1,0 @@
-source;share/chat_stop_gate/hook/cmake_prefix_path.ps1
-source;share/chat_stop_gate/hook/cmake_prefix_path.dsv
-source;share/chat_stop_gate/hook/cmake_prefix_path.sh
-source;share/chat_stop_gate/local_setup.bash
-source;share/chat_stop_gate/local_setup.dsv
-source;share/chat_stop_gate/local_setup.ps1
-source;share/chat_stop_gate/local_setup.sh
-source;share/chat_stop_gate/local_setup.zsh
