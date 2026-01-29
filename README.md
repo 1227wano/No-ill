@@ -12,11 +12,11 @@
 │       └── maps/                      # SLAM 지도 파일
 │
 ├── tests/                             # WSL2 가상 테스트 환경
+│   ├── jetson-orin-nano-wsl2-setup.sh # Docker 환경 구축 스크립트
+│   ├── install_dependencies.sh        # 의존성 설치
 │   ├── config.py                      # 테스트 설정
-│   ├── integrated_load_test.py        # 통합 부하 테스트
-│   └── install_dependencies.sh        # 의존성 설치
+│   └── integrated_load_test.py        # 통합 부하 테스트
 │
-├── jetson-orin-nano-wsl2-setup.sh     # Docker 환경 구축 스크립트
 └── README.md
 ```
 
@@ -94,6 +94,9 @@ Jetson Orin Nano 배포 전 부하 테스트를 위한 Docker 환경입니다.
 ```bash
 # WSL2 Ubuntu에서 실행
 
+# tests 폴더로 이동
+cd tests
+
 # 줄바꿈 변환 및 실행 권한
 sed -i 's/\r$//' jetson-orin-nano-wsl2-setup.sh
 chmod +x jetson-orin-nano-wsl2-setup.sh
@@ -106,12 +109,11 @@ docker exec -it jetson-sim bash
 
 # 의존성 설치 (최초 1회)
 cd /workspace
-sed -i 's/\r$//' tests/install_dependencies.sh
-chmod +x tests/install_dependencies.sh
-./tests/install_dependencies.sh
+sed -i 's/\r$//' install_dependencies.sh
+chmod +x install_dependencies.sh
+./install_dependencies.sh
 
 # 통합 부하 테스트 실행 (60초)
-cd /workspace/tests
 python3 integrated_load_test.py -d 60
 ```
 
