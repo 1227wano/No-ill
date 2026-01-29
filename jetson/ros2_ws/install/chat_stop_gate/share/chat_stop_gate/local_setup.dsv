@@ -1,0 +1,2 @@
+source;share/chat_stop_gate/environment/ament_prefix_path.sh
+source;share/chat_stop_gate/environment/path.sh

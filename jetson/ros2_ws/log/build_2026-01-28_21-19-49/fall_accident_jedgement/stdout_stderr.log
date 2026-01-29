@@ -1,0 +1,35 @@
+running egg_info
+creating ../../build/fall_accident_jedgement/fall_accident_jedgement.egg-info
+writing ../../build/fall_accident_jedgement/fall_accident_jedgement.egg-info/PKG-INFO
+writing dependency_links to ../../build/fall_accident_jedgement/fall_accident_jedgement.egg-info/dependency_links.txt
+writing entry points to ../../build/fall_accident_jedgement/fall_accident_jedgement.egg-info/entry_points.txt
+writing requirements to ../../build/fall_accident_jedgement/fall_accident_jedgement.egg-info/requires.txt
+writing top-level names to ../../build/fall_accident_jedgement/fall_accident_jedgement.egg-info/top_level.txt
+writing manifest file '../../build/fall_accident_jedgement/fall_accident_jedgement.egg-info/SOURCES.txt'
+reading manifest file '../../build/fall_accident_jedgement/fall_accident_jedgement.egg-info/SOURCES.txt'
+writing manifest file '../../build/fall_accident_jedgement/fall_accident_jedgement.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /home/jetson/ros2_ws/build/fall_accident_jedgement/build
+creating /home/jetson/ros2_ws/build/fall_accident_jedgement/build/lib
+creating /home/jetson/ros2_ws/build/fall_accident_jedgement/build/lib/fall_accident_jedgement
+copying fall_accident_jedgement/judgement_node.py -> /home/jetson/ros2_ws/build/fall_accident_jedgement/build/lib/fall_accident_jedgement
+copying fall_accident_jedgement/__init__.py -> /home/jetson/ros2_ws/build/fall_accident_jedgement/build/lib/fall_accident_jedgement
+running install
+running install_lib
+creating /home/jetson/ros2_ws/install/fall_accident_jedgement/lib/python3.10/site-packages/fall_accident_jedgement
+copying /home/jetson/ros2_ws/build/fall_accident_jedgement/build/lib/fall_accident_jedgement/judgement_node.py -> /home/jetson/ros2_ws/install/fall_accident_jedgement/lib/python3.10/site-packages/fall_accident_jedgement
+copying /home/jetson/ros2_ws/build/fall_accident_jedgement/build/lib/fall_accident_jedgement/__init__.py -> /home/jetson/ros2_ws/install/fall_accident_jedgement/lib/python3.10/site-packages/fall_accident_jedgement
+byte-compiling /home/jetson/ros2_ws/install/fall_accident_jedgement/lib/python3.10/site-packages/fall_accident_jedgement/judgement_node.py to judgement_node.cpython-310.pyc
+byte-compiling /home/jetson/ros2_ws/install/fall_accident_jedgement/lib/python3.10/site-packages/fall_accident_jedgement/__init__.py to __init__.cpython-310.pyc
+running install_data
+creating /home/jetson/ros2_ws/install/fall_accident_jedgement/share/ament_index
+creating /home/jetson/ros2_ws/install/fall_accident_jedgement/share/ament_index/resource_index
+creating /home/jetson/ros2_ws/install/fall_accident_jedgement/share/ament_index/resource_index/packages
+copying resource/fall_accident_jedgement -> /home/jetson/ros2_ws/install/fall_accident_jedgement/share/ament_index/resource_index/packages
+copying package.xml -> /home/jetson/ros2_ws/install/fall_accident_jedgement/share/fall_accident_jedgement
+running install_egg_info
+Copying ../../build/fall_accident_jedgement/fall_accident_jedgement.egg-info to /home/jetson/ros2_ws/install/fall_accident_jedgement/lib/python3.10/site-packages/fall_accident_jedgement-0.0.0-py3.10.egg-info
+running install_scripts
+Installing judgement_node script to /home/jetson/ros2_ws/install/fall_accident_jedgement/lib/fall_accident_jedgement
+writing list of installed files to '/home/jetson/ros2_ws/build/fall_accident_jedgement/install.log'

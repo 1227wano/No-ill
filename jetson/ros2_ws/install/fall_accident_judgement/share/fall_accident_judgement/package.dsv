@@ -1,0 +1,6 @@
+source;share/fall_accident_judgement/hook/pythonpath.ps1
+source;share/fall_accident_judgement/hook/pythonpath.dsv
+source;share/fall_accident_judgement/hook/pythonpath.sh
+source;share/fall_accident_judgement/hook/ament_prefix_path.ps1
+source;share/fall_accident_judgement/hook/ament_prefix_path.dsv
+source;share/fall_accident_judgement/hook/ament_prefix_path.sh

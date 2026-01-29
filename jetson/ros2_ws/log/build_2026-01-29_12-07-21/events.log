@@ -1,0 +1,81 @@
+[0.000000] (-) TimerEvent: {}
+[0.001202] (-) JobUnselected: {'identifier': 'chat_stop_gate'}
+[0.001635] (-) JobUnselected: {'identifier': 'fall_accident_judgement'}
+[0.001889] (-) JobUnselected: {'identifier': 'keyboard_latch_cpp'}
+[0.002095] (-) JobUnselected: {'identifier': 'llm'}
+[0.002171] (-) JobUnselected: {'identifier': 'my_robot_bringup'}
+[0.002291] (-) JobUnselected: {'identifier': 'pca_drive'}
+[0.002352] (-) JobUnselected: {'identifier': 'person_override_pkg'}
+[0.002384] (-) JobUnselected: {'identifier': 'rf2o_laser_odometry'}
+[0.002417] (-) JobUnselected: {'identifier': 'robot_bringup'}
+[0.002464] (-) JobUnselected: {'identifier': 'safety_override_pkg'}
+[0.002497] (-) JobUnselected: {'identifier': 'stt'}
+[0.002541] (-) JobUnselected: {'identifier': 'tracking_drive_test'}
+[0.002846] (-) JobUnselected: {'identifier': 'tts'}
+[0.002906] (-) JobUnselected: {'identifier': 'ydlidar_ros2_driver'}
+[0.003000] (-) JobUnselected: {'identifier': 'yolo_detector'}
+[0.003059] (no_ill_bringup) JobQueued: {'identifier': 'no_ill_bringup', 'dependencies': OrderedDict([('chat_stop_gate', '/home/jetson/ros2_ws/install/chat_stop_gate'), ('person_override_pkg', '/home/jetson/ros2_ws/install/person_override_pkg'), ('rf2o_laser_odometry', '/home/jetson/ros2_ws/install/rf2o_laser_odometry'), ('safety_override_pkg', '/home/jetson/ros2_ws/install/safety_override_pkg'), ('ydlidar_ros2_driver', '/home/jetson/ros2_ws/install/ydlidar_ros2_driver')])}
+[0.003116] (no_ill_bringup) JobStarted: {'identifier': 'no_ill_bringup'}
+[0.099923] (-) TimerEvent: {}
+[0.200431] (-) TimerEvent: {}
+[0.300965] (-) TimerEvent: {}
+[0.401434] (-) TimerEvent: {}
+[0.501927] (-) TimerEvent: {}
+[0.602508] (-) TimerEvent: {}
+[0.703221] (-) TimerEvent: {}
+[0.803747] (-) TimerEvent: {}
+[0.904266] (-) TimerEvent: {}
+[1.004815] (-) TimerEvent: {}
+[1.105325] (-) TimerEvent: {}
+[1.205848] (-) TimerEvent: {}
+[1.303978] (no_ill_bringup) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', '-W', 'ignore:easy_install command is deprecated', 'setup.py', 'egg_info', '--egg-base', '../../build/no_ill_bringup', 'build', '--build-base', '/home/jetson/ros2_ws/build/no_ill_bringup/build', 'install', '--record', '/home/jetson/ros2_ws/build/no_ill_bringup/install.log', '--single-version-externally-managed', 'install_data'], 'cwd': '/home/jetson/ros2_ws/src/no_ill_bringup', 'env': {'LESSOPEN': '| /usr/bin/lesspipe %s', 'USER': 'jetson', 'SSH_CLIENT': '10.13.243.41 64200 22', 'XDG_SESSION_TYPE': 'tty', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/usr/local/cuda/lib64:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib', 'MOTD_SHOWN': 'pam', 'HOME': '/home/jetson', 'OLDPWD': '/home/jetson/ros2_ws', 'SSH_TTY': '/dev/pts/4', 'ROS_PYTHON_VERSION': '3', 'FASTDDS_SHM_TRANSPORT_DISABLED': '1', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'COLCON_PREFIX_PATH': '/home/jetson/ros2_ws/install:/home/jetson/ros2_ws/src/yolo_detector/install', 'ROS_DISTRO': 'humble', 'LOGNAME': 'jetson', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'XDG_SESSION_CLASS': 'user', 'TERM': 'xterm', 'XDG_SESSION_ID': '10', 'ROS_LOCALHOST_ONLY': '0', 'PATH': '/home/jetson/.local/bin:/usr/local/cuda/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin', 'XDG_RUNTIME_DIR': '/run/user/1000', 'DISPLAY': 'localhost:12.0', 'LANG': 'ko_KR.UTF-8', 'RMW_IMPLEMENTATION': 'rmw_fastrtps_cpp', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:', 'ROS_DOMAIN_ID': '0', 'AMENT_PREFIX_PATH': '/home/jetson/ros2_ws/install/fall_accident_judgement:/home/jetson/ros2_ws/install/yolo_detector:/home/jetson/ros2_ws/install/ydlidar_ros2_driver:/home/jetson/ros2_ws/install/tts:/home/jetson/ros2_ws/install/tracking_test:/home/jetson/ros2_ws/install/tracking_drive_test:/home/jetson/ros2_ws/install/stt:/home/jetson/ros2_ws/install/safety_override_pkg:/home/jetson/ros2_ws/install/robot_bringup:/home/jetson/ros2_ws/install/rf2o_laser_odometry:/home/jetson/ros2_ws/install/person_override_pkg:/home/jetson/ros2_ws/install/pca_drive:/home/jetson/ros2_ws/install/my_robot_bringup:/home/jetson/ros2_ws/install/llm:/home/jetson/ros2_ws/install/keyboard_latch_cpp:/home/jetson/ros2_ws/install/chat_stop_gate:/home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector:/opt/ros/humble', 'SHELL': '/bin/bash', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'PWD': '/home/jetson/ros2_ws/build/no_ill_bringup', 'SSH_CONNECTION': '10.13.243.41 64200 10.13.243.53 22', 'XDG_DATA_DIRS': '/usr/share/gnome:/usr/local/share:/usr/share:/var/lib/snapd/desktop', 'PYTHONPATH': '/home/jetson/ros2_ws/build/no_ill_bringup/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/jetson/ros2_ws/install/no_ill_bringup/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/fall_accident_judgement/lib/python3.10/site-packages:/home/jetson/sherpa-onnx/sherpa-onnx/python:/home/jetson/sherpa-onnx/build/lib:/home/jetson/ros2_ws/build/yolo_detector:/home/jetson/ros2_ws/install/yolo_detector/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/tts/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/tracking_test/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/stt/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/robot_bringup/lib/python3.10/site-packages:/home/jetson/ros2_ws/build/my_robot_bringup:/home/jetson/ros2_ws/install/my_robot_bringup/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/llm/lib/python3.10/site-packages:/home/jetson/ros2_ws/src/yolo_detector/build/yolo_detector:/home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages:/home/jetson/sherpa-onnx/build/../sherpa-onnx/python:/home/jetson/sherpa-onnx/build/lib', 'COLCON': '1', 'CMAKE_PREFIX_PATH': '/home/jetson/ros2_ws/install/ydlidar_ros2_driver:/home/jetson/ros2_ws/install/safety_override_pkg:/home/jetson/ros2_ws/install/rf2o_laser_odometry:/home/jetson/ros2_ws/install/person_override_pkg:/home/jetson/ros2_ws/install/chat_stop_gate:/home/jetson/ros2_ws/install/tracking_drive_test:/home/jetson/ros2_ws/install/pca_drive:/home/jetson/ros2_ws/install/keyboard_latch_cpp'}, 'shell': False}
+[1.308439] (-) TimerEvent: {}
+[1.409441] (-) TimerEvent: {}
+[1.509976] (-) TimerEvent: {}
+[1.610520] (-) TimerEvent: {}
+[1.711026] (-) TimerEvent: {}
+[1.798930] (no_ill_bringup) StdoutLine: {'line': b'running egg_info\n'}
+[1.799916] (no_ill_bringup) StdoutLine: {'line': b'creating ../../build/no_ill_bringup/no_ill_bringup.egg-info\n'}
+[1.800332] (no_ill_bringup) StdoutLine: {'line': b'writing ../../build/no_ill_bringup/no_ill_bringup.egg-info/PKG-INFO\n'}
+[1.800772] (no_ill_bringup) StdoutLine: {'line': b'writing dependency_links to ../../build/no_ill_bringup/no_ill_bringup.egg-info/dependency_links.txt\n'}
+[1.800992] (no_ill_bringup) StdoutLine: {'line': b'writing entry points to ../../build/no_ill_bringup/no_ill_bringup.egg-info/entry_points.txt\n'}
+[1.801176] (no_ill_bringup) StdoutLine: {'line': b'writing requirements to ../../build/no_ill_bringup/no_ill_bringup.egg-info/requires.txt\n'}
+[1.801366] (no_ill_bringup) StdoutLine: {'line': b'writing top-level names to ../../build/no_ill_bringup/no_ill_bringup.egg-info/top_level.txt\n'}
+[1.801667] (no_ill_bringup) StdoutLine: {'line': b"writing manifest file '../../build/no_ill_bringup/no_ill_bringup.egg-info/SOURCES.txt'\n"}
+[1.804549] (no_ill_bringup) StdoutLine: {'line': b"reading manifest file '../../build/no_ill_bringup/no_ill_bringup.egg-info/SOURCES.txt'\n"}
+[1.805764] (no_ill_bringup) StdoutLine: {'line': b"writing manifest file '../../build/no_ill_bringup/no_ill_bringup.egg-info/SOURCES.txt'\n"}
+[1.806083] (no_ill_bringup) StdoutLine: {'line': b'running build\n'}
+[1.806286] (no_ill_bringup) StdoutLine: {'line': b'running build_py\n'}
+[1.806441] (no_ill_bringup) StdoutLine: {'line': b'creating /home/jetson/ros2_ws/build/no_ill_bringup/build\n'}
+[1.806608] (no_ill_bringup) StdoutLine: {'line': b'creating /home/jetson/ros2_ws/build/no_ill_bringup/build/lib\n'}
+[1.806748] (no_ill_bringup) StdoutLine: {'line': b'creating /home/jetson/ros2_ws/build/no_ill_bringup/build/lib/no_ill_bringup\n'}
+[1.806857] (no_ill_bringup) StdoutLine: {'line': b'copying no_ill_bringup/__init__.py -> /home/jetson/ros2_ws/build/no_ill_bringup/build/lib/no_ill_bringup\n'}
+[1.806991] (no_ill_bringup) StdoutLine: {'line': b'running install\n'}
+[1.807567] (no_ill_bringup) StdoutLine: {'line': b'running install_lib\n'}
+[1.808855] (no_ill_bringup) StdoutLine: {'line': b'creating /home/jetson/ros2_ws/install/no_ill_bringup/lib/python3.10/site-packages/no_ill_bringup\n'}
+[1.809009] (no_ill_bringup) StdoutLine: {'line': b'copying /home/jetson/ros2_ws/build/no_ill_bringup/build/lib/no_ill_bringup/__init__.py -> /home/jetson/ros2_ws/install/no_ill_bringup/lib/python3.10/site-packages/no_ill_bringup\n'}
+[1.810538] (no_ill_bringup) StdoutLine: {'line': b'byte-compiling /home/jetson/ros2_ws/install/no_ill_bringup/lib/python3.10/site-packages/no_ill_bringup/__init__.py to __init__.cpython-310.pyc\n'}
+[1.810973] (no_ill_bringup) StdoutLine: {'line': b'running install_data\n'}
+[1.811084] (-) TimerEvent: {}
+[1.811573] (no_ill_bringup) StdoutLine: {'line': b'creating /home/jetson/ros2_ws/install/no_ill_bringup/share/ament_index\n'}
+[1.811775] (no_ill_bringup) StdoutLine: {'line': b'creating /home/jetson/ros2_ws/install/no_ill_bringup/share/ament_index/resource_index\n'}
+[1.811958] (no_ill_bringup) StdoutLine: {'line': b'creating /home/jetson/ros2_ws/install/no_ill_bringup/share/ament_index/resource_index/packages\n'}
+[1.812071] (no_ill_bringup) StdoutLine: {'line': b'copying resource/no_ill_bringup -> /home/jetson/ros2_ws/install/no_ill_bringup/share/ament_index/resource_index/packages\n'}
+[1.812206] (no_ill_bringup) StdoutLine: {'line': b'copying package.xml -> /home/jetson/ros2_ws/install/no_ill_bringup/share/no_ill_bringup\n'}
+[1.812336] (no_ill_bringup) StdoutLine: {'line': b'creating /home/jetson/ros2_ws/install/no_ill_bringup/share/no_ill_bringup/launch\n'}
+[1.812439] (no_ill_bringup) StdoutLine: {'line': b'copying launch/no_ill_full.launch.py -> /home/jetson/ros2_ws/install/no_ill_bringup/share/no_ill_bringup/launch\n'}
+[1.812566] (no_ill_bringup) StdoutLine: {'line': b'creating /home/jetson/ros2_ws/install/no_ill_bringup/share/no_ill_bringup/config\n'}
+[1.812688] (no_ill_bringup) StdoutLine: {'line': b'copying config/nav2_params.yaml -> /home/jetson/ros2_ws/install/no_ill_bringup/share/no_ill_bringup/config\n'}
+[1.812873] (no_ill_bringup) StdoutLine: {'line': b'copying config/twist_mux.yaml -> /home/jetson/ros2_ws/install/no_ill_bringup/share/no_ill_bringup/config\n'}
+[1.812982] (no_ill_bringup) StdoutLine: {'line': b'creating /home/jetson/ros2_ws/install/no_ill_bringup/share/no_ill_bringup/maps\n'}
+[1.813109] (no_ill_bringup) StdoutLine: {'line': b'copying maps/home_map.pgm -> /home/jetson/ros2_ws/install/no_ill_bringup/share/no_ill_bringup/maps\n'}
+[1.813506] (no_ill_bringup) StdoutLine: {'line': b'copying maps/home_map.yaml -> /home/jetson/ros2_ws/install/no_ill_bringup/share/no_ill_bringup/maps\n'}
+[1.813693] (no_ill_bringup) StdoutLine: {'line': b'creating /home/jetson/ros2_ws/install/no_ill_bringup/share/no_ill_bringup/rviz\n'}
+[1.813831] (no_ill_bringup) StdoutLine: {'line': b'running install_egg_info\n'}
+[1.817171] (no_ill_bringup) StdoutLine: {'line': b'Copying ../../build/no_ill_bringup/no_ill_bringup.egg-info to /home/jetson/ros2_ws/install/no_ill_bringup/lib/python3.10/site-packages/no_ill_bringup-1.0.0-py3.10.egg-info\n'}
+[1.818773] (no_ill_bringup) StdoutLine: {'line': b'running install_scripts\n'}
+[1.856882] (no_ill_bringup) StdoutLine: {'line': b"writing list of installed files to '/home/jetson/ros2_ws/build/no_ill_bringup/install.log'\n"}
+[1.911264] (-) TimerEvent: {}
+[1.918956] (no_ill_bringup) CommandEnded: {'returncode': 0}
+[1.963339] (no_ill_bringup) JobEnded: {'identifier': 'no_ill_bringup', 'rc': 0}
+[1.968032] (-) EventReactorShutdown: {}

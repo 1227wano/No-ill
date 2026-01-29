@@ -1,0 +1,94 @@
+[0.239s] [34mcolcon[0m [1;30mDEBUG[0m [32mCommand line arguments: ['/usr/bin/colcon', 'build', '--symlink-install', '--packages-select', 'yolo_detector'][0m
+[0.239s] [34mcolcon[0m [1;30mDEBUG[0m [32mParsed command line arguments: Namespace(log_base=None, log_level=None, verb_name='build', build_base='build', install_base='install', merge_install=False, symlink_install=True, test_result_base=None, continue_on_error=False, executor='parallel', parallel_workers=6, event_handlers=None, ignore_user_meta=False, metas=['./colcon.meta'], base_paths=['.'], packages_ignore=None, packages_ignore_regex=None, paths=None, packages_up_to=None, packages_up_to_regex=None, packages_above=None, packages_above_and_dependencies=None, packages_above_depth=None, packages_select_by_dep=None, packages_skip_by_dep=None, packages_skip_up_to=None, packages_select_build_failed=False, packages_skip_build_finished=False, packages_select_test_failures=False, packages_skip_test_passed=False, packages_select=['yolo_detector'], packages_skip=None, packages_select_regex=None, packages_skip_regex=None, packages_start=None, packages_end=None, allow_overriding=[], cmake_args=None, cmake_target=None, cmake_target_skip_unavailable=False, cmake_clean_cache=False, cmake_clean_first=False, cmake_force_configure=False, ament_cmake_args=None, catkin_cmake_args=None, catkin_skip_building_tests=False, verb_parser=<colcon_defaults.argument_parser.defaults.DefaultArgumentsDecorator object at 0xffffae193a00>, verb_extension=<colcon_core.verb.build.BuildVerb object at 0xffffae380f10>, main=<bound method BuildVerb.main of <colcon_core.verb.build.BuildVerb object at 0xffffae380f10>>)[0m
+[0.570s] [34mcolcon.colcon_core.package_discovery[0m [1;30mLevel 1[0m discover_packages(colcon_meta) check parameters
+[0.571s] [34mcolcon.colcon_core.package_discovery[0m [1;30mLevel 1[0m discover_packages(recursive) check parameters
+[0.571s] [34mcolcon.colcon_core.package_discovery[0m [1;30mLevel 1[0m discover_packages(ignore) check parameters
+[0.571s] [34mcolcon.colcon_core.package_discovery[0m [1;30mLevel 1[0m discover_packages(path) check parameters
+[0.571s] [34mcolcon.colcon_core.package_discovery[0m [1;30mLevel 1[0m discover_packages(colcon_meta) discover
+[0.571s] [34mcolcon.colcon_core.package_discovery[0m [1;30mLevel 1[0m discover_packages(recursive) discover
+[0.571s] [34mcolcon.colcon_core.package_discovery[0m [1;30mINFO[0m Crawling recursively for packages in '/home/jetson/ros2_ws/src/yolo_detector'
+[0.572s] [34mcolcon.colcon_core.package_identification[0m [1;30mLevel 1[0m _identify(.) by extensions ['ignore', 'ignore_ament_install']
+[0.572s] [34mcolcon.colcon_core.package_identification[0m [1;30mLevel 1[0m _identify(.) by extension 'ignore'
+[0.572s] [34mcolcon.colcon_core.package_identification[0m [1;30mLevel 1[0m _identify(.) by extension 'ignore_ament_install'
+[0.572s] [34mcolcon.colcon_core.package_identification[0m [1;30mLevel 1[0m _identify(.) by extensions ['colcon_pkg']
+[0.572s] [34mcolcon.colcon_core.package_identification[0m [1;30mLevel 1[0m _identify(.) by extension 'colcon_pkg'
+[0.572s] [34mcolcon.colcon_core.package_identification[0m [1;30mLevel 1[0m _identify(.) by extensions ['colcon_meta']
+[0.572s] [34mcolcon.colcon_core.package_identification[0m [1;30mLevel 1[0m _identify(.) by extension 'colcon_meta'
+[0.572s] [34mcolcon.colcon_core.package_identification[0m [1;30mLevel 1[0m _identify(.) by extensions ['ros']
+[0.572s] [34mcolcon.colcon_core.package_identification[0m [1;30mLevel 1[0m _identify(.) by extension 'ros'
+[0.613s] [34mcolcon.colcon_core.package_identification[0m [1;30mDEBUG[0m [32mPackage '.' with type 'ros.ament_python' and name 'yolo_detector'[0m
+[0.613s] [34mcolcon.colcon_core.package_discovery[0m [1;30mLevel 1[0m discover_packages(recursive) using defaults
+[0.613s] [34mcolcon.colcon_core.package_discovery[0m [1;30mLevel 1[0m discover_packages(ignore) discover
+[0.613s] [34mcolcon.colcon_core.package_discovery[0m [1;30mLevel 1[0m discover_packages(ignore) using defaults
+[0.613s] [34mcolcon.colcon_core.package_discovery[0m [1;30mLevel 1[0m discover_packages(path) discover
+[0.613s] [34mcolcon.colcon_core.package_discovery[0m [1;30mLevel 1[0m discover_packages(path) using defaults
+[0.673s] [34mcolcon.colcon_core.package_discovery[0m [1;30mLevel 1[0m discover_packages(prefix_path) check parameters
+[0.674s] [34mcolcon.colcon_core.package_discovery[0m [1;30mLevel 1[0m discover_packages(prefix_path) discover
+[0.678s] [34mcolcon.colcon_installed_package_information.package_discovery[0m [1;30mDEBUG[0m [32mFound 9 installed packages in /home/jetson/ros2_ws/install[0m
+[0.680s] [34mcolcon.colcon_installed_package_information.package_discovery[0m [1;30mDEBUG[0m [32mFound 285 installed packages in /opt/ros/humble[0m
+[0.682s] [34mcolcon.colcon_core.package_discovery[0m [1;30mLevel 1[0m discover_packages(prefix_path) using defaults
+[0.757s] [34mcolcon.colcon_core.verb[0m [1;30mLevel 5[0m set package 'yolo_detector' build argument 'cmake_args' from command line to 'None'
+[0.757s] [34mcolcon.colcon_core.verb[0m [1;30mLevel 5[0m set package 'yolo_detector' build argument 'cmake_target' from command line to 'None'
+[0.757s] [34mcolcon.colcon_core.verb[0m [1;30mLevel 5[0m set package 'yolo_detector' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.757s] [34mcolcon.colcon_core.verb[0m [1;30mLevel 5[0m set package 'yolo_detector' build argument 'cmake_clean_cache' from command line to 'False'
+[0.757s] [34mcolcon.colcon_core.verb[0m [1;30mLevel 5[0m set package 'yolo_detector' build argument 'cmake_clean_first' from command line to 'False'
+[0.757s] [34mcolcon.colcon_core.verb[0m [1;30mLevel 5[0m set package 'yolo_detector' build argument 'cmake_force_configure' from command line to 'False'
+[0.757s] [34mcolcon.colcon_core.verb[0m [1;30mLevel 5[0m set package 'yolo_detector' build argument 'ament_cmake_args' from command line to 'None'
+[0.757s] [34mcolcon.colcon_core.verb[0m [1;30mLevel 5[0m set package 'yolo_detector' build argument 'catkin_cmake_args' from command line to 'None'
+[0.757s] [34mcolcon.colcon_core.verb[0m [1;30mLevel 5[0m set package 'yolo_detector' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.757s] [34mcolcon.colcon_core.verb[0m [1;30mDEBUG[0m [32mBuilding package 'yolo_detector' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/jetson/ros2_ws/src/yolo_detector/build/yolo_detector', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector', 'merge_install': False, 'path': '/home/jetson/ros2_ws/src/yolo_detector', 'symlink_install': True, 'test_result_base': None}[0m
+[0.758s] [34mcolcon.colcon_core.executor[0m [1;30mINFO[0m Executing jobs using 'parallel' executor
+[0.760s] [34mcolcon.colcon_parallel_executor.executor.parallel[0m [1;30mDEBUG[0m [32mrun_until_complete[0m
+[0.760s] [34mcolcon.colcon_ros.task.ament_python.build[0m [1;30mINFO[0m Building ROS package in '/home/jetson/ros2_ws/src/yolo_detector' with build type 'ament_python'
+[0.760s] [34mcolcon.colcon_core.shell[0m [1;30mLevel 1[0m create_environment_hook('yolo_detector', 'ament_prefix_path')
+[0.764s] [34mcolcon.colcon_core.plugin_system[0m [1;30mINFO[0m Skipping extension 'colcon_core.shell.bat': Not used on non-Windows systems
+[0.764s] [34mcolcon.colcon_core.shell[0m [1;30mINFO[0m Creating environment hook '/home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector/share/yolo_detector/hook/ament_prefix_path.ps1'
+[0.766s] [34mcolcon.colcon_core.shell[0m [1;30mINFO[0m Creating environment descriptor '/home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector/share/yolo_detector/hook/ament_prefix_path.dsv'
+[0.767s] [34mcolcon.colcon_core.shell[0m [1;30mINFO[0m Creating environment hook '/home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector/share/yolo_detector/hook/ament_prefix_path.sh'
+[0.768s] [34mcolcon.colcon_core.shell[0m [1;30mINFO[0m Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.768s] [34mcolcon.colcon_core.shell[0m [1;30mDEBUG[0m [32mSkip shell extension 'dsv' for command environment[0m
+[1.269s] [34mcolcon.colcon_core.task.python.build[0m [1;30mINFO[0m Building Python package in '/home/jetson/ros2_ws/src/yolo_detector'
+[1.269s] [34mcolcon.colcon_core.shell[0m [1;30mINFO[0m Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.270s] [34mcolcon.colcon_core.shell[0m [1;30mDEBUG[0m [32mSkip shell extension 'dsv' for command environment[0m
+[1.939s] [34mcolcon.colcon_core.event_handler.log_command[0m [1;30mDEBUG[0m [32mInvoking command in '/home/jetson/ros2_ws/src/yolo_detector/build/yolo_detector': PYTHONPATH=/home/jetson/ros2_ws/src/yolo_detector/build/yolo_detector/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/jetson/ros2_ws/src/yolo_detector/build/yolo_detector/build --no-deps symlink_data[0m
+[2.833s] [34mcolcon.colcon_core.shell[0m [1;30mLevel 1[0m create_environment_hook('yolo_detector', 'pythonpath_develop')
+[2.834s] [34mcolcon.colcon_core.shell[0m [1;30mINFO[0m Creating environment hook '/home/jetson/ros2_ws/src/yolo_detector/build/yolo_detector/share/yolo_detector/hook/pythonpath_develop.ps1'
+[2.835s] [34mcolcon.colcon_core.event_handler.log_command[0m [1;30mDEBUG[0m [32mInvoked command in '/home/jetson/ros2_ws/src/yolo_detector/build/yolo_detector' returned '0': PYTHONPATH=/home/jetson/ros2_ws/src/yolo_detector/build/yolo_detector/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/jetson/ros2_ws/src/yolo_detector/build/yolo_detector/build --no-deps symlink_data[0m
+[2.837s] [34mcolcon.colcon_core.shell[0m [1;30mINFO[0m Creating environment descriptor '/home/jetson/ros2_ws/src/yolo_detector/build/yolo_detector/share/yolo_detector/hook/pythonpath_develop.dsv'
+[2.838s] [34mcolcon.colcon_core.shell[0m [1;30mINFO[0m Creating environment hook '/home/jetson/ros2_ws/src/yolo_detector/build/yolo_detector/share/yolo_detector/hook/pythonpath_develop.sh'
+[2.852s] [34mcolcon.colcon_core.environment[0m [1;30mLevel 1[0m checking '/home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector' for CMake module files
+[2.854s] [34mcolcon.colcon_core.environment[0m [1;30mLevel 1[0m checking '/home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector' for CMake config files
+[2.858s] [34mcolcon.colcon_core.environment[0m [1;30mLevel 1[0m checking '/home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector/lib'
+[2.858s] [34mcolcon.colcon_core.environment[0m [1;30mLevel 1[0m checking '/home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector/bin'
+[2.859s] [34mcolcon.colcon_core.environment[0m [1;30mLevel 1[0m checking '/home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector/lib/pkgconfig/yolo_detector.pc'
+[2.860s] [34mcolcon.colcon_core.environment[0m [1;30mLevel 1[0m checking '/home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector/lib/python3.10/site-packages'
+[2.860s] [34mcolcon.colcon_core.shell[0m [1;30mLevel 1[0m create_environment_hook('yolo_detector', 'pythonpath')
+[2.861s] [34mcolcon.colcon_core.shell[0m [1;30mINFO[0m Creating environment hook '/home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector/share/yolo_detector/hook/pythonpath.ps1'
+[2.864s] [34mcolcon.colcon_core.shell[0m [1;30mINFO[0m Creating environment descriptor '/home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector/share/yolo_detector/hook/pythonpath.dsv'
+[2.865s] [34mcolcon.colcon_core.shell[0m [1;30mINFO[0m Creating environment hook '/home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector/share/yolo_detector/hook/pythonpath.sh'
+[2.868s] [34mcolcon.colcon_core.environment[0m [1;30mLevel 1[0m checking '/home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector/bin'
+[2.868s] [34mcolcon.colcon_core.environment[0m [1;30mLevel 1[0m create_environment_scripts_only(yolo_detector)
+[2.870s] [34mcolcon.colcon_core.shell[0m [1;30mINFO[0m Creating package script '/home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector/share/yolo_detector/package.ps1'
+[2.875s] [34mcolcon.colcon_core.shell[0m [1;30mINFO[0m Creating package descriptor '/home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector/share/yolo_detector/package.dsv'
+[2.877s] [34mcolcon.colcon_core.shell[0m [1;30mINFO[0m Creating package script '/home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector/share/yolo_detector/package.sh'
+[2.880s] [34mcolcon.colcon_core.shell[0m [1;30mINFO[0m Creating package script '/home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector/share/yolo_detector/package.bash'
+[2.883s] [34mcolcon.colcon_core.shell[0m [1;30mINFO[0m Creating package script '/home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector/share/yolo_detector/package.zsh'
+[2.886s] [34mcolcon.colcon_core.environment[0m [1;30mLevel 1[0m create_file_with_runtime_dependencies(/home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector/share/colcon-core/packages/yolo_detector)
+[2.888s] [34mcolcon.colcon_parallel_executor.executor.parallel[0m [1;30mDEBUG[0m [32mclosing loop[0m
+[2.889s] [34mcolcon.colcon_parallel_executor.executor.parallel[0m [1;30mDEBUG[0m [32mloop closed[0m
+[2.890s] [34mcolcon.colcon_parallel_executor.executor.parallel[0m [1;30mDEBUG[0m [32mrun_until_complete finished with '0'[0m
+[2.891s] [34mcolcon.colcon_core.event_reactor[0m [1;30mDEBUG[0m [32mjoining thread[0m
+[2.919s] [34mcolcon.colcon_core.plugin_system[0m [1;30mINFO[0m Skipping extension 'colcon_notification.desktop_notification.terminal_notifier': Not used on non-Darwin systems
+[2.919s] [34mcolcon.colcon_core.plugin_system[0m [1;30mINFO[0m Skipping extension 'colcon_notification.desktop_notification.win32': Not used on non-Windows systems
+[2.919s] [34mcolcon.colcon_notification.desktop_notification[0m [1;30mINFO[0m Sending desktop notification using 'notify2'
+[2.982s] [34mcolcon.colcon_core.event_reactor[0m [1;30mDEBUG[0m [32mjoined thread[0m
+[2.985s] [34mcolcon.colcon_core.shell[0m [1;30mINFO[0m Creating prefix script '/home/jetson/ros2_ws/src/yolo_detector/install/local_setup.ps1'
+[2.991s] [34mcolcon.colcon_core.shell[0m [1;30mINFO[0m Creating prefix util module '/home/jetson/ros2_ws/src/yolo_detector/install/_local_setup_util_ps1.py'
+[2.998s] [34mcolcon.colcon_core.shell[0m [1;30mINFO[0m Creating prefix chain script '/home/jetson/ros2_ws/src/yolo_detector/install/setup.ps1'
+[3.004s] [34mcolcon.colcon_core.shell[0m [1;30mINFO[0m Creating prefix script '/home/jetson/ros2_ws/src/yolo_detector/install/local_setup.sh'
+[3.006s] [34mcolcon.colcon_core.shell[0m [1;30mINFO[0m Creating prefix util module '/home/jetson/ros2_ws/src/yolo_detector/install/_local_setup_util_sh.py'
+[3.008s] [34mcolcon.colcon_core.shell[0m [1;30mINFO[0m Creating prefix chain script '/home/jetson/ros2_ws/src/yolo_detector/install/setup.sh'
+[3.012s] [34mcolcon.colcon_core.shell[0m [1;30mINFO[0m Creating prefix script '/home/jetson/ros2_ws/src/yolo_detector/install/local_setup.bash'
+[3.014s] [34mcolcon.colcon_core.shell[0m [1;30mINFO[0m Creating prefix chain script '/home/jetson/ros2_ws/src/yolo_detector/install/setup.bash'
+[3.019s] [34mcolcon.colcon_core.shell[0m [1;30mINFO[0m Creating prefix script '/home/jetson/ros2_ws/src/yolo_detector/install/local_setup.zsh'
+[3.020s] [34mcolcon.colcon_core.shell[0m [1;30mINFO[0m Creating prefix chain script '/home/jetson/ros2_ws/src/yolo_detector/install/setup.zsh'

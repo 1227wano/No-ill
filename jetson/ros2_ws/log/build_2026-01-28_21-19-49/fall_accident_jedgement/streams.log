@@ -1,0 +1,37 @@
+[1.276s] Invoking command in '/home/jetson/ros2_ws/src/fall_accident_jedgement': PYTHONPATH=/home/jetson/ros2_ws/build/fall_accident_jedgement/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/jetson/ros2_ws/install/fall_accident_jedgement/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/fall_accident_jedgement build --build-base /home/jetson/ros2_ws/build/fall_accident_jedgement/build install --record /home/jetson/ros2_ws/build/fall_accident_jedgement/install.log --single-version-externally-managed install_data
+[1.760s] running egg_info
+[1.760s] creating ../../build/fall_accident_jedgement/fall_accident_jedgement.egg-info
+[1.760s] writing ../../build/fall_accident_jedgement/fall_accident_jedgement.egg-info/PKG-INFO
+[1.761s] writing dependency_links to ../../build/fall_accident_jedgement/fall_accident_jedgement.egg-info/dependency_links.txt
+[1.761s] writing entry points to ../../build/fall_accident_jedgement/fall_accident_jedgement.egg-info/entry_points.txt
+[1.761s] writing requirements to ../../build/fall_accident_jedgement/fall_accident_jedgement.egg-info/requires.txt
+[1.762s] writing top-level names to ../../build/fall_accident_jedgement/fall_accident_jedgement.egg-info/top_level.txt
+[1.762s] writing manifest file '../../build/fall_accident_jedgement/fall_accident_jedgement.egg-info/SOURCES.txt'
+[1.765s] reading manifest file '../../build/fall_accident_jedgement/fall_accident_jedgement.egg-info/SOURCES.txt'
+[1.766s] writing manifest file '../../build/fall_accident_jedgement/fall_accident_jedgement.egg-info/SOURCES.txt'
+[1.767s] running build
+[1.767s] running build_py
+[1.767s] creating /home/jetson/ros2_ws/build/fall_accident_jedgement/build
+[1.767s] creating /home/jetson/ros2_ws/build/fall_accident_jedgement/build/lib
+[1.767s] creating /home/jetson/ros2_ws/build/fall_accident_jedgement/build/lib/fall_accident_jedgement
+[1.767s] copying fall_accident_jedgement/judgement_node.py -> /home/jetson/ros2_ws/build/fall_accident_jedgement/build/lib/fall_accident_jedgement
+[1.768s] copying fall_accident_jedgement/__init__.py -> /home/jetson/ros2_ws/build/fall_accident_jedgement/build/lib/fall_accident_jedgement
+[1.768s] running install
+[1.768s] running install_lib
+[1.770s] creating /home/jetson/ros2_ws/install/fall_accident_jedgement/lib/python3.10/site-packages/fall_accident_jedgement
+[1.770s] copying /home/jetson/ros2_ws/build/fall_accident_jedgement/build/lib/fall_accident_jedgement/judgement_node.py -> /home/jetson/ros2_ws/install/fall_accident_jedgement/lib/python3.10/site-packages/fall_accident_jedgement
+[1.770s] copying /home/jetson/ros2_ws/build/fall_accident_jedgement/build/lib/fall_accident_jedgement/__init__.py -> /home/jetson/ros2_ws/install/fall_accident_jedgement/lib/python3.10/site-packages/fall_accident_jedgement
+[1.771s] byte-compiling /home/jetson/ros2_ws/install/fall_accident_jedgement/lib/python3.10/site-packages/fall_accident_jedgement/judgement_node.py to judgement_node.cpython-310.pyc
+[1.773s] byte-compiling /home/jetson/ros2_ws/install/fall_accident_jedgement/lib/python3.10/site-packages/fall_accident_jedgement/__init__.py to __init__.cpython-310.pyc
+[1.773s] running install_data
+[1.773s] creating /home/jetson/ros2_ws/install/fall_accident_jedgement/share/ament_index
+[1.773s] creating /home/jetson/ros2_ws/install/fall_accident_jedgement/share/ament_index/resource_index
+[1.773s] creating /home/jetson/ros2_ws/install/fall_accident_jedgement/share/ament_index/resource_index/packages
+[1.774s] copying resource/fall_accident_jedgement -> /home/jetson/ros2_ws/install/fall_accident_jedgement/share/ament_index/resource_index/packages
+[1.774s] copying package.xml -> /home/jetson/ros2_ws/install/fall_accident_jedgement/share/fall_accident_jedgement
+[1.774s] running install_egg_info
+[1.777s] Copying ../../build/fall_accident_jedgement/fall_accident_jedgement.egg-info to /home/jetson/ros2_ws/install/fall_accident_jedgement/lib/python3.10/site-packages/fall_accident_jedgement-0.0.0-py3.10.egg-info
+[1.779s] running install_scripts
+[1.817s] Installing judgement_node script to /home/jetson/ros2_ws/install/fall_accident_jedgement/lib/fall_accident_jedgement
+[1.817s] writing list of installed files to '/home/jetson/ros2_ws/build/fall_accident_jedgement/install.log'
+[1.881s] Invoked command in '/home/jetson/ros2_ws/src/fall_accident_jedgement' returned '0': PYTHONPATH=/home/jetson/ros2_ws/build/fall_accident_jedgement/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/jetson/ros2_ws/install/fall_accident_jedgement/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/fall_accident_jedgement build --build-base /home/jetson/ros2_ws/build/fall_accident_jedgement/build install --record /home/jetson/ros2_ws/build/fall_accident_jedgement/install.log --single-version-externally-managed install_data

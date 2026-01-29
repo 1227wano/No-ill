@@ -1,0 +1,7 @@
+numpy
+setuptools
+sherpa-onnx
+sounddevice
+
+[test]
+pytest

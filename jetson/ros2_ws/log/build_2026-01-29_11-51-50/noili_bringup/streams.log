@@ -1,0 +1,41 @@
+[1.299s] Invoking command in '/home/jetson/ros2_ws/src/noill_bringup': CMAKE_PREFIX_PATH=/home/jetson/ros2_ws/install/ydlidar_ros2_driver:/home/jetson/ros2_ws/install/rf2o_laser_odometry:/home/jetson/ros2_ws/install/tracking_drive_test:/home/jetson/ros2_ws/install/safety_override_pkg:/home/jetson/ros2_ws/install/person_override_pkg:/home/jetson/ros2_ws/install/pca_drive:/home/jetson/ros2_ws/install/keyboard_latch_cpp:/home/jetson/ros2_ws/install/chat_stop_gate PYTHONPATH=/home/jetson/ros2_ws/build/noili_bringup/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/jetson/ros2_ws/install/noili_bringup/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/noili_bringup build --build-base /home/jetson/ros2_ws/build/noili_bringup/build install --record /home/jetson/ros2_ws/build/noili_bringup/install.log --single-version-externally-managed install_data
+[1.771s] running egg_info
+[1.772s] creating ../../build/noili_bringup/noili_bringup.egg-info
+[1.773s] writing ../../build/noili_bringup/noili_bringup.egg-info/PKG-INFO
+[1.773s] writing dependency_links to ../../build/noili_bringup/noili_bringup.egg-info/dependency_links.txt
+[1.773s] writing requirements to ../../build/noili_bringup/noili_bringup.egg-info/requires.txt
+[1.774s] writing top-level names to ../../build/noili_bringup/noili_bringup.egg-info/top_level.txt
+[1.774s] writing manifest file '../../build/noili_bringup/noili_bringup.egg-info/SOURCES.txt'
+[1.777s] reading manifest file '../../build/noili_bringup/noili_bringup.egg-info/SOURCES.txt'
+[1.778s] writing manifest file '../../build/noili_bringup/noili_bringup.egg-info/SOURCES.txt'
+[1.778s] running build
+[1.778s] running build_py
+[1.779s] creating /home/jetson/ros2_ws/build/noili_bringup/build
+[1.779s] creating /home/jetson/ros2_ws/build/noili_bringup/build/lib
+[1.779s] creating /home/jetson/ros2_ws/build/noili_bringup/build/lib/noili_bringup
+[1.779s] copying noili_bringup/__init__.py -> /home/jetson/ros2_ws/build/noili_bringup/build/lib/noili_bringup
+[1.779s] running install
+[1.780s] running install_lib
+[1.781s] creating /home/jetson/ros2_ws/install/noili_bringup/lib/python3.10/site-packages/noili_bringup
+[1.781s] copying /home/jetson/ros2_ws/build/noili_bringup/build/lib/noili_bringup/__init__.py -> /home/jetson/ros2_ws/install/noili_bringup/lib/python3.10/site-packages/noili_bringup
+[1.783s] byte-compiling /home/jetson/ros2_ws/install/noili_bringup/lib/python3.10/site-packages/noili_bringup/__init__.py to __init__.cpython-310.pyc
+[1.783s] running install_data
+[1.783s] creating /home/jetson/ros2_ws/install/noili_bringup/share/ament_index
+[1.784s] creating /home/jetson/ros2_ws/install/noili_bringup/share/ament_index/resource_index
+[1.784s] creating /home/jetson/ros2_ws/install/noili_bringup/share/ament_index/resource_index/packages
+[1.784s] copying resource/noili_bringup -> /home/jetson/ros2_ws/install/noili_bringup/share/ament_index/resource_index/packages
+[1.784s] copying package.xml -> /home/jetson/ros2_ws/install/noili_bringup/share/noili_bringup
+[1.784s] creating /home/jetson/ros2_ws/install/noili_bringup/share/noili_bringup/launch
+[1.784s] copying launch/noill.sensors.launch.py -> /home/jetson/ros2_ws/install/noili_bringup/share/noili_bringup/launch
+[1.784s] copying launch/noill_full.launch.py -> /home/jetson/ros2_ws/install/noili_bringup/share/noili_bringup/launch
+[1.785s] creating /home/jetson/ros2_ws/install/noili_bringup/share/noili_bringup/config
+[1.785s] copying config/nav2_params.yaml -> /home/jetson/ros2_ws/install/noili_bringup/share/noili_bringup/config
+[1.785s] copying config/sensors.yaml -> /home/jetson/ros2_ws/install/noili_bringup/share/noili_bringup/config
+[1.785s] copying config/twist_mux.yaml -> /home/jetson/ros2_ws/install/noili_bringup/share/noili_bringup/config
+[1.785s] creating /home/jetson/ros2_ws/install/noili_bringup/share/noili_bringup/maps
+[1.785s] creating /home/jetson/ros2_ws/install/noili_bringup/share/noili_bringup/rviz
+[1.786s] running install_egg_info
+[1.789s] Copying ../../build/noili_bringup/noili_bringup.egg-info to /home/jetson/ros2_ws/install/noili_bringup/lib/python3.10/site-packages/noili_bringup-1.0.0-py3.10.egg-info
+[1.790s] running install_scripts
+[1.829s] writing list of installed files to '/home/jetson/ros2_ws/build/noili_bringup/install.log'
+[1.891s] Invoked command in '/home/jetson/ros2_ws/src/noill_bringup' returned '0': CMAKE_PREFIX_PATH=/home/jetson/ros2_ws/install/ydlidar_ros2_driver:/home/jetson/ros2_ws/install/rf2o_laser_odometry:/home/jetson/ros2_ws/install/tracking_drive_test:/home/jetson/ros2_ws/install/safety_override_pkg:/home/jetson/ros2_ws/install/person_override_pkg:/home/jetson/ros2_ws/install/pca_drive:/home/jetson/ros2_ws/install/keyboard_latch_cpp:/home/jetson/ros2_ws/install/chat_stop_gate PYTHONPATH=/home/jetson/ros2_ws/build/noili_bringup/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/jetson/ros2_ws/install/noili_bringup/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/noili_bringup build --build-base /home/jetson/ros2_ws/build/noili_bringup/build install --record /home/jetson/ros2_ws/build/noili_bringup/install.log --single-version-externally-managed install_data

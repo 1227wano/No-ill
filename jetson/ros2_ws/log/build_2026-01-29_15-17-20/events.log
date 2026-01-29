@@ -1,0 +1,403 @@
+[0.000000] (-) TimerEvent: {}
+[0.000830] (-) JobUnselected: {'identifier': 'chat_stop_gate'}
+[0.001068] (-) JobUnselected: {'identifier': 'fall_accident_judgement'}
+[0.001266] (-) JobUnselected: {'identifier': 'keyboard_latch_cpp'}
+[0.001342] (-) JobUnselected: {'identifier': 'llm'}
+[0.001475] (-) JobUnselected: {'identifier': 'my_robot_bringup'}
+[0.001539] (-) JobUnselected: {'identifier': 'no_ill_bringup'}
+[0.001573] (-) JobUnselected: {'identifier': 'pca_drive'}
+[0.001606] (-) JobUnselected: {'identifier': 'rf2o_laser_odometry'}
+[0.001653] (-) JobUnselected: {'identifier': 'robot_bringup'}
+[0.001685] (-) JobUnselected: {'identifier': 'safety_override_pkg'}
+[0.001731] (-) JobUnselected: {'identifier': 'stt'}
+[0.002065] (-) JobUnselected: {'identifier': 'tracking_drive_test'}
+[0.002129] (-) JobUnselected: {'identifier': 'tts'}
+[0.002230] (-) JobUnselected: {'identifier': 'upload_accident'}
+[0.002285] (-) JobUnselected: {'identifier': 'ydlidar_ros2_driver'}
+[0.002317] (-) JobUnselected: {'identifier': 'yolo_detector'}
+[0.002354] (person_override_pkg) JobQueued: {'identifier': 'person_override_pkg', 'dependencies': OrderedDict()}
+[0.002410] (person_override_pkg) JobStarted: {'identifier': 'person_override_pkg'}
+[0.018525] (person_override_pkg) JobProgress: {'identifier': 'person_override_pkg', 'progress': 'cmake'}
+[0.022842] (person_override_pkg) Command: {'cmd': ['/usr/bin/cmake', '/home/jetson/ros2_ws/src/person_override_pkg', '-DCMAKE_INSTALL_PREFIX=/home/jetson/ros2_ws/install/person_override_pkg'], 'cwd': '/home/jetson/ros2_ws/build/person_override_pkg', 'env': OrderedDict([('LESSOPEN', '| /usr/bin/lesspipe %s'), ('USER', 'jetson'), ('SSH_CLIENT', '10.13.243.41 55241 22'), ('XDG_SESSION_TYPE', 'tty'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/usr/local/cuda/lib64:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib'), ('MOTD_SHOWN', 'pam'), ('HOME', '/home/jetson'), ('OLDPWD', '/home/jetson/ros2_ws/src/person_override_pkg/src'), ('SSH_TTY', '/dev/pts/1'), ('ROS_PYTHON_VERSION', '3'), ('FASTDDS_SHM_TRANSPORT_DISABLED', '1'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('COLCON_PREFIX_PATH', '/home/jetson/ros2_ws/install:/home/jetson/ros2_ws/src/yolo_detector/install'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'jetson'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('TERM', 'xterm'), ('XDG_SESSION_ID', '5'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/home/jetson/.local/bin:/usr/local/cuda/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('DISPLAY', 'localhost:11.0'), ('LANG', 'ko_KR.UTF-8'), ('RMW_IMPLEMENTATION', 'rmw_fastrtps_cpp'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('ROS_DOMAIN_ID', '0'), ('AMENT_PREFIX_PATH', '/home/jetson/ros2_ws/install/yolo_detector:/home/jetson/ros2_ws/install/noili_bringup:/home/jetson/ros2_ws/install/no_ill_bringup:/home/jetson/ros2_ws/install/ydlidar_ros2_driver:/home/jetson/ros2_ws/install/tts:/home/jetson/ros2_ws/install/tracking_test:/home/jetson/ros2_ws/install/tracking_drive_test:/home/jetson/ros2_ws/install/stt:/home/jetson/ros2_ws/install/safety_override_pkg:/home/jetson/ros2_ws/install/robot_bringup:/home/jetson/ros2_ws/install/rf2o_laser_odometry:/home/jetson/ros2_ws/install/person_override_pkg:/home/jetson/ros2_ws/install/pca_drive:/home/jetson/ros2_ws/install/my_robot_bringup:/home/jetson/ros2_ws/install/llm:/home/jetson/ros2_ws/install/keyboard_latch_cpp:/home/jetson/ros2_ws/install/fall_accident_judgement:/home/jetson/ros2_ws/install/chat_stop_gate:/home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('PWD', '/home/jetson/ros2_ws/build/person_override_pkg'), ('SSH_CONNECTION', '10.13.243.41 55241 10.13.243.53 22'), ('XDG_DATA_DIRS', '/usr/share/gnome:/usr/local/share:/usr/share:/var/lib/snapd/desktop'), ('PYTHONPATH', '/home/jetson/sherpa-onnx/sherpa-onnx/python:/home/jetson/sherpa-onnx/build/lib:/home/jetson/ros2_ws/build/yolo_detector:/home/jetson/ros2_ws/install/yolo_detector/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/noili_bringup/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/no_ill_bringup/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/tts/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/tracking_test/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/stt/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/robot_bringup/lib/python3.10/site-packages:/home/jetson/ros2_ws/build/my_robot_bringup:/home/jetson/ros2_ws/install/my_robot_bringup/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/llm/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/fall_accident_judgement/lib/python3.10/site-packages:/home/jetson/ros2_ws/src/yolo_detector/build/yolo_detector:/home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages:/home/jetson/sherpa-onnx/build/../sherpa-onnx/python:/home/jetson/sherpa-onnx/build/lib'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/jetson/ros2_ws/install/ydlidar_ros2_driver:/home/jetson/ros2_ws/install/tracking_drive_test:/home/jetson/ros2_ws/install/safety_override_pkg:/home/jetson/ros2_ws/install/rf2o_laser_odometry:/home/jetson/ros2_ws/install/person_override_pkg:/home/jetson/ros2_ws/install/pca_drive:/home/jetson/ros2_ws/install/keyboard_latch_cpp:/home/jetson/ros2_ws/install/chat_stop_gate:/home/jetson/ros2_ws/install/yolo_detector:/home/jetson/ros2_ws/install/noili_bringup:/home/jetson/ros2_ws/install/no_ill_bringup:/home/jetson/ros2_ws/install/tts:/home/jetson/ros2_ws/install/tracking_test:/home/jetson/ros2_ws/install/stt:/home/jetson/ros2_ws/install/robot_bringup:/home/jetson/ros2_ws/install/my_robot_bringup:/home/jetson/ros2_ws/install/llm:/home/jetson/ros2_ws/install/fall_accident_judgement:/home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector:/opt/ros/humble')]), 'shell': False}
+[0.099424] (-) TimerEvent: {}
+[0.135469] (person_override_pkg) StdoutLine: {'line': b'-- Found ament_cmake: 1.3.12 (/opt/ros/humble/share/ament_cmake/cmake)\n'}
+[0.199540] (-) TimerEvent: {}
+[0.300170] (-) TimerEvent: {}
+[0.400889] (-) TimerEvent: {}
+[0.494176] (person_override_pkg) StdoutLine: {'line': b'-- Override CMake install command with custom implementation using symlinks instead of copying resources\n'}
+[0.501090] (-) TimerEvent: {}
+[0.568320] (person_override_pkg) StdoutLine: {'line': b'-- Found rclcpp: 16.0.17 (/opt/ros/humble/share/rclcpp/cmake)\n'}
+[0.601531] (-) TimerEvent: {}
+[0.703607] (-) TimerEvent: {}
+[0.734986] (person_override_pkg) StdoutLine: {'line': b'-- Found rosidl_generator_c: 3.1.8 (/opt/ros/humble/share/rosidl_generator_c/cmake)\n'}
+[0.744855] (person_override_pkg) StdoutLine: {'line': b'-- Found rosidl_adapter: 3.1.8 (/opt/ros/humble/share/rosidl_adapter/cmake)\n'}
+[0.766915] (person_override_pkg) StdoutLine: {'line': b'-- Found rosidl_generator_cpp: 3.1.8 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)\n'}
+[0.801412] (person_override_pkg) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[0.803522] (-) TimerEvent: {}
+[0.838303] (person_override_pkg) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[0.903843] (-) TimerEvent: {}
+[0.949632] (person_override_pkg) StdoutLine: {'line': b'-- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)\n'}
+[0.958203] (person_override_pkg) StdoutLine: {'line': b'-- Found rmw_fastrtps_cpp: 6.2.9 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)\n'}
+[1.004089] (-) TimerEvent: {}
+[1.105137] (-) TimerEvent: {}
+[1.206035] (-) TimerEvent: {}
+[1.230418] (person_override_pkg) StdoutLine: {'line': b"-- Using RMW implementation 'rmw_fastrtps_cpp' as default\n"}
+[1.306202] (-) TimerEvent: {}
+[1.402908] (person_override_pkg) StdoutLine: {'line': b'-- Found geometry_msgs: 4.9.0 (/opt/ros/humble/share/geometry_msgs/cmake)\n'}
+[1.406345] (-) TimerEvent: {}
+[1.507057] (-) TimerEvent: {}
+[1.608155] (-) TimerEvent: {}
+[1.613585] (person_override_pkg) StdoutLine: {'line': b'-- Configuring done\n'}
+[1.699802] (person_override_pkg) StdoutLine: {'line': b'-- Generating done\n'}
+[1.708154] (-) TimerEvent: {}
+[1.713319] (person_override_pkg) StdoutLine: {'line': b'-- Build files have been written to: /home/jetson/ros2_ws/build/person_override_pkg\n'}
+[1.734478] (person_override_pkg) CommandEnded: {'returncode': 0}
+[1.735938] (person_override_pkg) JobProgress: {'identifier': 'person_override_pkg', 'progress': 'build'}
+[1.737533] (person_override_pkg) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/jetson/ros2_ws/build/person_override_pkg', '--', '-j6', '-l6'], 'cwd': '/home/jetson/ros2_ws/build/person_override_pkg', 'env': OrderedDict([('LESSOPEN', '| /usr/bin/lesspipe %s'), ('USER', 'jetson'), ('SSH_CLIENT', '10.13.243.41 55241 22'), ('XDG_SESSION_TYPE', 'tty'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/usr/local/cuda/lib64:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib'), ('MOTD_SHOWN', 'pam'), ('HOME', '/home/jetson'), ('OLDPWD', '/home/jetson/ros2_ws/src/person_override_pkg/src'), ('SSH_TTY', '/dev/pts/1'), ('ROS_PYTHON_VERSION', '3'), ('FASTDDS_SHM_TRANSPORT_DISABLED', '1'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('COLCON_PREFIX_PATH', '/home/jetson/ros2_ws/install:/home/jetson/ros2_ws/src/yolo_detector/install'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'jetson'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('TERM', 'xterm'), ('XDG_SESSION_ID', '5'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/home/jetson/.local/bin:/usr/local/cuda/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('DISPLAY', 'localhost:11.0'), ('LANG', 'ko_KR.UTF-8'), ('RMW_IMPLEMENTATION', 'rmw_fastrtps_cpp'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('ROS_DOMAIN_ID', '0'), ('AMENT_PREFIX_PATH', '/home/jetson/ros2_ws/install/yolo_detector:/home/jetson/ros2_ws/install/noili_bringup:/home/jetson/ros2_ws/install/no_ill_bringup:/home/jetson/ros2_ws/install/ydlidar_ros2_driver:/home/jetson/ros2_ws/install/tts:/home/jetson/ros2_ws/install/tracking_test:/home/jetson/ros2_ws/install/tracking_drive_test:/home/jetson/ros2_ws/install/stt:/home/jetson/ros2_ws/install/safety_override_pkg:/home/jetson/ros2_ws/install/robot_bringup:/home/jetson/ros2_ws/install/rf2o_laser_odometry:/home/jetson/ros2_ws/install/person_override_pkg:/home/jetson/ros2_ws/install/pca_drive:/home/jetson/ros2_ws/install/my_robot_bringup:/home/jetson/ros2_ws/install/llm:/home/jetson/ros2_ws/install/keyboard_latch_cpp:/home/jetson/ros2_ws/install/fall_accident_judgement:/home/jetson/ros2_ws/install/chat_stop_gate:/home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('PWD', '/home/jetson/ros2_ws/build/person_override_pkg'), ('SSH_CONNECTION', '10.13.243.41 55241 10.13.243.53 22'), ('XDG_DATA_DIRS', '/usr/share/gnome:/usr/local/share:/usr/share:/var/lib/snapd/desktop'), ('PYTHONPATH', '/home/jetson/sherpa-onnx/sherpa-onnx/python:/home/jetson/sherpa-onnx/build/lib:/home/jetson/ros2_ws/build/yolo_detector:/home/jetson/ros2_ws/install/yolo_detector/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/noili_bringup/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/no_ill_bringup/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/tts/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/tracking_test/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/stt/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/robot_bringup/lib/python3.10/site-packages:/home/jetson/ros2_ws/build/my_robot_bringup:/home/jetson/ros2_ws/install/my_robot_bringup/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/llm/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/fall_accident_judgement/lib/python3.10/site-packages:/home/jetson/ros2_ws/src/yolo_detector/build/yolo_detector:/home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages:/home/jetson/sherpa-onnx/build/../sherpa-onnx/python:/home/jetson/sherpa-onnx/build/lib'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/jetson/ros2_ws/install/ydlidar_ros2_driver:/home/jetson/ros2_ws/install/tracking_drive_test:/home/jetson/ros2_ws/install/safety_override_pkg:/home/jetson/ros2_ws/install/rf2o_laser_odometry:/home/jetson/ros2_ws/install/person_override_pkg:/home/jetson/ros2_ws/install/pca_drive:/home/jetson/ros2_ws/install/keyboard_latch_cpp:/home/jetson/ros2_ws/install/chat_stop_gate:/home/jetson/ros2_ws/install/yolo_detector:/home/jetson/ros2_ws/install/noili_bringup:/home/jetson/ros2_ws/install/no_ill_bringup:/home/jetson/ros2_ws/install/tts:/home/jetson/ros2_ws/install/tracking_test:/home/jetson/ros2_ws/install/stt:/home/jetson/ros2_ws/install/robot_bringup:/home/jetson/ros2_ws/install/my_robot_bringup:/home/jetson/ros2_ws/install/llm:/home/jetson/ros2_ws/install/fall_accident_judgement:/home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector:/opt/ros/humble')]), 'shell': False}
+[1.808425] (-) TimerEvent: {}
+[1.839767] (person_override_pkg) StdoutLine: {'line': b'\x1b[35m\x1b[1mConsolidate compiler generated dependencies of target person_override_node\x1b[0m\n'}
+[1.909145] (-) TimerEvent: {}
+[1.966740] (person_override_pkg) StdoutLine: {'line': b'[ 50%] \x1b[32mBuilding CXX object CMakeFiles/person_override_node.dir/src/person_override_node.cpp.o\x1b[0m\n'}
+[2.009643] (-) TimerEvent: {}
+[2.112266] (-) TimerEvent: {}
+[2.214838] (-) TimerEvent: {}
+[2.317438] (-) TimerEvent: {}
+[2.419880] (-) TimerEvent: {}
+[2.522469] (-) TimerEvent: {}
+[2.625183] (-) TimerEvent: {}
+[2.727242] (-) TimerEvent: {}
+[2.828309] (-) TimerEvent: {}
+[2.929302] (-) TimerEvent: {}
+[3.030098] (-) TimerEvent: {}
+[3.131002] (-) TimerEvent: {}
+[3.232145] (-) TimerEvent: {}
+[3.333486] (-) TimerEvent: {}
+[3.435579] (-) TimerEvent: {}
+[3.536739] (-) TimerEvent: {}
+[3.637561] (-) TimerEvent: {}
+[3.738376] (-) TimerEvent: {}
+[3.839185] (-) TimerEvent: {}
+[3.940025] (-) TimerEvent: {}
+[4.040806] (-) TimerEvent: {}
+[4.141588] (-) TimerEvent: {}
+[4.242281] (-) TimerEvent: {}
+[4.342827] (-) TimerEvent: {}
+[4.443348] (-) TimerEvent: {}
+[4.543885] (-) TimerEvent: {}
+[4.644448] (-) TimerEvent: {}
+[4.744974] (-) TimerEvent: {}
+[4.845479] (-) TimerEvent: {}
+[4.946039] (-) TimerEvent: {}
+[5.046699] (-) TimerEvent: {}
+[5.147382] (-) TimerEvent: {}
+[5.248029] (-) TimerEvent: {}
+[5.348537] (-) TimerEvent: {}
+[5.449065] (-) TimerEvent: {}
+[5.549558] (-) TimerEvent: {}
+[5.650096] (-) TimerEvent: {}
+[5.750659] (-) TimerEvent: {}
+[5.851170] (-) TimerEvent: {}
+[5.951693] (-) TimerEvent: {}
+[6.052332] (-) TimerEvent: {}
+[6.153049] (-) TimerEvent: {}
+[6.253651] (-) TimerEvent: {}
+[6.354216] (-) TimerEvent: {}
+[6.454745] (-) TimerEvent: {}
+[6.555311] (-) TimerEvent: {}
+[6.655905] (-) TimerEvent: {}
+[6.756511] (-) TimerEvent: {}
+[6.857083] (-) TimerEvent: {}
+[6.957630] (-) TimerEvent: {}
+[7.058266] (-) TimerEvent: {}
+[7.159012] (-) TimerEvent: {}
+[7.259597] (-) TimerEvent: {}
+[7.360170] (-) TimerEvent: {}
+[7.460698] (-) TimerEvent: {}
+[7.561336] (-) TimerEvent: {}
+[7.662157] (-) TimerEvent: {}
+[7.762994] (-) TimerEvent: {}
+[7.863822] (-) TimerEvent: {}
+[7.964662] (-) TimerEvent: {}
+[8.065487] (-) TimerEvent: {}
+[8.166298] (-) TimerEvent: {}
+[8.267130] (-) TimerEvent: {}
+[8.367979] (-) TimerEvent: {}
+[8.469005] (-) TimerEvent: {}
+[8.569826] (-) TimerEvent: {}
+[8.670666] (-) TimerEvent: {}
+[8.771520] (-) TimerEvent: {}
+[8.872348] (-) TimerEvent: {}
+[8.973170] (-) TimerEvent: {}
+[9.073982] (-) TimerEvent: {}
+[9.174793] (-) TimerEvent: {}
+[9.275604] (-) TimerEvent: {}
+[9.376465] (-) TimerEvent: {}
+[9.477290] (-) TimerEvent: {}
+[9.578098] (-) TimerEvent: {}
+[9.678973] (-) TimerEvent: {}
+[9.779798] (-) TimerEvent: {}
+[9.880656] (-) TimerEvent: {}
+[9.981494] (-) TimerEvent: {}
+[10.082309] (-) TimerEvent: {}
+[10.183134] (-) TimerEvent: {}
+[10.283992] (-) TimerEvent: {}
+[10.384811] (-) TimerEvent: {}
+[10.485621] (-) TimerEvent: {}
+[10.586384] (-) TimerEvent: {}
+[10.687052] (-) TimerEvent: {}
+[10.787665] (-) TimerEvent: {}
+[10.888237] (-) TimerEvent: {}
+[10.989033] (-) TimerEvent: {}
+[11.089696] (-) TimerEvent: {}
+[11.190420] (-) TimerEvent: {}
+[11.291090] (-) TimerEvent: {}
+[11.391694] (-) TimerEvent: {}
+[11.492301] (-) TimerEvent: {}
+[11.592881] (-) TimerEvent: {}
+[11.693460] (-) TimerEvent: {}
+[11.794041] (-) TimerEvent: {}
+[11.894606] (-) TimerEvent: {}
+[11.995219] (-) TimerEvent: {}
+[12.095933] (-) TimerEvent: {}
+[12.196688] (-) TimerEvent: {}
+[12.297298] (-) TimerEvent: {}
+[12.397858] (-) TimerEvent: {}
+[12.498436] (-) TimerEvent: {}
+[12.599024] (-) TimerEvent: {}
+[12.699603] (-) TimerEvent: {}
+[12.800203] (-) TimerEvent: {}
+[12.900715] (-) TimerEvent: {}
+[13.001242] (-) TimerEvent: {}
+[13.101860] (-) TimerEvent: {}
+[13.202587] (-) TimerEvent: {}
+[13.303160] (-) TimerEvent: {}
+[13.403687] (-) TimerEvent: {}
+[13.504306] (-) TimerEvent: {}
+[13.604798] (-) TimerEvent: {}
+[13.705320] (-) TimerEvent: {}
+[13.805846] (-) TimerEvent: {}
+[13.906334] (-) TimerEvent: {}
+[14.006965] (-) TimerEvent: {}
+[14.107740] (-) TimerEvent: {}
+[14.208490] (-) TimerEvent: {}
+[14.309065] (-) TimerEvent: {}
+[14.409580] (-) TimerEvent: {}
+[14.510117] (-) TimerEvent: {}
+[14.610638] (-) TimerEvent: {}
+[14.711428] (-) TimerEvent: {}
+[14.811973] (-) TimerEvent: {}
+[14.912533] (-) TimerEvent: {}
+[15.013202] (-) TimerEvent: {}
+[15.114003] (-) TimerEvent: {}
+[15.214757] (-) TimerEvent: {}
+[15.315397] (-) TimerEvent: {}
+[15.416006] (-) TimerEvent: {}
+[15.516573] (-) TimerEvent: {}
+[15.617127] (-) TimerEvent: {}
+[15.717689] (-) TimerEvent: {}
+[15.818246] (-) TimerEvent: {}
+[15.918826] (-) TimerEvent: {}
+[16.019459] (-) TimerEvent: {}
+[16.120136] (-) TimerEvent: {}
+[16.220866] (-) TimerEvent: {}
+[16.321492] (-) TimerEvent: {}
+[16.422052] (-) TimerEvent: {}
+[16.522607] (-) TimerEvent: {}
+[16.623198] (-) TimerEvent: {}
+[16.723746] (-) TimerEvent: {}
+[16.824327] (-) TimerEvent: {}
+[16.924888] (-) TimerEvent: {}
+[17.025459] (-) TimerEvent: {}
+[17.126102] (-) TimerEvent: {}
+[17.226831] (-) TimerEvent: {}
+[17.327495] (-) TimerEvent: {}
+[17.428112] (-) TimerEvent: {}
+[17.528696] (-) TimerEvent: {}
+[17.629267] (-) TimerEvent: {}
+[17.729808] (-) TimerEvent: {}
+[17.830345] (-) TimerEvent: {}
+[17.930874] (-) TimerEvent: {}
+[18.031399] (-) TimerEvent: {}
+[18.132132] (-) TimerEvent: {}
+[18.233457] (-) TimerEvent: {}
+[18.334097] (-) TimerEvent: {}
+[18.434713] (-) TimerEvent: {}
+[18.535334] (-) TimerEvent: {}
+[18.635919] (-) TimerEvent: {}
+[18.736490] (-) TimerEvent: {}
+[18.837052] (-) TimerEvent: {}
+[18.937652] (-) TimerEvent: {}
+[19.038228] (-) TimerEvent: {}
+[19.138871] (-) TimerEvent: {}
+[19.239604] (-) TimerEvent: {}
+[19.340257] (-) TimerEvent: {}
+[19.440832] (-) TimerEvent: {}
+[19.541356] (-) TimerEvent: {}
+[19.641859] (-) TimerEvent: {}
+[19.753690] (-) TimerEvent: {}
+[19.854223] (-) TimerEvent: {}
+[19.954844] (-) TimerEvent: {}
+[20.055546] (-) TimerEvent: {}
+[20.156206] (-) TimerEvent: {}
+[20.256933] (-) TimerEvent: {}
+[20.357600] (-) TimerEvent: {}
+[20.458198] (-) TimerEvent: {}
+[20.558795] (-) TimerEvent: {}
+[20.659397] (-) TimerEvent: {}
+[20.760106] (-) TimerEvent: {}
+[20.860972] (-) TimerEvent: {}
+[20.961825] (-) TimerEvent: {}
+[21.062666] (-) TimerEvent: {}
+[21.163527] (-) TimerEvent: {}
+[21.264165] (-) TimerEvent: {}
+[21.364786] (-) TimerEvent: {}
+[21.465424] (-) TimerEvent: {}
+[21.566040] (-) TimerEvent: {}
+[21.666652] (-) TimerEvent: {}
+[21.767274] (-) TimerEvent: {}
+[21.867901] (-) TimerEvent: {}
+[21.968533] (-) TimerEvent: {}
+[22.069141] (-) TimerEvent: {}
+[22.169765] (-) TimerEvent: {}
+[22.270388] (-) TimerEvent: {}
+[22.371024] (-) TimerEvent: {}
+[22.471669] (-) TimerEvent: {}
+[22.572301] (-) TimerEvent: {}
+[22.672917] (-) TimerEvent: {}
+[22.773549] (-) TimerEvent: {}
+[22.874190] (-) TimerEvent: {}
+[22.974828] (-) TimerEvent: {}
+[23.075458] (-) TimerEvent: {}
+[23.176110] (-) TimerEvent: {}
+[23.276729] (-) TimerEvent: {}
+[23.377367] (-) TimerEvent: {}
+[23.477981] (-) TimerEvent: {}
+[23.578613] (-) TimerEvent: {}
+[23.679230] (-) TimerEvent: {}
+[23.779867] (-) TimerEvent: {}
+[23.880524] (-) TimerEvent: {}
+[23.981128] (-) TimerEvent: {}
+[24.081740] (-) TimerEvent: {}
+[24.182374] (-) TimerEvent: {}
+[24.283001] (-) TimerEvent: {}
+[24.383636] (-) TimerEvent: {}
+[24.484288] (-) TimerEvent: {}
+[24.584930] (-) TimerEvent: {}
+[24.685554] (-) TimerEvent: {}
+[24.786173] (-) TimerEvent: {}
+[24.886789] (-) TimerEvent: {}
+[24.987412] (-) TimerEvent: {}
+[25.088036] (-) TimerEvent: {}
+[25.188661] (-) TimerEvent: {}
+[25.289273] (-) TimerEvent: {}
+[25.389893] (-) TimerEvent: {}
+[25.490505] (-) TimerEvent: {}
+[25.591116] (-) TimerEvent: {}
+[25.691728] (-) TimerEvent: {}
+[25.792367] (-) TimerEvent: {}
+[25.892971] (-) TimerEvent: {}
+[25.993576] (-) TimerEvent: {}
+[26.094174] (-) TimerEvent: {}
+[26.194810] (-) TimerEvent: {}
+[26.295445] (-) TimerEvent: {}
+[26.396088] (-) TimerEvent: {}
+[26.496701] (-) TimerEvent: {}
+[26.597310] (-) TimerEvent: {}
+[26.697934] (-) TimerEvent: {}
+[26.798590] (-) TimerEvent: {}
+[26.899204] (-) TimerEvent: {}
+[26.999809] (-) TimerEvent: {}
+[27.100461] (-) TimerEvent: {}
+[27.201081] (-) TimerEvent: {}
+[27.301708] (-) TimerEvent: {}
+[27.402322] (-) TimerEvent: {}
+[27.502934] (-) TimerEvent: {}
+[27.603535] (-) TimerEvent: {}
+[27.704181] (-) TimerEvent: {}
+[27.804792] (-) TimerEvent: {}
+[27.905409] (-) TimerEvent: {}
+[28.006016] (-) TimerEvent: {}
+[28.106614] (-) TimerEvent: {}
+[28.207230] (-) TimerEvent: {}
+[28.307847] (-) TimerEvent: {}
+[28.408514] (-) TimerEvent: {}
+[28.509273] (-) TimerEvent: {}
+[28.610721] (-) TimerEvent: {}
+[28.712871] (-) TimerEvent: {}
+[28.814666] (-) TimerEvent: {}
+[28.916653] (-) TimerEvent: {}
+[29.018642] (-) TimerEvent: {}
+[29.120526] (-) TimerEvent: {}
+[29.222325] (-) TimerEvent: {}
+[29.324370] (-) TimerEvent: {}
+[29.426766] (-) TimerEvent: {}
+[29.528762] (-) TimerEvent: {}
+[29.629999] (-) TimerEvent: {}
+[29.731533] (-) TimerEvent: {}
+[31.075767] (-) TimerEvent: {}
+[31.176898] (-) TimerEvent: {}
+[31.277546] (-) TimerEvent: {}
+[31.378184] (-) TimerEvent: {}
+[31.478825] (-) TimerEvent: {}
+[31.579471] (-) TimerEvent: {}
+[31.680126] (-) TimerEvent: {}
+[31.780777] (-) TimerEvent: {}
+[31.881423] (-) TimerEvent: {}
+[31.982067] (-) TimerEvent: {}
+[32.082722] (-) TimerEvent: {}
+[32.183370] (-) TimerEvent: {}
+[32.284036] (-) TimerEvent: {}
+[32.384680] (-) TimerEvent: {}
+[32.485324] (-) TimerEvent: {}
+[32.585971] (-) TimerEvent: {}
+[32.686640] (-) TimerEvent: {}
+[32.787312] (-) TimerEvent: {}
+[32.887986] (-) TimerEvent: {}
+[32.988645] (-) TimerEvent: {}
+[33.089310] (-) TimerEvent: {}
+[33.189961] (-) TimerEvent: {}
+[33.290645] (-) TimerEvent: {}
+[33.391297] (-) TimerEvent: {}
+[33.469730] (person_override_pkg) StdoutLine: {'line': b'[100%] \x1b[32m\x1b[1mLinking CXX executable person_override_node\x1b[0m\n'}
+[33.491595] (-) TimerEvent: {}
+[33.592580] (-) TimerEvent: {}
+[33.693260] (-) TimerEvent: {}
+[33.793938] (-) TimerEvent: {}
+[33.894594] (-) TimerEvent: {}
+[33.995288] (-) TimerEvent: {}
+[34.095924] (-) TimerEvent: {}
+[34.196579] (-) TimerEvent: {}
+[34.297240] (-) TimerEvent: {}
+[34.397897] (-) TimerEvent: {}
+[34.498564] (-) TimerEvent: {}
+[34.599208] (-) TimerEvent: {}
+[34.699889] (-) TimerEvent: {}
+[34.800529] (-) TimerEvent: {}
+[34.901174] (-) TimerEvent: {}
+[34.924748] (person_override_pkg) StdoutLine: {'line': b'[100%] Built target person_override_node\n'}
+[34.954711] (person_override_pkg) CommandEnded: {'returncode': 0}
+[34.961279] (person_override_pkg) JobProgress: {'identifier': 'person_override_pkg', 'progress': 'install'}
+[34.988012] (person_override_pkg) Command: {'cmd': ['/usr/bin/cmake', '--install', '/home/jetson/ros2_ws/build/person_override_pkg'], 'cwd': '/home/jetson/ros2_ws/build/person_override_pkg', 'env': OrderedDict([('LESSOPEN', '| /usr/bin/lesspipe %s'), ('USER', 'jetson'), ('SSH_CLIENT', '10.13.243.41 55241 22'), ('XDG_SESSION_TYPE', 'tty'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/usr/local/cuda/lib64:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib'), ('MOTD_SHOWN', 'pam'), ('HOME', '/home/jetson'), ('OLDPWD', '/home/jetson/ros2_ws/src/person_override_pkg/src'), ('SSH_TTY', '/dev/pts/1'), ('ROS_PYTHON_VERSION', '3'), ('FASTDDS_SHM_TRANSPORT_DISABLED', '1'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('COLCON_PREFIX_PATH', '/home/jetson/ros2_ws/install:/home/jetson/ros2_ws/src/yolo_detector/install'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'jetson'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('TERM', 'xterm'), ('XDG_SESSION_ID', '5'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/home/jetson/.local/bin:/usr/local/cuda/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('DISPLAY', 'localhost:11.0'), ('LANG', 'ko_KR.UTF-8'), ('RMW_IMPLEMENTATION', 'rmw_fastrtps_cpp'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('ROS_DOMAIN_ID', '0'), ('AMENT_PREFIX_PATH', '/home/jetson/ros2_ws/install/yolo_detector:/home/jetson/ros2_ws/install/noili_bringup:/home/jetson/ros2_ws/install/no_ill_bringup:/home/jetson/ros2_ws/install/ydlidar_ros2_driver:/home/jetson/ros2_ws/install/tts:/home/jetson/ros2_ws/install/tracking_test:/home/jetson/ros2_ws/install/tracking_drive_test:/home/jetson/ros2_ws/install/stt:/home/jetson/ros2_ws/install/safety_override_pkg:/home/jetson/ros2_ws/install/robot_bringup:/home/jetson/ros2_ws/install/rf2o_laser_odometry:/home/jetson/ros2_ws/install/person_override_pkg:/home/jetson/ros2_ws/install/pca_drive:/home/jetson/ros2_ws/install/my_robot_bringup:/home/jetson/ros2_ws/install/llm:/home/jetson/ros2_ws/install/keyboard_latch_cpp:/home/jetson/ros2_ws/install/fall_accident_judgement:/home/jetson/ros2_ws/install/chat_stop_gate:/home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('PWD', '/home/jetson/ros2_ws/build/person_override_pkg'), ('SSH_CONNECTION', '10.13.243.41 55241 10.13.243.53 22'), ('XDG_DATA_DIRS', '/usr/share/gnome:/usr/local/share:/usr/share:/var/lib/snapd/desktop'), ('PYTHONPATH', '/home/jetson/sherpa-onnx/sherpa-onnx/python:/home/jetson/sherpa-onnx/build/lib:/home/jetson/ros2_ws/build/yolo_detector:/home/jetson/ros2_ws/install/yolo_detector/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/noili_bringup/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/no_ill_bringup/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/tts/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/tracking_test/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/stt/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/robot_bringup/lib/python3.10/site-packages:/home/jetson/ros2_ws/build/my_robot_bringup:/home/jetson/ros2_ws/install/my_robot_bringup/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/llm/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/fall_accident_judgement/lib/python3.10/site-packages:/home/jetson/ros2_ws/src/yolo_detector/build/yolo_detector:/home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages:/home/jetson/sherpa-onnx/build/../sherpa-onnx/python:/home/jetson/sherpa-onnx/build/lib'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/jetson/ros2_ws/install/ydlidar_ros2_driver:/home/jetson/ros2_ws/install/tracking_drive_test:/home/jetson/ros2_ws/install/safety_override_pkg:/home/jetson/ros2_ws/install/rf2o_laser_odometry:/home/jetson/ros2_ws/install/person_override_pkg:/home/jetson/ros2_ws/install/pca_drive:/home/jetson/ros2_ws/install/keyboard_latch_cpp:/home/jetson/ros2_ws/install/chat_stop_gate:/home/jetson/ros2_ws/install/yolo_detector:/home/jetson/ros2_ws/install/noili_bringup:/home/jetson/ros2_ws/install/no_ill_bringup:/home/jetson/ros2_ws/install/tts:/home/jetson/ros2_ws/install/tracking_test:/home/jetson/ros2_ws/install/stt:/home/jetson/ros2_ws/install/robot_bringup:/home/jetson/ros2_ws/install/my_robot_bringup:/home/jetson/ros2_ws/install/llm:/home/jetson/ros2_ws/install/fall_accident_judgement:/home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector:/opt/ros/humble')]), 'shell': False}
+[35.001504] (-) TimerEvent: {}
+[35.018408] (person_override_pkg) StdoutLine: {'line': b'-- Install configuration: ""\n'}
+[35.033565] (person_override_pkg) StdoutLine: {'line': b'-- Execute custom install script\n'}
+[35.034210] (person_override_pkg) StdoutLine: {'line': b'-- Up-to-date symlink: /home/jetson/ros2_ws/install/person_override_pkg/lib/person_override_pkg/person_override_node\n'}
+[35.034647] (person_override_pkg) StdoutLine: {'line': b'-- Up-to-date symlink: /home/jetson/ros2_ws/install/person_override_pkg/share/ament_index/resource_index/package_run_dependencies/person_override_pkg\n'}
+[35.034999] (person_override_pkg) StdoutLine: {'line': b'-- Up-to-date symlink: /home/jetson/ros2_ws/install/person_override_pkg/share/ament_index/resource_index/parent_prefix_path/person_override_pkg\n'}
+[35.035353] (person_override_pkg) StdoutLine: {'line': b'-- Up-to-date symlink: /home/jetson/ros2_ws/install/person_override_pkg/share/person_override_pkg/environment/ament_prefix_path.sh\n'}
+[35.036176] (person_override_pkg) StdoutLine: {'line': b'-- Up-to-date symlink: /home/jetson/ros2_ws/install/person_override_pkg/share/person_override_pkg/environment/ament_prefix_path.dsv\n'}
+[35.036586] (person_override_pkg) StdoutLine: {'line': b'-- Up-to-date symlink: /home/jetson/ros2_ws/install/person_override_pkg/share/person_override_pkg/environment/path.sh\n'}
+[35.036983] (person_override_pkg) StdoutLine: {'line': b'-- Up-to-date symlink: /home/jetson/ros2_ws/install/person_override_pkg/share/person_override_pkg/environment/path.dsv\n'}
+[35.037306] (person_override_pkg) StdoutLine: {'line': b'-- Up-to-date symlink: /home/jetson/ros2_ws/install/person_override_pkg/share/person_override_pkg/local_setup.bash\n'}
+[35.037602] (person_override_pkg) StdoutLine: {'line': b'-- Up-to-date symlink: /home/jetson/ros2_ws/install/person_override_pkg/share/person_override_pkg/local_setup.sh\n'}
+[35.037891] (person_override_pkg) StdoutLine: {'line': b'-- Up-to-date symlink: /home/jetson/ros2_ws/install/person_override_pkg/share/person_override_pkg/local_setup.zsh\n'}
+[35.038171] (person_override_pkg) StdoutLine: {'line': b'-- Up-to-date symlink: /home/jetson/ros2_ws/install/person_override_pkg/share/person_override_pkg/local_setup.dsv\n'}
+[35.038440] (person_override_pkg) StdoutLine: {'line': b'-- Symlinking: /home/jetson/ros2_ws/install/person_override_pkg/share/person_override_pkg/package.dsv\n'}
+[35.063226] (person_override_pkg) StdoutLine: {'line': b'-- Up-to-date symlink: /home/jetson/ros2_ws/install/person_override_pkg/share/ament_index/resource_index/packages/person_override_pkg\n'}
+[35.064211] (person_override_pkg) StdoutLine: {'line': b'-- Up-to-date symlink: /home/jetson/ros2_ws/install/person_override_pkg/share/person_override_pkg/cmake/person_override_pkgConfig.cmake\n'}
+[35.064560] (person_override_pkg) StdoutLine: {'line': b'-- Up-to-date symlink: /home/jetson/ros2_ws/install/person_override_pkg/share/person_override_pkg/cmake/person_override_pkgConfig-version.cmake\n'}
+[35.064833] (person_override_pkg) StdoutLine: {'line': b'-- Up-to-date symlink: /home/jetson/ros2_ws/install/person_override_pkg/share/person_override_pkg/package.xml\n'}
+[35.070138] (person_override_pkg) CommandEnded: {'returncode': 0}
+[35.101797] (-) TimerEvent: {}
+[35.156484] (person_override_pkg) JobEnded: {'identifier': 'person_override_pkg', 'rc': 0}
+[35.160619] (-) EventReactorShutdown: {}

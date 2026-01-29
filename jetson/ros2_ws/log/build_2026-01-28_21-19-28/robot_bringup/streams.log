@@ -1,0 +1,40 @@
+[1.746s] Invoking command in '/home/jetson/ros2_ws/src/robot_bringup': PYTHONPATH=/home/jetson/ros2_ws/build/robot_bringup/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/jetson/ros2_ws/install/robot_bringup/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/robot_bringup build --build-base /home/jetson/ros2_ws/build/robot_bringup/build install --record /home/jetson/ros2_ws/build/robot_bringup/install.log --single-version-externally-managed install_data
+[2.225s] running egg_info
+[2.226s] creating ../../build/robot_bringup/robot_bringup.egg-info
+[2.226s] writing ../../build/robot_bringup/robot_bringup.egg-info/PKG-INFO
+[2.227s] writing dependency_links to ../../build/robot_bringup/robot_bringup.egg-info/dependency_links.txt
+[2.228s] writing entry points to ../../build/robot_bringup/robot_bringup.egg-info/entry_points.txt
+[2.228s] writing requirements to ../../build/robot_bringup/robot_bringup.egg-info/requires.txt
+[2.228s] writing top-level names to ../../build/robot_bringup/robot_bringup.egg-info/top_level.txt
+[2.229s] writing manifest file '../../build/robot_bringup/robot_bringup.egg-info/SOURCES.txt'
+[2.231s] reading manifest file '../../build/robot_bringup/robot_bringup.egg-info/SOURCES.txt'
+[2.232s] writing manifest file '../../build/robot_bringup/robot_bringup.egg-info/SOURCES.txt'
+[2.233s] running build
+[2.233s] running build_py
+[2.233s] creating /home/jetson/ros2_ws/build/robot_bringup/build
+[2.234s] creating /home/jetson/ros2_ws/build/robot_bringup/build/lib
+[2.234s] creating /home/jetson/ros2_ws/build/robot_bringup/build/lib/robot_bringup
+[2.234s] copying robot_bringup/__init__.py -> /home/jetson/ros2_ws/build/robot_bringup/build/lib/robot_bringup
+[2.234s] running install
+[2.235s] running install_lib
+[2.236s] creating /home/jetson/ros2_ws/install/robot_bringup/lib/python3.10/site-packages/robot_bringup
+[2.236s] copying /home/jetson/ros2_ws/build/robot_bringup/build/lib/robot_bringup/__init__.py -> /home/jetson/ros2_ws/install/robot_bringup/lib/python3.10/site-packages/robot_bringup
+[2.237s] byte-compiling /home/jetson/ros2_ws/install/robot_bringup/lib/python3.10/site-packages/robot_bringup/__init__.py to __init__.cpython-310.pyc
+[2.237s] running install_data
+[2.238s] creating /home/jetson/ros2_ws/install/robot_bringup/share/ament_index
+[2.238s] creating /home/jetson/ros2_ws/install/robot_bringup/share/ament_index/resource_index
+[2.238s] creating /home/jetson/ros2_ws/install/robot_bringup/share/ament_index/resource_index/packages
+[2.238s] copying resource/robot_bringup -> /home/jetson/ros2_ws/install/robot_bringup/share/ament_index/resource_index/packages
+[2.239s] copying package.xml -> /home/jetson/ros2_ws/install/robot_bringup/share/robot_bringup
+[2.239s] creating /home/jetson/ros2_ws/install/robot_bringup/share/robot_bringup/launch
+[2.239s] copying launch/robot_bringup.launch.py -> /home/jetson/ros2_ws/install/robot_bringup/share/robot_bringup/launch
+[2.239s] copying launch/nav.launch.py -> /home/jetson/ros2_ws/install/robot_bringup/share/robot_bringup/launch
+[2.240s] copying launch/localization.launch.py -> /home/jetson/ros2_ws/install/robot_bringup/share/robot_bringup/launch
+[2.240s] creating /home/jetson/ros2_ws/install/robot_bringup/share/robot_bringup/config
+[2.241s] copying config/nav2_params.yaml -> /home/jetson/ros2_ws/install/robot_bringup/share/robot_bringup/config
+[2.241s] creating /home/jetson/ros2_ws/install/robot_bringup/share/robot_bringup/params
+[2.241s] running install_egg_info
+[2.244s] Copying ../../build/robot_bringup/robot_bringup.egg-info to /home/jetson/ros2_ws/install/robot_bringup/lib/python3.10/site-packages/robot_bringup-0.0.0-py3.10.egg-info
+[2.246s] running install_scripts
+[2.283s] writing list of installed files to '/home/jetson/ros2_ws/build/robot_bringup/install.log'
+[2.344s] Invoked command in '/home/jetson/ros2_ws/src/robot_bringup' returned '0': PYTHONPATH=/home/jetson/ros2_ws/build/robot_bringup/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/jetson/ros2_ws/install/robot_bringup/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/robot_bringup build --build-base /home/jetson/ros2_ws/build/robot_bringup/build install --record /home/jetson/ros2_ws/build/robot_bringup/install.log --single-version-externally-managed install_data

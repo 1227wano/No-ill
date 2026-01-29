@@ -1,0 +1,23 @@
+amcl:
+  ros__parameters:
+    use_sim_time: false
+
+    # Frames (너 구성: map->odom는 amcl, odom->base_link는 rf2o, base_link->laser_frame는 static tf)
+    global_frame_id: map
+    odom_frame_id: odom
+    base_frame_id: base_link
+
+    # Laser
+    scan_topic: /scan
+    laser_frame_id: laser_frame
+
+    # Publish TF map->odom
+    tf_broadcast: true
+
+    # 기본값들(최소)
+    min_particles: 200
+    max_particles: 2000
+    update_min_d: 0.10
+    update_min_a: 0.20
+    resample_interval: 1
+    transform_tolerance: 1.0

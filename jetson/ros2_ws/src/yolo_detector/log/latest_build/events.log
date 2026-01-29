@@ -1,0 +1,55 @@
+[0.000000] (-) TimerEvent: {}
+[0.000784] (yolo_detector) JobQueued: {'identifier': 'yolo_detector', 'dependencies': OrderedDict()}
+[0.001557] (yolo_detector) JobStarted: {'identifier': 'yolo_detector'}
+[0.099948] (-) TimerEvent: {}
+[0.200492] (-) TimerEvent: {}
+[0.300980] (-) TimerEvent: {}
+[0.401417] (-) TimerEvent: {}
+[0.501927] (-) TimerEvent: {}
+[0.602436] (-) TimerEvent: {}
+[0.702963] (-) TimerEvent: {}
+[0.803516] (-) TimerEvent: {}
+[0.904063] (-) TimerEvent: {}
+[1.004567] (-) TimerEvent: {}
+[1.105094] (-) TimerEvent: {}
+[1.177063] (yolo_detector) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', '-W', 'ignore:easy_install command is deprecated', 'setup.py', 'develop', '--editable', '--build-directory', '/home/jetson/ros2_ws/src/yolo_detector/build/yolo_detector/build', '--no-deps', 'symlink_data'], 'cwd': '/home/jetson/ros2_ws/src/yolo_detector/build/yolo_detector', 'env': {'LESSOPEN': '| /usr/bin/lesspipe %s', 'USER': 'jetson', 'SSH_CLIENT': '192.168.137.1 57256 22', 'XDG_SESSION_TYPE': 'tty', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/usr/local/cuda/lib64:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib', 'MOTD_SHOWN': 'pam', 'HOME': '/home/jetson', 'OLDPWD': '/home/jetson/ros2_ws/src/yolo_detector/models', 'SSH_TTY': '/dev/pts/3', 'ROS_PYTHON_VERSION': '3', 'FASTDDS_SHM_TRANSPORT_DISABLED': '1', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'COLCON_PREFIX_PATH': '/home/jetson/ros2_ws/install', 'ROS_DISTRO': 'humble', 'LOGNAME': 'jetson', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'XDG_SESSION_CLASS': 'user', 'TERM': 'xterm', 'XDG_SESSION_ID': '16', 'ROS_LOCALHOST_ONLY': '0', 'PATH': '/home/jetson/.local/bin:/usr/local/cuda/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin', 'XDG_RUNTIME_DIR': '/run/user/1000', 'DISPLAY': 'localhost:12.0', 'LANG': 'ko_KR.UTF-8', 'RMW_IMPLEMENTATION': 'rmw_fastrtps_cpp', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:', 'ROS_DOMAIN_ID': '0', 'AMENT_PREFIX_PATH': '/home/jetson/ros2_ws/install/tracking_drive_test:/home/jetson/ros2_ws/install/yolo_detector:/home/jetson/ros2_ws/install/ydlidar_ros2_driver:/home/jetson/ros2_ws/install/tracking_test:/home/jetson/ros2_ws/install/stt:/home/jetson/ros2_ws/install/rf2o_laser_odometry:/home/jetson/ros2_ws/install/pca_drive:/home/jetson/ros2_ws/install/my_robot_bringup:/home/jetson/ros2_ws/install/keyboard_latch_cpp:/opt/ros/humble', 'SHELL': '/bin/bash', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'PWD': '/home/jetson/ros2_ws/src/yolo_detector/build/yolo_detector', 'SSH_CONNECTION': '192.168.137.1 57256 192.168.137.234 22', 'XDG_DATA_DIRS': '/usr/share/gnome:/usr/local/share:/usr/share:/var/lib/snapd/desktop', 'PYTHONPATH': '/home/jetson/ros2_ws/src/yolo_detector/build/yolo_detector/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector/lib/python3.10/site-packages:/home/jetson/ros2_ws/build/stt:/home/jetson/sherpa-onnx/sherpa-onnx/python:/home/jetson/sherpa-onnx/build/lib:/home/jetson/sherpa-onnx/sherpa-onnx/python:/home/jetson/sherpa-onnx/build/lib:/home/jetson/sherpa-onnx/sherpa-onnx/python:/home/jetson/sherpa-onnx/build/lib:/home/jetson/ros2_ws/build/yolo_detector:/home/jetson/ros2_ws/install/yolo_detector/lib/python3.10/site-packages:/home/jetson/ros2_ws/build/tracking_test:/home/jetson/ros2_ws/install/tracking_test/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/stt/lib/python3.10/site-packages:/home/jetson/ros2_ws/build/my_robot_bringup:/home/jetson/ros2_ws/install/my_robot_bringup/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages:/home/jetson/sherpa-onnx/build/../sherpa-onnx/python:/home/jetson/sherpa-onnx/build/lib', 'COLCON': '1', 'CMAKE_PREFIX_PATH': '/home/jetson/ros2_ws/install/tracking_drive_test:/home/jetson/ros2_ws/install/ydlidar_ros2_driver:/home/jetson/ros2_ws/install/rf2o_laser_odometry:/home/jetson/ros2_ws/install/pca_drive:/home/jetson/ros2_ws/install/keyboard_latch_cpp'}, 'shell': False}
+[1.205230] (-) TimerEvent: {}
+[1.306086] (-) TimerEvent: {}
+[1.406855] (-) TimerEvent: {}
+[1.507613] (-) TimerEvent: {}
+[1.608161] (-) TimerEvent: {}
+[1.679541] (yolo_detector) StdoutLine: {'line': b'running develop\n'}
+[1.708238] (-) TimerEvent: {}
+[1.808672] (-) TimerEvent: {}
+[1.909209] (-) TimerEvent: {}
+[1.989528] (yolo_detector) StdoutLine: {'line': b'running egg_info\n'}
+[1.989898] (yolo_detector) StdoutLine: {'line': b'creating yolo_detector.egg-info\n'}
+[1.990135] (yolo_detector) StdoutLine: {'line': b'writing yolo_detector.egg-info/PKG-INFO\n'}
+[1.990611] (yolo_detector) StdoutLine: {'line': b'writing dependency_links to yolo_detector.egg-info/dependency_links.txt\n'}
+[1.990773] (yolo_detector) StdoutLine: {'line': b'writing entry points to yolo_detector.egg-info/entry_points.txt\n'}
+[1.991065] (yolo_detector) StdoutLine: {'line': b'writing requirements to yolo_detector.egg-info/requires.txt\n'}
+[1.991184] (yolo_detector) StdoutLine: {'line': b'writing top-level names to yolo_detector.egg-info/top_level.txt\n'}
+[1.991632] (yolo_detector) StdoutLine: {'line': b"writing manifest file 'yolo_detector.egg-info/SOURCES.txt'\n"}
+[1.994748] (yolo_detector) StdoutLine: {'line': b"reading manifest file 'yolo_detector.egg-info/SOURCES.txt'\n"}
+[1.995824] (yolo_detector) StdoutLine: {'line': b"writing manifest file 'yolo_detector.egg-info/SOURCES.txt'\n"}
+[1.998689] (yolo_detector) StdoutLine: {'line': b'running build_ext\n'}
+[1.999101] (yolo_detector) StdoutLine: {'line': b'Creating /home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector/lib/python3.10/site-packages/yolo-detector.egg-link (link to .)\n'}
+[2.000610] (yolo_detector) StdoutLine: {'line': b'Installing detect_node script to /home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector/lib/yolo_detector\n'}
+[2.001111] (yolo_detector) StdoutLine: {'line': b'\n'}
+[2.001234] (yolo_detector) StdoutLine: {'line': b'Installed /home/jetson/ros2_ws/src/yolo_detector/build/yolo_detector\n'}
+[2.001344] (yolo_detector) StdoutLine: {'line': b'running symlink_data\n'}
+[2.001550] (yolo_detector) StdoutLine: {'line': b'creating /home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector/share/ament_index\n'}
+[2.001705] (yolo_detector) StdoutLine: {'line': b'creating /home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector/share/ament_index/resource_index\n'}
+[2.001846] (yolo_detector) StdoutLine: {'line': b'creating /home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector/share/ament_index/resource_index/packages\n'}
+[2.001977] (yolo_detector) StdoutLine: {'line': b'symbolically linking /home/jetson/ros2_ws/src/yolo_detector/build/yolo_detector/resource/yolo_detector -> /home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector/share/ament_index/resource_index/packages\n'}
+[2.002117] (yolo_detector) StdoutLine: {'line': b'symbolically linking /home/jetson/ros2_ws/src/yolo_detector/build/yolo_detector/package.xml -> /home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector/share/yolo_detector\n'}
+[2.002254] (yolo_detector) StdoutLine: {'line': b'creating /home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector/share/yolo_detector/models\n'}
+[2.002378] (yolo_detector) StdoutLine: {'line': b'symbolically linking /home/jetson/ros2_ws/src/yolo_detector/build/yolo_detector/models/best_640.onnx -> /home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector/share/yolo_detector/models\n'}
+[2.002506] (yolo_detector) StdoutLine: {'line': b'symbolically linking /home/jetson/ros2_ws/src/yolo_detector/build/yolo_detector/models/best.onnx -> /home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector/share/yolo_detector/models\n'}
+[2.002611] (yolo_detector) StdoutLine: {'line': b'symbolically linking /home/jetson/ros2_ws/src/yolo_detector/build/yolo_detector/models/best.pt -> /home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector/share/yolo_detector/models\n'}
+[2.002712] (yolo_detector) StdoutLine: {'line': b'symbolically linking /home/jetson/ros2_ws/src/yolo_detector/build/yolo_detector/models/best.engine -> /home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector/share/yolo_detector/models\n'}
+[2.009290] (-) TimerEvent: {}
+[2.074781] (yolo_detector) CommandEnded: {'returncode': 0}
+[2.109619] (-) TimerEvent: {}
+[2.128733] (yolo_detector) JobEnded: {'identifier': 'yolo_detector', 'rc': 0}
+[2.132625] (-) EventReactorShutdown: {}

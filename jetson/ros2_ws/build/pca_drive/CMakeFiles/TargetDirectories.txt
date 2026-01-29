@@ -1,0 +1,10 @@
+/home/jetson/ros2_ws/build/pca_drive/CMakeFiles/uninstall.dir
+/home/jetson/ros2_ws/build/pca_drive/CMakeFiles/pca_drive_uninstall.dir
+/home/jetson/ros2_ws/build/pca_drive/CMakeFiles/pca_drive_node.dir
+/home/jetson/ros2_ws/build/pca_drive/CMakeFiles/test.dir
+/home/jetson/ros2_ws/build/pca_drive/CMakeFiles/edit_cache.dir
+/home/jetson/ros2_ws/build/pca_drive/CMakeFiles/rebuild_cache.dir
+/home/jetson/ros2_ws/build/pca_drive/CMakeFiles/list_install_components.dir
+/home/jetson/ros2_ws/build/pca_drive/CMakeFiles/install.dir
+/home/jetson/ros2_ws/build/pca_drive/CMakeFiles/install/local.dir
+/home/jetson/ros2_ws/build/pca_drive/CMakeFiles/install/strip.dir

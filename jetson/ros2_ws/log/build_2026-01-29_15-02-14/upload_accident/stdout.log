@@ -1,0 +1,35 @@
+running egg_info
+creating ../../build/upload_accident/upload_accident.egg-info
+writing ../../build/upload_accident/upload_accident.egg-info/PKG-INFO
+writing dependency_links to ../../build/upload_accident/upload_accident.egg-info/dependency_links.txt
+writing entry points to ../../build/upload_accident/upload_accident.egg-info/entry_points.txt
+writing requirements to ../../build/upload_accident/upload_accident.egg-info/requires.txt
+writing top-level names to ../../build/upload_accident/upload_accident.egg-info/top_level.txt
+writing manifest file '../../build/upload_accident/upload_accident.egg-info/SOURCES.txt'
+reading manifest file '../../build/upload_accident/upload_accident.egg-info/SOURCES.txt'
+writing manifest file '../../build/upload_accident/upload_accident.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /home/jetson/ros2_ws/build/upload_accident/build
+creating /home/jetson/ros2_ws/build/upload_accident/build/lib
+creating /home/jetson/ros2_ws/build/upload_accident/build/lib/upload_accident
+copying upload_accident/upload_accident_node.py -> /home/jetson/ros2_ws/build/upload_accident/build/lib/upload_accident
+copying upload_accident/__init__.py -> /home/jetson/ros2_ws/build/upload_accident/build/lib/upload_accident
+running install
+running install_lib
+creating /home/jetson/ros2_ws/install/upload_accident/lib/python3.10/site-packages/upload_accident
+copying /home/jetson/ros2_ws/build/upload_accident/build/lib/upload_accident/upload_accident_node.py -> /home/jetson/ros2_ws/install/upload_accident/lib/python3.10/site-packages/upload_accident
+copying /home/jetson/ros2_ws/build/upload_accident/build/lib/upload_accident/__init__.py -> /home/jetson/ros2_ws/install/upload_accident/lib/python3.10/site-packages/upload_accident
+byte-compiling /home/jetson/ros2_ws/install/upload_accident/lib/python3.10/site-packages/upload_accident/upload_accident_node.py to upload_accident_node.cpython-310.pyc
+byte-compiling /home/jetson/ros2_ws/install/upload_accident/lib/python3.10/site-packages/upload_accident/__init__.py to __init__.cpython-310.pyc
+running install_data
+creating /home/jetson/ros2_ws/install/upload_accident/share/ament_index
+creating /home/jetson/ros2_ws/install/upload_accident/share/ament_index/resource_index
+creating /home/jetson/ros2_ws/install/upload_accident/share/ament_index/resource_index/packages
+copying resource/upload_accident -> /home/jetson/ros2_ws/install/upload_accident/share/ament_index/resource_index/packages
+copying package.xml -> /home/jetson/ros2_ws/install/upload_accident/share/upload_accident
+running install_egg_info
+Copying ../../build/upload_accident/upload_accident.egg-info to /home/jetson/ros2_ws/install/upload_accident/lib/python3.10/site-packages/upload_accident-0.0.0-py3.10.egg-info
+running install_scripts
+Installing upload_accident_node script to /home/jetson/ros2_ws/install/upload_accident/lib/upload_accident
+writing list of installed files to '/home/jetson/ros2_ws/build/upload_accident/install.log'

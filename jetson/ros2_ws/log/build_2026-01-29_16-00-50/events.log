@@ -1,0 +1,263 @@
+[0.000000] (-) TimerEvent: {}
+[0.000636] (-) JobUnselected: {'identifier': 'chat_stop_gate'}
+[0.001084] (-) JobUnselected: {'identifier': 'fall_accident_judgement'}
+[0.001333] (-) JobUnselected: {'identifier': 'keyboard_latch_cpp'}
+[0.001563] (-) JobUnselected: {'identifier': 'llm'}
+[0.001643] (-) JobUnselected: {'identifier': 'my_robot_bringup'}
+[0.001786] (-) JobUnselected: {'identifier': 'no_ill_bringup'}
+[0.001854] (-) JobUnselected: {'identifier': 'person_override_pkg'}
+[0.001887] (-) JobUnselected: {'identifier': 'rf2o_laser_odometry'}
+[0.001918] (-) JobUnselected: {'identifier': 'robot_bringup'}
+[0.001968] (-) JobUnselected: {'identifier': 'safety_override_pkg'}
+[0.002001] (-) JobUnselected: {'identifier': 'stt'}
+[0.002048] (-) JobUnselected: {'identifier': 'tracking_drive_test'}
+[0.002406] (-) JobUnselected: {'identifier': 'tts'}
+[0.002468] (-) JobUnselected: {'identifier': 'upload_accident'}
+[0.002566] (-) JobUnselected: {'identifier': 'ydlidar_ros2_driver'}
+[0.002621] (-) JobUnselected: {'identifier': 'yolo_detector'}
+[0.002659] (pca_drive) JobQueued: {'identifier': 'pca_drive', 'dependencies': OrderedDict()}
+[0.002726] (pca_drive) JobStarted: {'identifier': 'pca_drive'}
+[0.020314] (pca_drive) JobProgress: {'identifier': 'pca_drive', 'progress': 'cmake'}
+[0.026290] (pca_drive) Command: {'cmd': ['/usr/bin/cmake', '/home/jetson/ros2_ws/src/pca_drive', '-DCMAKE_INSTALL_PREFIX=/home/jetson/ros2_ws/install/pca_drive'], 'cwd': '/home/jetson/ros2_ws/build/pca_drive', 'env': OrderedDict([('LESSOPEN', '| /usr/bin/lesspipe %s'), ('USER', 'jetson'), ('SSH_CLIENT', '10.13.243.41 51457 22'), ('XDG_SESSION_TYPE', 'tty'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/usr/local/cuda/lib64:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib'), ('MOTD_SHOWN', 'pam'), ('HOME', '/home/jetson'), ('OLDPWD', '/home/jetson/ros2_ws/src/no_ill_bringup/launch'), ('SSH_TTY', '/dev/pts/0'), ('ROS_PYTHON_VERSION', '3'), ('FASTDDS_SHM_TRANSPORT_DISABLED', '1'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('COLCON_PREFIX_PATH', '/home/jetson/ros2_ws/install:/home/jetson/ros2_ws/src/yolo_detector/install'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'jetson'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('TERM', 'xterm'), ('XDG_SESSION_ID', '3'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/home/jetson/.local/bin:/usr/local/cuda/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('DISPLAY', 'localhost:10.0'), ('LANG', 'ko_KR.UTF-8'), ('RMW_IMPLEMENTATION', 'rmw_fastrtps_cpp'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('ROS_DOMAIN_ID', '0'), ('AMENT_PREFIX_PATH', '/home/jetson/ros2_ws/install/yolo_detector:/home/jetson/ros2_ws/install/noili_bringup:/home/jetson/ros2_ws/install/no_ill_bringup:/home/jetson/ros2_ws/install/ydlidar_ros2_driver:/home/jetson/ros2_ws/install/tts:/home/jetson/ros2_ws/install/tracking_test:/home/jetson/ros2_ws/install/tracking_drive_test:/home/jetson/ros2_ws/install/stt:/home/jetson/ros2_ws/install/safety_override_pkg:/home/jetson/ros2_ws/install/robot_bringup:/home/jetson/ros2_ws/install/rf2o_laser_odometry:/home/jetson/ros2_ws/install/person_override_pkg:/home/jetson/ros2_ws/install/pca_drive:/home/jetson/ros2_ws/install/my_robot_bringup:/home/jetson/ros2_ws/install/llm:/home/jetson/ros2_ws/install/keyboard_latch_cpp:/home/jetson/ros2_ws/install/fall_accident_judgement:/home/jetson/ros2_ws/install/chat_stop_gate:/home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('PWD', '/home/jetson/ros2_ws/build/pca_drive'), ('SSH_CONNECTION', '10.13.243.41 51457 10.13.243.53 22'), ('XDG_DATA_DIRS', '/usr/share/gnome:/usr/local/share:/usr/share:/var/lib/snapd/desktop'), ('PYTHONPATH', '/home/jetson/sherpa-onnx/sherpa-onnx/python:/home/jetson/sherpa-onnx/build/lib:/home/jetson/ros2_ws/build/yolo_detector:/home/jetson/ros2_ws/install/yolo_detector/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/noili_bringup/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/no_ill_bringup/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/tts/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/tracking_test/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/stt/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/robot_bringup/lib/python3.10/site-packages:/home/jetson/ros2_ws/build/my_robot_bringup:/home/jetson/ros2_ws/install/my_robot_bringup/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/llm/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/fall_accident_judgement/lib/python3.10/site-packages:/home/jetson/ros2_ws/src/yolo_detector/build/yolo_detector:/home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages:/home/jetson/sherpa-onnx/build/../sherpa-onnx/python:/home/jetson/sherpa-onnx/build/lib'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/jetson/ros2_ws/install/ydlidar_ros2_driver:/home/jetson/ros2_ws/install/tracking_drive_test:/home/jetson/ros2_ws/install/safety_override_pkg:/home/jetson/ros2_ws/install/rf2o_laser_odometry:/home/jetson/ros2_ws/install/person_override_pkg:/home/jetson/ros2_ws/install/pca_drive:/home/jetson/ros2_ws/install/keyboard_latch_cpp:/home/jetson/ros2_ws/install/chat_stop_gate:/home/jetson/ros2_ws/install/yolo_detector:/home/jetson/ros2_ws/install/noili_bringup:/home/jetson/ros2_ws/install/no_ill_bringup:/home/jetson/ros2_ws/install/tts:/home/jetson/ros2_ws/install/tracking_test:/home/jetson/ros2_ws/install/stt:/home/jetson/ros2_ws/install/robot_bringup:/home/jetson/ros2_ws/install/my_robot_bringup:/home/jetson/ros2_ws/install/llm:/home/jetson/ros2_ws/install/fall_accident_judgement:/home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector:/opt/ros/humble')]), 'shell': False}
+[0.056773] (pca_drive) StdoutLine: {'line': b'-- Found ament_cmake: 1.3.12 (/opt/ros/humble/share/ament_cmake/cmake)\n'}
+[0.099400] (-) TimerEvent: {}
+[0.199960] (-) TimerEvent: {}
+[0.300569] (-) TimerEvent: {}
+[0.354746] (pca_drive) StdoutLine: {'line': b'-- Override CMake install command with custom implementation using symlinks instead of copying resources\n'}
+[0.390416] (pca_drive) StdoutLine: {'line': b'-- Found rclcpp: 16.0.17 (/opt/ros/humble/share/rclcpp/cmake)\n'}
+[0.400828] (-) TimerEvent: {}
+[0.472887] (pca_drive) StdoutLine: {'line': b'-- Found rosidl_generator_c: 3.1.8 (/opt/ros/humble/share/rosidl_generator_c/cmake)\n'}
+[0.476859] (pca_drive) StdoutLine: {'line': b'-- Found rosidl_adapter: 3.1.8 (/opt/ros/humble/share/rosidl_adapter/cmake)\n'}
+[0.486746] (pca_drive) StdoutLine: {'line': b'-- Found rosidl_generator_cpp: 3.1.8 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)\n'}
+[0.500912] (-) TimerEvent: {}
+[0.503776] (pca_drive) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[0.525288] (pca_drive) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[0.579911] (pca_drive) StdoutLine: {'line': b'-- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)\n'}
+[0.583054] (pca_drive) StdoutLine: {'line': b'-- Found rmw_fastrtps_cpp: 6.2.9 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)\n'}
+[0.601022] (-) TimerEvent: {}
+[0.701542] (-) TimerEvent: {}
+[0.763502] (pca_drive) StdoutLine: {'line': b"-- Using RMW implementation 'rmw_fastrtps_cpp' as default\n"}
+[0.801712] (-) TimerEvent: {}
+[0.846460] (pca_drive) StdoutLine: {'line': b'-- Found geometry_msgs: 4.9.0 (/opt/ros/humble/share/geometry_msgs/cmake)\n'}
+[0.871239] (pca_drive) StdoutLine: {'line': b'-- Found ament_lint_auto: 0.12.14 (/opt/ros/humble/share/ament_lint_auto/cmake)\n'}
+[0.901853] (-) TimerEvent: {}
+[1.002420] (-) TimerEvent: {}
+[1.061093] (pca_drive) StdoutLine: {'line': b"-- Added test 'cppcheck' to perform static code analysis on C / C++ code\n"}
+[1.061597] (pca_drive) StdoutLine: {'line': b'-- Configured cppcheck include dirs: \n'}
+[1.061776] (pca_drive) StdoutLine: {'line': b'-- Configured cppcheck exclude dirs and/or files: \n'}
+[1.063474] (pca_drive) StdoutLine: {'line': b"-- Added test 'lint_cmake' to check CMake code style\n"}
+[1.066927] (pca_drive) StdoutLine: {'line': b"-- Added test 'uncrustify' to check C / C++ code style\n"}
+[1.067421] (pca_drive) StdoutLine: {'line': b'-- Configured uncrustify additional arguments: \n'}
+[1.068688] (pca_drive) StdoutLine: {'line': b"-- Added test 'xmllint' to check XML markup files\n"}
+[1.072269] (pca_drive) StdoutLine: {'line': b'-- Configuring done\n'}
+[1.102582] (-) TimerEvent: {}
+[1.114518] (pca_drive) StdoutLine: {'line': b'-- Generating done\n'}
+[1.126294] (pca_drive) StdoutLine: {'line': b'-- Build files have been written to: /home/jetson/ros2_ws/build/pca_drive\n'}
+[1.155868] (pca_drive) CommandEnded: {'returncode': 0}
+[1.157543] (pca_drive) JobProgress: {'identifier': 'pca_drive', 'progress': 'build'}
+[1.159164] (pca_drive) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/jetson/ros2_ws/build/pca_drive', '--', '-j6', '-l6'], 'cwd': '/home/jetson/ros2_ws/build/pca_drive', 'env': OrderedDict([('LESSOPEN', '| /usr/bin/lesspipe %s'), ('USER', 'jetson'), ('SSH_CLIENT', '10.13.243.41 51457 22'), ('XDG_SESSION_TYPE', 'tty'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/usr/local/cuda/lib64:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib'), ('MOTD_SHOWN', 'pam'), ('HOME', '/home/jetson'), ('OLDPWD', '/home/jetson/ros2_ws/src/no_ill_bringup/launch'), ('SSH_TTY', '/dev/pts/0'), ('ROS_PYTHON_VERSION', '3'), ('FASTDDS_SHM_TRANSPORT_DISABLED', '1'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('COLCON_PREFIX_PATH', '/home/jetson/ros2_ws/install:/home/jetson/ros2_ws/src/yolo_detector/install'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'jetson'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('TERM', 'xterm'), ('XDG_SESSION_ID', '3'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/home/jetson/.local/bin:/usr/local/cuda/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('DISPLAY', 'localhost:10.0'), ('LANG', 'ko_KR.UTF-8'), ('RMW_IMPLEMENTATION', 'rmw_fastrtps_cpp'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('ROS_DOMAIN_ID', '0'), ('AMENT_PREFIX_PATH', '/home/jetson/ros2_ws/install/yolo_detector:/home/jetson/ros2_ws/install/noili_bringup:/home/jetson/ros2_ws/install/no_ill_bringup:/home/jetson/ros2_ws/install/ydlidar_ros2_driver:/home/jetson/ros2_ws/install/tts:/home/jetson/ros2_ws/install/tracking_test:/home/jetson/ros2_ws/install/tracking_drive_test:/home/jetson/ros2_ws/install/stt:/home/jetson/ros2_ws/install/safety_override_pkg:/home/jetson/ros2_ws/install/robot_bringup:/home/jetson/ros2_ws/install/rf2o_laser_odometry:/home/jetson/ros2_ws/install/person_override_pkg:/home/jetson/ros2_ws/install/pca_drive:/home/jetson/ros2_ws/install/my_robot_bringup:/home/jetson/ros2_ws/install/llm:/home/jetson/ros2_ws/install/keyboard_latch_cpp:/home/jetson/ros2_ws/install/fall_accident_judgement:/home/jetson/ros2_ws/install/chat_stop_gate:/home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('PWD', '/home/jetson/ros2_ws/build/pca_drive'), ('SSH_CONNECTION', '10.13.243.41 51457 10.13.243.53 22'), ('XDG_DATA_DIRS', '/usr/share/gnome:/usr/local/share:/usr/share:/var/lib/snapd/desktop'), ('PYTHONPATH', '/home/jetson/sherpa-onnx/sherpa-onnx/python:/home/jetson/sherpa-onnx/build/lib:/home/jetson/ros2_ws/build/yolo_detector:/home/jetson/ros2_ws/install/yolo_detector/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/noili_bringup/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/no_ill_bringup/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/tts/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/tracking_test/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/stt/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/robot_bringup/lib/python3.10/site-packages:/home/jetson/ros2_ws/build/my_robot_bringup:/home/jetson/ros2_ws/install/my_robot_bringup/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/llm/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/fall_accident_judgement/lib/python3.10/site-packages:/home/jetson/ros2_ws/src/yolo_detector/build/yolo_detector:/home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages:/home/jetson/sherpa-onnx/build/../sherpa-onnx/python:/home/jetson/sherpa-onnx/build/lib'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/jetson/ros2_ws/install/ydlidar_ros2_driver:/home/jetson/ros2_ws/install/tracking_drive_test:/home/jetson/ros2_ws/install/safety_override_pkg:/home/jetson/ros2_ws/install/rf2o_laser_odometry:/home/jetson/ros2_ws/install/person_override_pkg:/home/jetson/ros2_ws/install/pca_drive:/home/jetson/ros2_ws/install/keyboard_latch_cpp:/home/jetson/ros2_ws/install/chat_stop_gate:/home/jetson/ros2_ws/install/yolo_detector:/home/jetson/ros2_ws/install/noili_bringup:/home/jetson/ros2_ws/install/no_ill_bringup:/home/jetson/ros2_ws/install/tts:/home/jetson/ros2_ws/install/tracking_test:/home/jetson/ros2_ws/install/stt:/home/jetson/ros2_ws/install/robot_bringup:/home/jetson/ros2_ws/install/my_robot_bringup:/home/jetson/ros2_ws/install/llm:/home/jetson/ros2_ws/install/fall_accident_judgement:/home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector:/opt/ros/humble')]), 'shell': False}
+[1.202782] (-) TimerEvent: {}
+[1.245222] (pca_drive) StdoutLine: {'line': b'\x1b[35m\x1b[1mConsolidate compiler generated dependencies of target pca_drive_node\x1b[0m\n'}
+[1.277345] (pca_drive) StdoutLine: {'line': b'[ 50%] \x1b[32mBuilding CXX object CMakeFiles/pca_drive_node.dir/src/pca_drive_node.cpp.o\x1b[0m\n'}
+[1.302893] (-) TimerEvent: {}
+[1.403594] (-) TimerEvent: {}
+[1.504464] (-) TimerEvent: {}
+[1.605159] (-) TimerEvent: {}
+[1.705826] (-) TimerEvent: {}
+[1.806628] (-) TimerEvent: {}
+[1.907434] (-) TimerEvent: {}
+[2.008234] (-) TimerEvent: {}
+[2.109076] (-) TimerEvent: {}
+[2.209886] (-) TimerEvent: {}
+[2.310597] (-) TimerEvent: {}
+[2.411332] (-) TimerEvent: {}
+[2.512133] (-) TimerEvent: {}
+[2.612797] (-) TimerEvent: {}
+[2.713476] (-) TimerEvent: {}
+[2.814327] (-) TimerEvent: {}
+[2.915211] (-) TimerEvent: {}
+[3.016036] (-) TimerEvent: {}
+[3.116864] (-) TimerEvent: {}
+[3.217671] (-) TimerEvent: {}
+[3.318484] (-) TimerEvent: {}
+[3.419321] (-) TimerEvent: {}
+[3.520104] (-) TimerEvent: {}
+[3.620832] (-) TimerEvent: {}
+[3.721526] (-) TimerEvent: {}
+[3.823986] (-) TimerEvent: {}
+[3.924813] (-) TimerEvent: {}
+[4.025630] (-) TimerEvent: {}
+[4.126588] (-) TimerEvent: {}
+[4.227483] (-) TimerEvent: {}
+[4.328242] (-) TimerEvent: {}
+[4.428967] (-) TimerEvent: {}
+[4.529722] (-) TimerEvent: {}
+[4.630536] (-) TimerEvent: {}
+[4.731357] (-) TimerEvent: {}
+[4.832008] (-) TimerEvent: {}
+[4.932760] (-) TimerEvent: {}
+[5.033572] (-) TimerEvent: {}
+[5.134325] (-) TimerEvent: {}
+[5.235298] (-) TimerEvent: {}
+[5.335998] (-) TimerEvent: {}
+[5.436623] (-) TimerEvent: {}
+[5.537274] (-) TimerEvent: {}
+[5.637918] (-) TimerEvent: {}
+[5.738534] (-) TimerEvent: {}
+[5.839204] (-) TimerEvent: {}
+[5.939854] (-) TimerEvent: {}
+[6.040667] (-) TimerEvent: {}
+[6.141309] (-) TimerEvent: {}
+[6.241926] (-) TimerEvent: {}
+[6.342568] (-) TimerEvent: {}
+[6.443190] (-) TimerEvent: {}
+[6.543831] (-) TimerEvent: {}
+[6.644468] (-) TimerEvent: {}
+[6.745145] (-) TimerEvent: {}
+[6.845774] (-) TimerEvent: {}
+[6.946423] (-) TimerEvent: {}
+[7.047095] (-) TimerEvent: {}
+[7.147763] (-) TimerEvent: {}
+[7.248415] (-) TimerEvent: {}
+[7.349110] (-) TimerEvent: {}
+[7.450507] (-) TimerEvent: {}
+[7.551281] (-) TimerEvent: {}
+[7.651946] (-) TimerEvent: {}
+[7.752644] (-) TimerEvent: {}
+[7.853315] (-) TimerEvent: {}
+[7.953959] (-) TimerEvent: {}
+[8.054592] (-) TimerEvent: {}
+[8.155252] (-) TimerEvent: {}
+[8.255907] (-) TimerEvent: {}
+[8.356542] (-) TimerEvent: {}
+[8.457245] (-) TimerEvent: {}
+[8.558004] (-) TimerEvent: {}
+[8.658794] (-) TimerEvent: {}
+[8.759491] (-) TimerEvent: {}
+[8.860152] (-) TimerEvent: {}
+[8.960799] (-) TimerEvent: {}
+[9.061432] (-) TimerEvent: {}
+[9.162098] (-) TimerEvent: {}
+[9.262775] (-) TimerEvent: {}
+[9.363415] (-) TimerEvent: {}
+[9.464059] (-) TimerEvent: {}
+[9.564691] (-) TimerEvent: {}
+[9.665340] (-) TimerEvent: {}
+[9.766011] (-) TimerEvent: {}
+[9.866713] (-) TimerEvent: {}
+[9.967388] (-) TimerEvent: {}
+[10.068062] (-) TimerEvent: {}
+[10.168706] (-) TimerEvent: {}
+[10.269381] (-) TimerEvent: {}
+[10.372060] (-) TimerEvent: {}
+[10.473282] (-) TimerEvent: {}
+[10.573947] (-) TimerEvent: {}
+[10.674584] (-) TimerEvent: {}
+[10.775253] (-) TimerEvent: {}
+[10.875959] (-) TimerEvent: {}
+[10.976675] (-) TimerEvent: {}
+[11.077362] (-) TimerEvent: {}
+[11.178043] (-) TimerEvent: {}
+[11.278758] (-) TimerEvent: {}
+[11.379431] (-) TimerEvent: {}
+[11.480089] (-) TimerEvent: {}
+[11.580743] (-) TimerEvent: {}
+[11.681352] (-) TimerEvent: {}
+[11.782237] (-) TimerEvent: {}
+[11.882931] (-) TimerEvent: {}
+[11.983702] (-) TimerEvent: {}
+[12.084444] (-) TimerEvent: {}
+[12.185106] (-) TimerEvent: {}
+[12.285740] (-) TimerEvent: {}
+[12.386683] (-) TimerEvent: {}
+[12.487469] (-) TimerEvent: {}
+[12.588108] (-) TimerEvent: {}
+[12.688702] (-) TimerEvent: {}
+[12.789312] (-) TimerEvent: {}
+[12.890085] (-) TimerEvent: {}
+[12.990810] (-) TimerEvent: {}
+[13.091497] (-) TimerEvent: {}
+[13.192171] (-) TimerEvent: {}
+[13.293296] (-) TimerEvent: {}
+[13.393929] (-) TimerEvent: {}
+[13.494563] (-) TimerEvent: {}
+[13.595584] (-) TimerEvent: {}
+[13.696231] (-) TimerEvent: {}
+[13.796857] (-) TimerEvent: {}
+[13.897472] (-) TimerEvent: {}
+[13.998114] (-) TimerEvent: {}
+[14.099042] (-) TimerEvent: {}
+[14.199789] (-) TimerEvent: {}
+[14.300418] (-) TimerEvent: {}
+[14.401069] (-) TimerEvent: {}
+[14.502227] (-) TimerEvent: {}
+[14.603150] (-) TimerEvent: {}
+[14.703853] (-) TimerEvent: {}
+[14.804526] (-) TimerEvent: {}
+[14.905197] (-) TimerEvent: {}
+[15.005903] (-) TimerEvent: {}
+[15.106641] (-) TimerEvent: {}
+[15.207376] (-) TimerEvent: {}
+[15.308112] (-) TimerEvent: {}
+[15.409711] (-) TimerEvent: {}
+[15.510351] (-) TimerEvent: {}
+[15.611047] (-) TimerEvent: {}
+[15.711729] (-) TimerEvent: {}
+[15.812464] (-) TimerEvent: {}
+[15.914893] (-) TimerEvent: {}
+[16.015922] (-) TimerEvent: {}
+[16.116671] (-) TimerEvent: {}
+[16.217439] (-) TimerEvent: {}
+[16.318203] (-) TimerEvent: {}
+[16.419011] (-) TimerEvent: {}
+[16.522037] (-) TimerEvent: {}
+[16.623413] (-) TimerEvent: {}
+[16.724049] (-) TimerEvent: {}
+[16.824979] (-) TimerEvent: {}
+[16.925654] (-) TimerEvent: {}
+[17.026273] (-) TimerEvent: {}
+[17.126944] (-) TimerEvent: {}
+[17.227942] (-) TimerEvent: {}
+[17.328755] (-) TimerEvent: {}
+[17.429439] (-) TimerEvent: {}
+[17.533264] (-) TimerEvent: {}
+[17.646889] (-) TimerEvent: {}
+[17.747596] (-) TimerEvent: {}
+[17.848343] (-) TimerEvent: {}
+[17.949030] (-) TimerEvent: {}
+[18.049689] (-) TimerEvent: {}
+[18.103140] (pca_drive) StdoutLine: {'line': b'[100%] \x1b[32m\x1b[1mLinking CXX executable pca_drive_node\x1b[0m\n'}
+[18.149851] (-) TimerEvent: {}
+[18.250474] (-) TimerEvent: {}
+[18.351459] (-) TimerEvent: {}
+[18.452205] (-) TimerEvent: {}
+[18.552869] (-) TimerEvent: {}
+[18.653659] (-) TimerEvent: {}
+[18.754294] (-) TimerEvent: {}
+[18.836004] (pca_drive) StdoutLine: {'line': b'[100%] Built target pca_drive_node\n'}
+[18.854482] (-) TimerEvent: {}
+[18.860391] (pca_drive) CommandEnded: {'returncode': 0}
+[18.866087] (pca_drive) JobProgress: {'identifier': 'pca_drive', 'progress': 'install'}
+[18.881760] (pca_drive) Command: {'cmd': ['/usr/bin/cmake', '--install', '/home/jetson/ros2_ws/build/pca_drive'], 'cwd': '/home/jetson/ros2_ws/build/pca_drive', 'env': OrderedDict([('LESSOPEN', '| /usr/bin/lesspipe %s'), ('USER', 'jetson'), ('SSH_CLIENT', '10.13.243.41 51457 22'), ('XDG_SESSION_TYPE', 'tty'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/usr/local/cuda/lib64:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib'), ('MOTD_SHOWN', 'pam'), ('HOME', '/home/jetson'), ('OLDPWD', '/home/jetson/ros2_ws/src/no_ill_bringup/launch'), ('SSH_TTY', '/dev/pts/0'), ('ROS_PYTHON_VERSION', '3'), ('FASTDDS_SHM_TRANSPORT_DISABLED', '1'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('COLCON_PREFIX_PATH', '/home/jetson/ros2_ws/install:/home/jetson/ros2_ws/src/yolo_detector/install'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'jetson'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('TERM', 'xterm'), ('XDG_SESSION_ID', '3'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/home/jetson/.local/bin:/usr/local/cuda/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('DISPLAY', 'localhost:10.0'), ('LANG', 'ko_KR.UTF-8'), ('RMW_IMPLEMENTATION', 'rmw_fastrtps_cpp'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('ROS_DOMAIN_ID', '0'), ('AMENT_PREFIX_PATH', '/home/jetson/ros2_ws/install/yolo_detector:/home/jetson/ros2_ws/install/noili_bringup:/home/jetson/ros2_ws/install/no_ill_bringup:/home/jetson/ros2_ws/install/ydlidar_ros2_driver:/home/jetson/ros2_ws/install/tts:/home/jetson/ros2_ws/install/tracking_test:/home/jetson/ros2_ws/install/tracking_drive_test:/home/jetson/ros2_ws/install/stt:/home/jetson/ros2_ws/install/safety_override_pkg:/home/jetson/ros2_ws/install/robot_bringup:/home/jetson/ros2_ws/install/rf2o_laser_odometry:/home/jetson/ros2_ws/install/person_override_pkg:/home/jetson/ros2_ws/install/pca_drive:/home/jetson/ros2_ws/install/my_robot_bringup:/home/jetson/ros2_ws/install/llm:/home/jetson/ros2_ws/install/keyboard_latch_cpp:/home/jetson/ros2_ws/install/fall_accident_judgement:/home/jetson/ros2_ws/install/chat_stop_gate:/home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('PWD', '/home/jetson/ros2_ws/build/pca_drive'), ('SSH_CONNECTION', '10.13.243.41 51457 10.13.243.53 22'), ('XDG_DATA_DIRS', '/usr/share/gnome:/usr/local/share:/usr/share:/var/lib/snapd/desktop'), ('PYTHONPATH', '/home/jetson/sherpa-onnx/sherpa-onnx/python:/home/jetson/sherpa-onnx/build/lib:/home/jetson/ros2_ws/build/yolo_detector:/home/jetson/ros2_ws/install/yolo_detector/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/noili_bringup/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/no_ill_bringup/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/tts/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/tracking_test/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/stt/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/robot_bringup/lib/python3.10/site-packages:/home/jetson/ros2_ws/build/my_robot_bringup:/home/jetson/ros2_ws/install/my_robot_bringup/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/llm/lib/python3.10/site-packages:/home/jetson/ros2_ws/install/fall_accident_judgement/lib/python3.10/site-packages:/home/jetson/ros2_ws/src/yolo_detector/build/yolo_detector:/home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages:/home/jetson/sherpa-onnx/build/../sherpa-onnx/python:/home/jetson/sherpa-onnx/build/lib'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/jetson/ros2_ws/install/ydlidar_ros2_driver:/home/jetson/ros2_ws/install/tracking_drive_test:/home/jetson/ros2_ws/install/safety_override_pkg:/home/jetson/ros2_ws/install/rf2o_laser_odometry:/home/jetson/ros2_ws/install/person_override_pkg:/home/jetson/ros2_ws/install/pca_drive:/home/jetson/ros2_ws/install/keyboard_latch_cpp:/home/jetson/ros2_ws/install/chat_stop_gate:/home/jetson/ros2_ws/install/yolo_detector:/home/jetson/ros2_ws/install/noili_bringup:/home/jetson/ros2_ws/install/no_ill_bringup:/home/jetson/ros2_ws/install/tts:/home/jetson/ros2_ws/install/tracking_test:/home/jetson/ros2_ws/install/stt:/home/jetson/ros2_ws/install/robot_bringup:/home/jetson/ros2_ws/install/my_robot_bringup:/home/jetson/ros2_ws/install/llm:/home/jetson/ros2_ws/install/fall_accident_judgement:/home/jetson/ros2_ws/src/yolo_detector/install/yolo_detector:/opt/ros/humble')]), 'shell': False}
+[18.900527] (pca_drive) StdoutLine: {'line': b'-- Install configuration: ""\n'}
+[18.901296] (pca_drive) StdoutLine: {'line': b'-- Execute custom install script\n'}
+[18.902122] (pca_drive) StdoutLine: {'line': b'-- Up-to-date symlink: /home/jetson/ros2_ws/install/pca_drive/lib/pca_drive/pca_drive_node\n'}
+[18.902539] (pca_drive) StdoutLine: {'line': b'-- Up-to-date symlink: /home/jetson/ros2_ws/install/pca_drive/share/ament_index/resource_index/package_run_dependencies/pca_drive\n'}
+[18.902899] (pca_drive) StdoutLine: {'line': b'-- Up-to-date symlink: /home/jetson/ros2_ws/install/pca_drive/share/ament_index/resource_index/parent_prefix_path/pca_drive\n'}
+[18.903215] (pca_drive) StdoutLine: {'line': b'-- Up-to-date symlink: /home/jetson/ros2_ws/install/pca_drive/share/pca_drive/environment/ament_prefix_path.sh\n'}
+[18.903510] (pca_drive) StdoutLine: {'line': b'-- Up-to-date symlink: /home/jetson/ros2_ws/install/pca_drive/share/pca_drive/environment/ament_prefix_path.dsv\n'}
+[18.903795] (pca_drive) StdoutLine: {'line': b'-- Up-to-date symlink: /home/jetson/ros2_ws/install/pca_drive/share/pca_drive/environment/path.sh\n'}
+[18.904119] (pca_drive) StdoutLine: {'line': b'-- Up-to-date symlink: /home/jetson/ros2_ws/install/pca_drive/share/pca_drive/environment/path.dsv\n'}
+[18.904411] (pca_drive) StdoutLine: {'line': b'-- Up-to-date symlink: /home/jetson/ros2_ws/install/pca_drive/share/pca_drive/local_setup.bash\n'}
+[18.904688] (pca_drive) StdoutLine: {'line': b'-- Up-to-date symlink: /home/jetson/ros2_ws/install/pca_drive/share/pca_drive/local_setup.sh\n'}
+[18.904970] (pca_drive) StdoutLine: {'line': b'-- Up-to-date symlink: /home/jetson/ros2_ws/install/pca_drive/share/pca_drive/local_setup.zsh\n'}
+[18.905192] (pca_drive) StdoutLine: {'line': b'-- Up-to-date symlink: /home/jetson/ros2_ws/install/pca_drive/share/pca_drive/local_setup.dsv\n'}
+[18.905406] (pca_drive) StdoutLine: {'line': b'-- Symlinking: /home/jetson/ros2_ws/install/pca_drive/share/pca_drive/package.dsv\n'}
+[18.921667] (pca_drive) StdoutLine: {'line': b'-- Up-to-date symlink: /home/jetson/ros2_ws/install/pca_drive/share/ament_index/resource_index/packages/pca_drive\n'}
+[18.922299] (pca_drive) StdoutLine: {'line': b'-- Up-to-date symlink: /home/jetson/ros2_ws/install/pca_drive/share/pca_drive/cmake/pca_driveConfig.cmake\n'}
+[18.922652] (pca_drive) StdoutLine: {'line': b'-- Up-to-date symlink: /home/jetson/ros2_ws/install/pca_drive/share/pca_drive/cmake/pca_driveConfig-version.cmake\n'}
+[18.922976] (pca_drive) StdoutLine: {'line': b'-- Up-to-date symlink: /home/jetson/ros2_ws/install/pca_drive/share/pca_drive/package.xml\n'}
+[18.926121] (pca_drive) CommandEnded: {'returncode': 0}
+[18.954862] (-) TimerEvent: {}
+[18.969412] (pca_drive) JobEnded: {'identifier': 'pca_drive', 'rc': 0}
+[18.972412] (-) EventReactorShutdown: {}
