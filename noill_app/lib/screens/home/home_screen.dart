@@ -5,9 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/auth_provider.dart'; // 3. AuthProvider 추가/ 1. Riverpod 추가
 
 import '../../core/constants/color_constants.dart';
-import '../../widgets/atoms/light_diffusion_background.dart';
 
-import '../call/video_call_screen.dart';
 import '../accident/accident_history_screen.dart';
 import '../auth/splash_screen.dart'; // Splash 화면으로 이동하도록 수정
 
@@ -196,7 +194,7 @@ class HomeScreen extends ConsumerWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(16),
             child: Image.asset(
-              'assets/images/room_view.png',
+              'images/room_view.png',
               height: 140,
               width: double.infinity,
               fit: BoxFit.cover,

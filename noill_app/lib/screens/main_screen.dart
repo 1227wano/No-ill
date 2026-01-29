@@ -6,7 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../widgets/molecules/bottom_nav_bar.dart';
 import '../widgets/atoms/light_diffusion_background.dart';
 import '../providers/auth_provider.dart';
-import '../core/constants/color_constants.dart';
 import 'home/home_screen.dart';
 import 'schedule/schedule_screen.dart';
 import 'settings/settings_screen.dart';
