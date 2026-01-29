@@ -30,7 +30,7 @@ public class ConversationController {
             return ResponseEntity.badRequest().build();
         }
 
-        TalkResponseDto response = robotInteractionService.handleUserRequest(request.getContent(), request.getPetNo());
+        TalkResponseDto response = robotInteractionService.handleUserRequest(request);
 
         return ResponseEntity.ok(response);
     }

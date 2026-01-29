@@ -37,4 +37,13 @@ public class Talk {
     @CreatedDate
     @Column(name = "CREATED_AT", nullable = false, updatable = false)
     private LocalDateTime createdAt;
+
+    // --- 비즈니스 로직 ---
+    public void close() {
+        this.status = "N";
+    }
+
+    public void updateTitle(String newTitle) {
+        this.talkName = newTitle;
+    }
 }

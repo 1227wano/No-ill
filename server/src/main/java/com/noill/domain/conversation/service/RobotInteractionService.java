@@ -2,14 +2,15 @@ package com.noill.domain.conversation.service;
 
 import com.noill.domain.conversation.dto.LlmAnalysisResult;
 import com.noill.domain.conversation.dto.LlmIntent;
+import com.noill.domain.conversation.dto.TalkRequestDto;
 import com.noill.domain.conversation.dto.TalkResponseDto;
+import com.noill.domain.conversation.entity.Talk;
 import com.noill.domain.pet.entity.Pet;
 import com.noill.domain.pet.repository.PetRepository;
 import com.noill.domain.schedule.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -19,47 +20,47 @@ public class RobotInteractionService {
     private final LlmService llmService;
     private final ScheduleService scheduleService;
     private final PetRepository petRepository;
+    private final ConversationService conversationService; // 추가
 
     /**
      * 로봇(클라이언트)의 음성/텍스트 요청을 처리하는 진입점
      * 
-     * @param userText 사용자 발화 텍스트
-     * @param petNo    반려동물 식별 번호
+     * @param request 사용자 발화 텍스트 및 반려동물 식별 번호
      * @return 로봇이 취할 행동 및 TTS 답변
      */
-    @Transactional
-    public TalkResponseDto handleUserRequest(String userText, Long petNo) {
-        log.info("Robot Request: petNo={}, text={}", petNo, userText);
+    public TalkResponseDto handleUserRequest(TalkRequestDto request) {
+        // [검증] - TODO: 추후 공통 Validator 등으로 분리 추천
+        Pet pet = petRepository.findById(request.getPetNo())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 펫입니다. ID: " + request.getPetNo()));
 
-        // 1. Pet 검증 (단순 조회)
-        // TODO: 추후 PetQueryService 등을 통해 공통 검증 로직으로 대체 가능
-        Pet pet = petRepository.findById(petNo)
-                .orElseThrow(() -> new IllegalArgumentException("해당 반려동물을 찾을 수 없습니다. petNo=" + petNo));
+        log.info("Robot Request: petNo={}, text={}", request.getPetNo(), request.getContent());
 
-        // 2. LLM 의도 분석
-        LlmAnalysisResult analysis = llmService.analyzeUserCommand(userText);
+        // [Phase 1] 사용자 메시지 저장 (Transaction O)
+        Talk currentTalk = conversationService.saveUserMessage(pet, request.getContent());
+
+        // [Phase 2] LLM 분석 (Transaction X - Latency 구간)
+        LlmAnalysisResult analysis = llmService.analyzeUserCommand(request.getContent());
         log.info("Analysis Result: intent={}", analysis.getIntent());
 
-        // 3. 의도에 따른 분기 처리 (Routing)
-        String ttsReply = analysis.getContent();
+        String replyContent = "죄송해요, 처리에 문제가 생겼어요."; // 기본값
         String actionCode = "NONE";
 
+        // [Routing] & [Phase 3] 봇 응답 생성 및 저장 (Transaction O)
         if (analysis.getIntent() == LlmIntent.SCHEDULE && analysis.getScheduleData() != null) {
-            // 일정 등록 서비스 호출
-            // ScheduleService.addScheduleFromLlm은 내부적으로 예외 발생 시 에러 메시지 String을 반환함
-            ttsReply = scheduleService.addScheduleFromLlm(analysis.getScheduleData(), pet, analysis.getContent());
+            // 스케줄 처리
+            replyContent = scheduleService.addScheduleFromLlm(analysis.getScheduleData(), pet, analysis.getContent());
             actionCode = "SCHEDULE_ADDED";
-
-        } else if (analysis.getIntent() == LlmIntent.DAILY_TALK) {
-            // TODO: 대화 저장 로직 (TalkService) 호출 필요
-            // 현재는 로그만 남기고 통과
-            log.info("Saving daily conversation (Not implemented yet)");
+        } else {
+            // 일상 대화 (또는 UNKNOWN)
+            replyContent = (analysis.getContent() != null) ? analysis.getContent() : "네, 알겠어요.";
             actionCode = "NONE";
         }
 
-        // 4. 결과 반환
+        // [Phase 3] 봇 메시지 DB 저장
+        conversationService.saveBotMessage(currentTalk, replyContent);
+
         return TalkResponseDto.builder()
-                .reply(ttsReply)
+                .reply(replyContent)
                 .action(actionCode)
                 .build();
     }
