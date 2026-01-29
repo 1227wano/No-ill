@@ -19,7 +19,7 @@ const LoginForm = ({ onSubmit, isLoading, error }) => {
                     htmlFor="petNo"
                     className="block text-lg font-medium text-gray-700 mb-2"
                 >
-                    로봇펜 번호
+                    로봇펫 번호
                 </label>
                 <input
                     type="text"

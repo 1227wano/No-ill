@@ -55,7 +55,7 @@ const LoginPage = () => {
 
                 {/* 안내 문구 */}
                 <p className="text-center text-sm text-gray-500 mt-6">
-                    로봇펜에 표시된 번호를 입력해주세요
+                    로봇펫에 표시된 번호를 입력해주세요
                 </p>
             </div>
         </div>

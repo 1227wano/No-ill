@@ -6,6 +6,6 @@ describe('App', () => {
   it('renders without crashing', () => {
     render(<App />)
     // 로그인 페이지가 렌더링되는지 확인
-    expect(screen.getByLabelText('로봇펜 번호')).toBeInTheDocument()
+    expect(screen.getByLabelText('로봇펫 번호')).toBeInTheDocument()
   })
 })
