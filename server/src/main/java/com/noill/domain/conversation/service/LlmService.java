@@ -67,7 +67,11 @@ public class LlmService {
 
       규칙 1: 일정 추가 (add_schedule)
       - 사용자가 특정 날짜/시간에 일정을 추가하려 할 때 사용합니다.
-      - 현재 시간([현재 시간 정보] 참고)을 기준으로 날짜와 시간을 계산해야 합니다.
+      - 현재 시간(아래 정보 참고)을 기준으로 날짜와 시간을 계산해야 합니다.
+
+      [현재 시간 정보]
+      %s
+
       {
         "cmd": {
           "cmdType": "add_schedule",
@@ -80,7 +84,7 @@ public class LlmService {
 
       [Few-shot Examples]
 
-      User: 내일 오후 2시에 병원 가야 돼.
+      User: 내일 오후 2시에 병원 가야 돼. (현재 시간: 2026-01-21T10:00:00)
       Assistant: {"cmd": {"cmdType": "add_schedule", "title": "병원 방문", "datetime": "2026-01-22T14:00:00", "memo": "병원 진료"}, "message": "네, 내일 오후 2시 병원 일정을 잡았어요."}
 
       User: 오늘 뭐 했어?
@@ -100,18 +104,21 @@ public class LlmService {
   private static final String FALLBACK_MESSAGE = "죄송해요, 잠시 머리가 아파서 생각을 정리하는 중이에요. 조금 뒤에 다시 말씀해 주시겠어요?";
 
   /**
-   * 사용자 발화 의도 분석 (JSON 응답 파싱)
+   * 사용자 발화 의도 분석 (JSON 응답 파싱) - Context Aware
+   * 
+   * @param userText       사용자 발화
+   * @param historyContext 최근 대화 내용 (Q/A)
+   * @param memoryContext  관련 과거 기억 (Title)
    */
-  public LlmAnalysisResult analyzeUserCommand(String userText) {
+  public LlmAnalysisResult analyzeUserCommand(String userText, String historyContext, String memoryContext) {
     if (userText == null || userText.trim().isEmpty()) {
-      // 빈 입력에 대해서는 예외보다는 안내 메시지 반환이 더 자연스러움
       return LlmAnalysisResult.builder()
           .intent(LlmIntent.UNKNOWN)
           .content("잘 못 들었어요. 다시 한 번 말씀해 주시겠어요?")
           .build();
     }
 
-    String fullPrompt = createAnalysisPrompt(userText);
+    String fullPrompt = createAnalysisPrompt(userText, historyContext, memoryContext);
     log.info("LLM 분석 요청: {}", userText);
 
     try {
@@ -124,13 +131,16 @@ public class LlmService {
 
     } catch (Exception e) {
       log.error("LLM 분석 중 오류 발생: {}", e.getMessage(), e);
-
-      // 장애 대응(Fallback): 시스템 오류가 발생해도 안전한 답변 반환
       return LlmAnalysisResult.builder()
           .intent(LlmIntent.UNKNOWN)
           .content(FALLBACK_MESSAGE)
           .build();
     }
+  }
+
+  // 기존 메서드 호환성 유지 (오버로딩) - 테스트 등에서 사용
+  public LlmAnalysisResult analyzeUserCommand(String userText) {
+    return analyzeUserCommand(userText, "", "");
   }
 
   /**
@@ -202,17 +212,25 @@ public class LlmService {
     }
   }
 
-  private String createAnalysisPrompt(String userText) {
+  private String createAnalysisPrompt(String userText, String historyContext, String memoryContext) {
     String currentTime = LocalDateTime.now().toString();
+
+    // 1. 시스템 프롬프트 완성 (시간 주입)
+    String systemInstruction = SYSTEM_PROMPT_ANALYSIS.formatted(currentTime);
+
+    // 2. 전체 프롬프트 조립
     return String.format("""
         %s
 
-        [현재 시간 정보]
+        [관련된 과거 기억]
+        %s
+
+        [현재 대화 흐름]
         %s
 
         User: %s
         Assistant:
-        """, SYSTEM_PROMPT_ANALYSIS, currentTime, userText);
+        """, systemInstruction, memoryContext, historyContext, userText);
   }
 
   private LlmAnalysisResult parseLlmResponse(String jsonString) throws JsonProcessingException {

@@ -38,8 +38,17 @@ public class RobotInteractionService {
         // [Phase 1] 사용자 메시지 저장 (Transaction O)
         Talk currentTalk = conversationService.saveUserMessage(pet, request.getContent());
 
+        // [New: Context Retrieval] 대화 문맥 및 기억 조회 (Transaction O - ReadOnly)
+        // 1. 현재 세션의 대화 내역(History) 조회
+        String historyContext = conversationService.getConversationHistory(currentTalk);
+        // 2. 과거 기억(Memory) 키워드 검색
+        String memoryContext = conversationService.getRelatedMemories(pet, request.getContent());
+
+        log.debug("Context Injected - History: {}, Memory: {}", historyContext.length(), memoryContext.length());
+
         // [Phase 2] LLM 분석 (Transaction X - Latency 구간)
-        LlmAnalysisResult analysis = llmService.analyzeUserCommand(request.getContent());
+        // Context를 포함하여 LLM 호출
+        LlmAnalysisResult analysis = llmService.analyzeUserCommand(request.getContent(), historyContext, memoryContext);
         log.info("Analysis Result: intent={}", analysis.getIntent());
 
         String replyContent = "죄송해요, 처리에 문제가 생겼어요."; // 기본값

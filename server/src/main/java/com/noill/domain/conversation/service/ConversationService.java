@@ -124,4 +124,66 @@ public class ConversationService {
             log.info("Rolling Window 동작: 메시지 {}개 삭제 (Talk: {})", oldMessages.size(), talk.getTalkNo());
         }
     }
+
+    // --- LLM Context 구성용 메서드 ---
+
+    /**
+     * 현재 세션의 대화 내역(History) 반환 (최근 10개)
+     * Format:
+     * Q: ...
+     * A: ...
+     */
+    @Transactional(readOnly = true)
+    public String getConversationHistory(Talk talk) {
+        java.util.List<Message> recentMessages = messageRepository
+                .findTop10ByTalk_TalkNoOrderByCreatedAtDesc(talk.getTalkNo());
+
+        // 최신순 -> 시간순(과거->현재) 정렬
+        java.util.Collections.reverse(recentMessages);
+
+        StringBuilder sb = new StringBuilder();
+        for (Message m : recentMessages) {
+            sb.append(m.getMsgType().equals("Q") ? "User: " : "Noyle: ");
+            sb.append(m.getMsgContent()).append("\n");
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 사용자 발화와 관련된 과거 기억(Memory) 검색
+     * - Status='N' (종료된 세션) 대상
+     * - 제목(TalkName) 유사도 검색 (LIKE)
+     */
+    @Transactional(readOnly = true)
+    public String getRelatedMemories(Pet pet, String userText) {
+        // [키워드 추출 전략: 단순 공백 분리 후 2글자 이상 명사 추정 단어 검색]
+        String[] tokens = userText.split("\\s+");
+        StringBuilder memories = new StringBuilder();
+        java.util.Set<String> addedTalkNames = new java.util.HashSet<>();
+
+        int count = 0;
+        for (String token : tokens) {
+            if (token.length() < 2)
+                continue; // 조사 등 제외 (단순)
+
+            java.util.List<Talk> found = talkRepository.findByPet_PetNoAndStatusAndTalkNameContaining(
+                    pet.getPetNo(), "N", token); // 제목에 키워드 포함 검색
+
+            for (Talk t : found) {
+                // 중복 제거 및 최대 3개까지만
+                if (!addedTalkNames.contains(t.getTalkName()) && count < 3) {
+                    memories.append("- [기억] ").append(t.getTalkName()).append("\n");
+                    addedTalkNames.add(t.getTalkName());
+                    count++;
+                }
+            }
+            if (count >= 3)
+                break;
+        }
+
+        if (memories.length() == 0) {
+            return "관련된 과거 기억이 없습니다.";
+        }
+        return memories.toString();
+    }
 }
