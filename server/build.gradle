@@ -47,12 +47,10 @@ dependencies {
     // Validation (입력값 검증)
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-
     // WebSocket
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
 
     // Dotenv (.env 파일 로드)
-
     implementation 'me.paulschwarz:spring-dotenv:4.0.0'
     implementation 'io.github.cdimascio:dotenv-java:3.0.0'
 
@@ -62,7 +60,6 @@ dependencies {
     // [FCM] Firebase Admin SDK 추가
     implementation 'com.google.firebase:firebase-admin:9.2.0'
 
-    // Lombok (컴파일 시점에 getter/setter 자동 생성)
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     runtimeOnly 'com.mysql:mysql-connector-j'
