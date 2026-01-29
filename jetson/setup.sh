@@ -120,19 +120,8 @@ else
     echo "STT 모델이 이미 존재합니다: $STT_MODEL_DIR"
 fi
 
-# TTS 모델 다운로드 (한국어 VITS)
-TTS_MODEL_DIR="$HOME/sherpa-onnx/vits-melo-tts-ko"
-if [ ! -d "$TTS_MODEL_DIR" ]; then
-    echo "TTS 모델 다운로드 중..."
-    mkdir -p "$HOME/sherpa-onnx"
-    cd "$HOME/sherpa-onnx"
-    wget -q https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/vits-melo-tts-ko.tar.bz2
-    tar xf vits-melo-tts-ko.tar.bz2
-    rm vits-melo-tts-ko.tar.bz2
-    echo "TTS 모델 다운로드 완료: $TTS_MODEL_DIR"
-else
-    echo "TTS 모델이 이미 존재합니다: $TTS_MODEL_DIR"
-fi
+# TTS 모델: tts 패키지의 models/ 폴더에 이미 포함되어 있음 (tts_model.onnx)
+echo "TTS 모델: 패키지에 포함됨 (별도 다운로드 불필요)"
 
 # =============================================================================
 # 7. TensorRT (YOLO용) - JetPack에 포함되어 있음
