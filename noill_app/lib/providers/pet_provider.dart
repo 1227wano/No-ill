@@ -15,9 +15,14 @@ class PetRegistrationNotifier extends Notifier<PetRegistrationRequest> {
     return PetRegistrationRequest();
   }
 
-  // 기기 번호 업데이트 (DevicePairingScreen)
+  // 기기 ID만 업데이트 (DevicePairingScreen 호출 인터페이스와 일치)
   void updatePetId(String id) {
     state = state.copyWith(petId: id);
+  }
+
+  // 기기 이름(별명) 업데이트
+  void updatePetName(String name) {
+    state = state.copyWith(petName: name);
   }
 
   // 어르신 프로필 업데이트 (ElderlyProfileRegistrationScreen)
