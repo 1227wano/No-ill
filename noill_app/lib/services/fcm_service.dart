@@ -14,8 +14,8 @@ class FcmService {
     _dio = Dio(
       BaseOptions(
         baseUrl: ApiConstants.baseUrl,
-        connectTimeout: const Duration(seconds: 10),
-        receiveTimeout: const Duration(seconds: 10),
+        connectTimeout: const Duration(seconds: 3),
+        receiveTimeout: const Duration(seconds: 3),
       ),
     );
 
@@ -40,10 +40,11 @@ class FcmService {
   /// accessToken이 필요하므로 로그인 후 사용
   Future<bool> sendTokenToServer(String fcmToken, String accessToken) async {
     try {
+      await Future.delayed(Duration(milliseconds: 500));
       print('🚀 [FCM] 서버로 토큰 전송 중...');
 
       final response = await _dio.post(
-        '/notifications/token',
+        '/api/notifications/token',
         data: {'token': fcmToken},
         options: Options(
           headers: {

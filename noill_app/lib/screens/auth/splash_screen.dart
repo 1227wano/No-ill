@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:noill_app/screens/main_screen.dart';
 import 'package:noill_app/widgets/atoms/gradient_background.dart';
 import '../../core/constants/color_constants.dart';
 import 'login_screen.dart';
@@ -36,7 +37,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       // 💡 토큰 있으면 바로 홈으로!
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
+        MaterialPageRoute(builder: (_) => const MainScreen()),
       );
     } else {
       // 💡 없으면 로그인 화면으로!

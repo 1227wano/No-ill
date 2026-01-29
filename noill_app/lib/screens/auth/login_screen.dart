@@ -130,7 +130,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     if (success && mounted) {
       // 로그인 성공 시 홈 화면으로 이동 (스택 제거)
-      Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+      Navigator.pushNamedAndRemoveUntil(context, '/main', (route) => false);
     } else if (mounted) {
       _showSnackBar("로그인 실패: 정보를 다시 확인해 주세요.");
     }

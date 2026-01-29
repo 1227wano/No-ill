@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants/color_constants.dart';
+import '../../widgets/atoms/light_diffusion_background.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -12,21 +13,26 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // Return only the page content so `MainScreen`'s Scaffold
     // (which provides the Drawer and BottomNavigationBar) can host it.
-    return SafeArea(
-      bottom: false,
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(20, 10, 20, 120), // 내비바 공간 확보
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildHeader(context), // 상단 헤더 (메뉴 & 알림)
-            const SizedBox(height: 24),
-            _buildStatusCard(), // 안심 상태 카드
-            const SizedBox(height: 32),
-            _buildRobotSection(context), // 로봇 상태 및 바텀시트 트리거
-            const SizedBox(height: 32),
-            _buildAgendaSection(), // 오늘의 일정
-          ],
+    return LightDiffusionBackground(
+      child: Container(
+        color: Colors.transparent,
+        child: SafeArea(
+          bottom: false,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(20, 10, 20, 120), // 내비바 공간 확보
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeader(context), // 상단 헤더 (메뉴 & 알림)
+                const SizedBox(height: 24),
+                _buildStatusCard(), // 안심 상태 카드
+                const SizedBox(height: 32),
+                _buildRobotSection(context), // 로봇 상태 및 바텀시트 트리거
+                const SizedBox(height: 32),
+                _buildAgendaSection(), // 오늘의 일정
+              ],
+            ),
+          ),
         ),
       ),
     );
