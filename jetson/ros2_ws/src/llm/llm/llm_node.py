@@ -3,6 +3,7 @@ import rclpy
 from rclpy.node import Node
 from std_msgs.msg import String
 import requests
+import os
 
 class NoilLLMNode(Node):
     def __init__(self):
@@ -10,11 +11,14 @@ class NoilLLMNode(Node):
         # 명세에 따른 토픽 구독 및 발행
         self.subscription = self.create_subscription(String, 'stt_result', self.stt_callback, 10)
         self.publisher = self.create_publisher(String, 'llm_response', 10)
-        
-        # API 설정
-        self.api_key = "S14P12A301-4cc0fe65-6e3e-4af7-9595-c12e4353cb39"
-        self.api_url = "https://gms.ssafy.io/gmsapi/api.openai.com/v1/chat/completions"
-        
+
+        # API 설정 (환경변수에서 로드)
+        self.api_key = os.environ.get('LLM_API_KEY', '')
+        self.api_url = os.environ.get('LLM_API_URL', 'https://gms.ssafy.io/gmsapi/api.openai.com/v1/chat/completions')
+
+        if not self.api_key:
+            self.get_logger().error("LLM_API_KEY 환경변수가 설정되지 않았습니다!")
+
         self.get_logger().info("★★★ LLM 통신 노드 가동 ★★★")
 
     def stt_callback(self, msg):

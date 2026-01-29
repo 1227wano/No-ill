@@ -15,8 +15,8 @@ class ImageUploadNode(Node):
         # 고정된 이미지 경로
         self.image_path = os.path.expanduser('~/Downloads/N0111.jpg')
         
-        # 업로드 엔드포인트
-        self.upload_url = "http://i14a301.p.ssafy.io:8080/api/events/report"
+        # 업로드 엔드포인트 (환경변수에서 로드)
+        self.upload_url = os.environ.get('UPLOAD_API_URL', 'http://i14a301.p.ssafy.io:8080/api/events/report')
         
         self.get_logger().info('★★★ Upload Accident Node Started ★★★')
         self.get_logger().info(f'Monitoring: {self.image_path}')

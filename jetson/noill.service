@@ -1,0 +1,38 @@
+# =============================================================================
+# 노일(No-ill) systemd 서비스 파일
+# =============================================================================
+# 설치 방법:
+#   sudo cp noill.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable noill
+#   sudo systemctl start noill
+#
+# 로그 확인:
+#   journalctl -u noill -f
+# =============================================================================
+
+[Unit]
+Description=No-ill Robot System (ROS2)
+After=network.target
+
+[Service]
+Type=simple
+User=jetson
+WorkingDirectory=/home/jetson/ros2_ws
+
+# 환경변수 설정
+EnvironmentFile=/home/jetson/jetson/.env
+
+# ROS2 환경 설정 후 실행
+ExecStart=/bin/bash -c 'source /opt/ros/humble/setup.bash && source /home/jetson/ros2_ws/install/setup.bash && ros2 launch no_ill_bringup no_ill_full.launch.py'
+
+# 재시작 설정
+Restart=on-failure
+RestartSec=10
+
+# 로그 설정
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

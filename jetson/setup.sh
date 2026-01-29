@@ -120,6 +120,20 @@ else
     echo "STT 모델이 이미 존재합니다: $STT_MODEL_DIR"
 fi
 
+# TTS 모델 다운로드 (한국어 VITS)
+TTS_MODEL_DIR="$HOME/sherpa-onnx/vits-melo-tts-ko"
+if [ ! -d "$TTS_MODEL_DIR" ]; then
+    echo "TTS 모델 다운로드 중..."
+    mkdir -p "$HOME/sherpa-onnx"
+    cd "$HOME/sherpa-onnx"
+    wget -q https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/vits-melo-tts-ko.tar.bz2
+    tar xf vits-melo-tts-ko.tar.bz2
+    rm vits-melo-tts-ko.tar.bz2
+    echo "TTS 모델 다운로드 완료: $TTS_MODEL_DIR"
+else
+    echo "TTS 모델이 이미 존재합니다: $TTS_MODEL_DIR"
+fi
+
 # =============================================================================
 # 7. TensorRT (YOLO용) - JetPack에 포함되어 있음
 # =============================================================================
@@ -163,23 +177,34 @@ sudo usermod -aG i2c $USER
 # =============================================================================
 # 완료
 # =============================================================================
+# =============================================================================
+# 환경변수 설정 파일 생성
+# =============================================================================
+echo ""
+echo "환경변수 설정 파일 생성..."
+if [ ! -f "$SCRIPT_DIR/.env" ]; then
+    cp "$SCRIPT_DIR/.env.example" "$SCRIPT_DIR/.env"
+    echo ".env 파일이 생성되었습니다. API 키를 설정하세요:"
+    echo "  vi $SCRIPT_DIR/.env"
+else
+    echo ".env 파일이 이미 존재합니다."
+fi
+
 echo ""
 echo "=========================================="
 echo " 설치 완료!"
 echo "=========================================="
 echo ""
-echo "재부팅 후 다음 명령어로 실행하세요:"
+echo "1. 환경변수 설정 (API 키):"
+echo "   vi $SCRIPT_DIR/.env"
 echo ""
-echo "  # 전체 시스템 실행"
-echo "  ros2 launch no_ill_bringup no_ill_full.launch.py"
+echo "2. 재부팅 (I2C 권한 적용):"
+echo "   sudo reboot"
 echo ""
-echo "  # 개별 노드 테스트"
-echo "  ros2 run yolo_detector yolo_detector_node"
-echo "  ros2 run stt stt_node"
-echo "  ros2 run tts tts_node"
+echo "3. 실행:"
+echo "   cd $SCRIPT_DIR"
+echo "   source .env"
+echo "   ros2 launch no_ill_bringup no_ill_full.launch.py"
 echo ""
 echo "=========================================="
-echo ""
-echo "NOTE: 재부팅이 필요합니다 (I2C 권한 적용)"
-echo "  sudo reboot"
 echo ""
