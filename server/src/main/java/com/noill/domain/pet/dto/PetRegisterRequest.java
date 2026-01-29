@@ -11,7 +11,6 @@ import lombok.Setter;
 public class PetRegisterRequest {
     private String petId;
     private String petName;
-    private String petOwner;
     private String petAddress;
     private String petPhone;
 
