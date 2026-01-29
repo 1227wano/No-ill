@@ -31,9 +31,29 @@ public class JwtTokenProvider {
         this.refreshTokenValidityInMilliseconds = refreshTokenValidityInMilliseconds;
     }
 
+    // Principal 타입에 따라 유연하게 처리
     public String generateToken(Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        return generateToken(userDetails.getUsername());
+        String username = getUsername(authentication);
+        return generateToken(username);
+    }
+
+    // Principal 타입에 따라 유연하게 처리
+    public String generateRefreshToken(Authentication authentication) {
+        String username = getUsername(authentication);
+        return generateRefreshToken(username);
+    }
+
+    // Authentication에서 username을 안전하게 추출하는 메서드
+    private String getUsername(Authentication authentication) {
+        Object principal = authentication.getPrincipal();
+
+        if (principal instanceof UserDetails) {
+            return ((UserDetails) principal).getUsername();
+        } else if (principal instanceof String) {
+            return (String) principal;
+        }
+
+        throw new IllegalArgumentException("지원하지 않는 인증 타입입니다.");
     }
 
     public String generateToken(String username) {
@@ -46,11 +66,6 @@ public class JwtTokenProvider {
                 .expiration(expiryDate)
                 .signWith(secretKey)
                 .compact();
-    }
-
-    public String generateRefreshToken(Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        return generateRefreshToken(userDetails.getUsername());
     }
 
     public String generateRefreshToken(String username) {
