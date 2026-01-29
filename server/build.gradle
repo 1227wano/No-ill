@@ -30,12 +30,13 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
-    // 1번 추가: JSON 날짜/시간 처리를 위한 Jackson 모듈 (LocalDateTime 등을 위해 필수)
+    // JSON 날짜/시간 처리를 위한 Jackson 모듈 (LocalDateTime 등을 위해 필수)
     implementation 'com.fasterxml.jackson.core:jackson-databind'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
     // Spring Security & Redis (로그인 및 토큰 저장)
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    // Redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
     // JWT (최신 0.12.6 버전)
@@ -55,7 +56,7 @@ dependencies {
     implementation 'me.paulschwarz:spring-dotenv:4.0.0'
     implementation 'io.github.cdimascio:dotenv-java:3.0.0'
 
-    // 2번 메인: Swagger / OpenAPI (팀원들 API 확인용)
+    // Swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.3'
 
     // [FCM] Firebase Admin SDK 추가
@@ -64,17 +65,11 @@ dependencies {
     // Lombok (컴파일 시점에 getter/setter 자동 생성)
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
-
-    // Database
-    runtimeOnly 'com.mysql:mysql-connector-j' // 실제 DB (MySQL)
-
-    // H2 Database 설정 (1번의 위치 변경: 테스트 시에만 사용하도록 분리하는 것이 정석입니다)
-    testRuntimeOnly 'com.h2database:h2'
-
-    // Test
+    runtimeOnly 'com.mysql:mysql-connector-j'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testRuntimeOnly 'com.h2database:h2'
 }
 
 tasks.named('test') {

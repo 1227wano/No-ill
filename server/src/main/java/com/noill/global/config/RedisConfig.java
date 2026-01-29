@@ -24,7 +24,6 @@ public class RedisConfig {
     @Value("${spring.data.redis.password:}")
     private String password;
 
-    // 1. 연결 설정 (2번의 유연함 채택)
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
         RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
@@ -39,8 +38,6 @@ public class RedisConfig {
         return new LettuceConnectionFactory(config, clientConfig);
     }
 
-
-    // 2. 데이터 직렬화 설정 (1번의 핵심 로직 채택)
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
