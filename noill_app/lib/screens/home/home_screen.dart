@@ -6,6 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/color_constants.dart';
 import '../../widgets/atoms/light_diffusion_background.dart';
 
+import '../../providers/auth_provider.dart';
+
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
@@ -28,6 +30,18 @@ class HomeScreen extends ConsumerWidget {
                 _buildStatusCard(), // 안심 상태 카드
                 const SizedBox(height: 32),
                 _buildRobotSection(context), // 로봇 상태 및 바텀시트 트리거
+                // HomeScreen 내부 Column의 children 중 하나로 추가
+                ElevatedButton(
+                  onPressed: () {
+                    // 🚨 401 에러가 발생했을 때와 동일한 '로그아웃' 명령을 강제로 내립니다.
+                    ref.read(authProvider.notifier).logout();
+                  },
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                  child: const Text(
+                    "세션 만료 강제 테스트",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
                 const SizedBox(height: 32),
                 _buildAgendaSection(), // 오늘의 일정
               ],

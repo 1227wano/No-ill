@@ -44,7 +44,7 @@ class FcmService {
       print('🚀 [FCM] 서버로 토큰 전송 중...');
 
       final response = await _dio.post(
-        '/api/notifications/token',
+        '/notifications/token',
         data: {'token': fcmToken},
         options: Options(
           headers: {

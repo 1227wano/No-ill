@@ -14,7 +14,7 @@ class AuthService {
 
   // [로그인]
   Future<LoginResponse> login(String id, String password) async {
-    print("🚀 [POST] 로그인 시도: $id");
+    print("[API 요청 데이터] : $id / $password ");
     try {
       final response = await _dio.post(
         ApiConstants.login,

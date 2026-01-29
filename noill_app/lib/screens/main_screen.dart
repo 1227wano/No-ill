@@ -34,6 +34,30 @@ class _MainScreenState extends ConsumerState<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // authProvider 의 상태 실시간 감시 -> 로그아웃 시 화면 재빌드
+    ref.listen(authProvider, (previous, next) {
+      // 이전에는 로그인, 현재 로그아웃 상태로 변한다면
+      final previousData = previous?.value; // 이전 데이터
+      final nextData = next.value; // 현재 데이터
+
+      if (previousData != null && nextData == null) {
+        //  1. 하단에 검은색 스낵바 띄우기
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("세션이 만료되었습니다. 다시 로그인해주세요."),
+            backgroundColor: Colors.black87,
+            duration: Duration(seconds: 3),
+          ),
+        );
+        // 2. 로그인 화면 (splash)으로 이동
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const SplashScreen()),
+          (route) => false, // 뒤로가기 방지를 위해 모든 경로 삭제
+        );
+      }
+    });
+
     return LightDiffusionBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
