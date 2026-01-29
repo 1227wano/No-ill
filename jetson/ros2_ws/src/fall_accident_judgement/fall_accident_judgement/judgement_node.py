@@ -6,6 +6,11 @@ class FallJudgementNode(Node):
     def __init__(self):
         super().__init__('fall_judgement_node')
 
+        # ROS2 파라미터 선언
+        self.declare_parameter('threshold', 30)
+        self.declare_parameter('event_duration', 5.0)
+        self.declare_parameter('cooldown_duration', 10.0)
+
         # Subscriber
         self.create_subscription(String, 'object_type', self.listener_callback, 10)
 
@@ -17,13 +22,13 @@ class FallJudgementNode(Node):
         self.is_paused = False
         self.timer = None  # 5초 뒤 False 전환을 위한 타이머
         self.cooldown_timer = None # 10초 휴지기를 위한 타이머
-        
-        # 설정값
-        self.THRESHOLD = 30 
-        self.EVENT_DURATION = 5.0      # True 유지 시간
-        self.COOLDOWN_DURATION = 10.0  # 휴지기 시간
 
-        self.get_logger().info('Fall Judgement Node: Event-based mode started.')
+        # 설정값 (파라미터에서 로드)
+        self.THRESHOLD = self.get_parameter('threshold').value
+        self.EVENT_DURATION = self.get_parameter('event_duration').value
+        self.COOLDOWN_DURATION = self.get_parameter('cooldown_duration').value
+
+        self.get_logger().info(f'Fall Judgement Node: threshold={self.THRESHOLD}, event={self.EVENT_DURATION}s, cooldown={self.COOLDOWN_DURATION}s')
 
     def listener_callback(self, msg):
         # 휴지기(이벤트 중 포함)일 경우 데이터 무시

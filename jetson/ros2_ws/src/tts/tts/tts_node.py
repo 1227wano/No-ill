@@ -11,12 +11,17 @@ from ament_index_python.packages import get_package_share_directory
 class NoilTTSNode(Node):
     def __init__(self):
         super().__init__('tts_node')
+
+        # ROS2 파라미터 선언
+        self.declare_parameter('speaker_device_name', 'UACDemo')
+
         self.sub_res = self.create_subscription(String, 'llm_response', self.tts_callback, 10)
         self.sub_chat = self.create_subscription(Bool, 'is_chatting', self.chat_state_callback, 10)
         self.done_pub = self.create_publisher(Bool, 'tts_done', 10)
 
-        self.speaker_device_id = self.find_device_by_name("UACDemo")
-        self.get_logger().info(f"선택된 스피커 장치 ID: {self.speaker_device_id}")
+        speaker_name = self.get_parameter('speaker_device_name').value
+        self.speaker_device_id = self.find_device_by_name(speaker_name)
+        self.get_logger().info(f"선택된 스피커 장치 ID: {self.speaker_device_id} ({speaker_name})")
 
         pkg_share = get_package_share_directory('tts')
         vits_config = sherpa_onnx.OfflineTtsVitsModelConfig(

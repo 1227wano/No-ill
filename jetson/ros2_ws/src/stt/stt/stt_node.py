@@ -14,7 +14,12 @@ from sherpa_onnx.lib._sherpa_onnx import (
 class NoilSTTNode(Node):
     def __init__(self):
         super().__init__('stt_node')
-        
+
+        # ROS2 파라미터 선언
+        self.declare_parameter('mic_device_name', 'Brio')
+        self.declare_parameter('model_dir', os.path.expanduser('~/sherpa-onnx/sherpa-onnx-streaming-zipformer-korean-2024-06-16'))
+        self.declare_parameter('timeout_sec', 7.0)
+
         self.is_chatting_pub = self.create_publisher(Bool, 'is_chatting', 10)
         self.stt_result_pub = self.create_publisher(String, 'stt_result', 10)
         self.tts_done_sub = self.create_subscription(Bool, 'tts_done', self.tts_done_callback, 10)
@@ -23,11 +28,13 @@ class NoilSTTNode(Node):
         self.is_chatting = False
         self.can_listen = False
         self.timeout_timer = None
+        self.timeout_sec = self.get_parameter('timeout_sec').value
 
-        self.mic_device_id = self.find_device_by_name("Brio")
-        self.get_logger().info(f"선택된 마이크 장치 ID: {self.mic_device_id}")
+        mic_name = self.get_parameter('mic_device_name').value
+        self.mic_device_id = self.find_device_by_name(mic_name)
+        self.get_logger().info(f"선택된 마이크 장치 ID: {self.mic_device_id} ({mic_name})")
 
-        model_dir = "/home/jetson/sherpa-onnx/sherpa-onnx-streaming-zipformer-korean-2024-06-16"
+        model_dir = self.get_parameter('model_dir').value
         package_share_dir = get_package_share_directory('stt')
         self.hotwords_filepath = os.path.join(package_share_dir, 'hotwords.txt')
         self.keywords = self.load_hotwords(self.hotwords_filepath)
@@ -89,7 +96,7 @@ class NoilSTTNode(Node):
 
     def reset_timeout_timer(self):
         if self.timeout_timer: self.timeout_timer.cancel()
-        self.timeout_timer = threading.Timer(7.0, self.handle_timeout) # 5.0 -> 7.0초로 연장
+        self.timeout_timer = threading.Timer(self.timeout_sec, self.handle_timeout)
         self.timeout_timer.start()
 
     def handle_timeout(self):
