@@ -26,6 +26,7 @@ void main() async {
   runApp(const ProviderScope(child: NoIllApp()));
 
   // 권한 요청, 토큰 추출은 화면 띄운 후 별도 진행
+  // ※ 로그인 후 auth_provider에서 자동으로 FCM이 처리됩니다.
   _initializeNotification();
 }
 
@@ -35,19 +36,43 @@ Future<void> _initializeNotification() async {
     FirebaseMessaging messaging = FirebaseMessaging.instance;
 
     // 권한 요청
-    await messaging.requestPermission(alert: true, badge: true, sound: true);
-
-    // FCM 토큰 가져오기
-    // ※ 웹에서는 VAPID 키가 없으면 여기서 응답이 없을 수 있습니다.
-    String? fcmToken = await messaging.getToken(
-      vapidKey:
-          "BLyYLeyyrWUkeSUJHUXjBLeGfHNus1-CNvH2kJK1Nm6MwWqEUwPml8R-nDaM7ynHCywMezpAabuLACfsaepYyB0",
+    final NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+      provisional: true,
     );
 
-    print('🚀 [FCM TOKEN] : $fcmToken');
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      print('✅ [FCM] 사용자가 알림 권한을 승인했습니다');
+    } else if (settings.authorizationStatus ==
+        AuthorizationStatus.provisional) {
+      print('⚠️ [FCM] 임시 권한만 승인되었습니다');
+    } else {
+      print('❌ [FCM] 사용자가 알림 권한을 거부했습니다');
+      return;
+    }
+
+    // 🔥 [개선] 백그라운드 메시지 핸들러 등록
+    // (앱이 완전히 종료된 상태에서 메시지를 받을 때)
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+    print('✅ [FCM] 알림 초기화 완료');
   } catch (e) {
     print('❌ 알림 초기화 실패: $e');
   }
+}
+
+// 🔥 [새로운 함수] 백그라운드 메시지 핸들러
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // 백그라운드에서 Firebase를 다시 초기화
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  print('📬 [FCM] 백그라운드 메시지 수신');
+  print('   - 제목: ${message.notification?.title}');
+  print('   - 내용: ${message.notification?.body}');
+  print('   - 데이터: ${message.data}');
 }
 
 class NoIllApp extends StatelessWidget {

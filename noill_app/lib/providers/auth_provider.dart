@@ -2,12 +2,12 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart'; // 👈 추가
-import 'package:dio/dio.dart';
-import '../services/fcm_service.dart';
 import '../services/auth_service.dart';
+import '../services/fcm_service.dart';
 import '../models/auth_models.dart';
 
 final authServiceProvider = Provider((ref) => AuthService());
+final fcmServiceProvider = Provider((ref) => FcmService());
 
 // 💡 보안 저장소 인스턴스 생성
 const _storage = FlutterSecureStorage();
@@ -29,7 +29,8 @@ class AuthNotifier extends Notifier<AsyncValue<LoginData?>> {
         // Debug log: 로그인 응답 확인
         // ignore: avoid_print
         print('AuthNotifier: login success, storing tokens');
-        // 1. JWT 토큰을 기기에 안전하게 저장합니다.
+
+        // ✅ [핵심] 토큰을 기기에 안전하게 저장합니다.
         await _storage.write(
           key: 'accessToken',
           value: response.data!.accessToken,
@@ -38,12 +39,18 @@ class AuthNotifier extends Notifier<AsyncValue<LoginData?>> {
           key: 'refreshToken',
           value: response.data!.refreshToken,
         );
+
+        // Debug log: 토큰 저장 완료
+        // ignore: avoid_print
         print(
-          'AuthNotifier: tokens saved (accessToken length=${response.data!.accessToken.length ?? 0})',
+          'AuthNotifier: tokens saved (accessToken length=${response.data!.accessToken.length})',
         );
-        // 2. FCM 토큰을 백엔드 서버로 전송합니다.
-        _registerFcmToken(response.data!.accessToken);
+
         state = AsyncValue.data(response.data);
+
+        // 🔥 [새로운 기능] 로그인 후 FCM 토큰 전송
+        _handlePostLoginFcm(response.data!.accessToken);
+
         return true;
       } else {
         // Debug log: 로그인 실패 원인 출력
@@ -61,25 +68,41 @@ class AuthNotifier extends Notifier<AsyncValue<LoginData?>> {
     }
   }
 
-  // [FCM 토큰 등록 내부 함수]
-  Future<void> _registerFcmToken(String accessToken) async {
+  // 🔥 [새로운 함수] 로그인 후 FCM 처리
+  Future<void> _handlePostLoginFcm(String accessToken) async {
     try {
       final fcmService = ref.read(fcmServiceProvider);
 
-      // 1. FCM 토큰 발급
-      final token = await fcmService.getFcmToken();
+      // 1. FCM 토큰 가져오기
+      final fcmToken = await fcmService.getFcmToken();
 
-      if (token != null) {
-        // 2. 백엔드 전송 (협의된 규격 적용)
-        await fcmService.sendTokenToServer(token, accessToken);
+      if (fcmToken != null) {
+        // 2. 서버로 토큰 전송
+        final success = await fcmService.sendTokenToServer(
+          fcmToken,
+          accessToken,
+        );
 
-        // 3. 토큰 갱신 리스너 가동 (이미 로그인 상태이므로 리스너 등록)
-        fcmService.listenToTokenRefresh(accessToken);
-        print('🚀 [AuthNotifier] FCM 등록 및 리스너 가동 완료');
+        if (success) {
+          // 3. 토큰 갱신 리스너 등록 (이후 토큰이 갱신되면 자동 전송)
+          fcmService.listenToTokenRefresh(accessToken);
+
+          // 4. 메시지 리스너 등록
+          fcmService.listenToForegroundMessages();
+
+          // ignore: avoid_print
+          print('✅ AuthNotifier: FCM 토큰 전송 및 리스너 등록 완료');
+        } else {
+          // ignore: avoid_print
+          print('⚠️ AuthNotifier: FCM 토큰 전송 실패 - 나중에 재시도 필요');
+        }
+      } else {
+        // ignore: avoid_print
+        print('⚠️ AuthNotifier: FCM 토큰 획득 실패');
       }
     } catch (e) {
-      // 알림 등록 실패가 로그인을 방해해서는 안 되므로 에러 로그만 남깁니다.
-      print('⚠️ [AuthNotifier] FCM 등록 중 비치명적 에러: $e');
+      // ignore: avoid_print
+      print('❌ AuthNotifier: FCM 처리 중 오류 - $e');
     }
   }
 
