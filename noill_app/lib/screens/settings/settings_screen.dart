@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/color_constants.dart';
 import '../../providers/auth_provider.dart';
 import '../auth/splash_screen.dart';
+import '../onboarding/device_pairing_screen.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -51,7 +52,15 @@ class SettingsScreen extends ConsumerWidget {
             _buildMenuTile(
               Icons.smart_toy_outlined,
               "기기 관리 (Aibo-Bot v2)",
-              onTap: () {},
+              onTap: () {
+                // 💡 [핵심] 기기 연동 화면으로 이동합니다.
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const DevicePairingScreen(),
+                  ),
+                );
+              },
             ),
             _buildMenuTile(Icons.group_outlined, "공동 보호자 초대", onTap: () {}),
             _buildMenuTile(Icons.notifications_none, "알림 설정", onTap: () {}),

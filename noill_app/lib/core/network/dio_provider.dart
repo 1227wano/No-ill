@@ -1,15 +1,19 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'api_constants.dart';
 import '../../providers/auth_provider.dart'; // providers 폴더는 UI 상 변하는 데이터, dio_provider는 전체 통신/인프라에 해당하므로 별도 관리
 
-final dioProvider = Provider<Dio>((ref) {
-  final dio = Dio();
+const storage = FlutterSecureStorage();
 
-  // 1. 기본 설정 (BaseUrl 등)
-  dio.options.baseUrl = dotenv.env['API_BASE_URL'] ?? ApiConstants.baseUrl;
-  dio.options.connectTimeout = const Duration(seconds: 5);
+final dioProvider = Provider<Dio>((ref) {
+  final dio = Dio(
+    BaseOptions(
+      baseUrl: ApiConstants.baseUrl,
+      connectTimeout: const Duration(seconds: 5),
+    ),
+  );
 
   // 2. 인터셉터 추가
   dio.interceptors.add(
@@ -18,6 +22,10 @@ final dioProvider = Provider<Dio>((ref) {
       // [진짜 코드]
       onRequest: (options, handler) async {
         // 여기에 저장소에서 토큰을 읽어와서 헤더에 넣는 로직을 추가할 수 있습니다.
+        final accessToken = await storage.read(key: 'accessToken');
+        if (accessToken != null) {
+          options.headers['Authorization'] = 'Bearer $accessToken';
+        }
         return handler.next(options);
       },
 
