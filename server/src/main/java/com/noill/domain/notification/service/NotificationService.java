@@ -16,7 +16,7 @@ public class NotificationService {
     private final FcmTokenRepository fcmTokenRepository;
     private final UserRepository userRepository;
 
-    // 1. 토큰 저장/갱신 (로그인 성공 직후 호출)
+    // 1. 토큰 저장/갱신
     @Transactional
     public void saveToken(Long userNo, FcmTokenRequest request) {
         User user = userRepository.findById(userNo)
@@ -24,13 +24,13 @@ public class NotificationService {
 
         fcmTokenRepository.findByToken(request.getToken())
                 .ifPresentOrElse(
-                        // A. 이미 있는 토큰이면 -> 유저 정보가 맞는지 확인하고 업데이트 (마지막 활동 시간 갱신됨)
+                        // 이미 있는 토큰이면 -> 유저 정보가 맞는지 확인하고 업데이트 (마지막 활동 시간 갱신됨)
                         existingToken -> {
                             if (!existingToken.getUser().getUserNo().equals(userNo)) {
                                 existingToken.updateUser(user); // 기기 사용자가 바뀌었으면 주인 변경
                             }
                         },
-                        // B. 없는 토큰이면 -> 새로 저장
+                        // 없는 토큰이면 새로 저장
                         () -> {
                             fcmTokenRepository.save(FcmToken.builder()
                                     .user(user)

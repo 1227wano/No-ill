@@ -64,7 +64,6 @@ public class AuthService {
                     pet = Pet.builder()
                             .petId(petDto.getPetId())
                             .petName(petDto.getPetName())
-                            .petOwner(petDto.getPetOwner())
                             .petAddress(petDto.getPetAddress())
                             .petPhone(petDto.getPetPhone())
                             .build();

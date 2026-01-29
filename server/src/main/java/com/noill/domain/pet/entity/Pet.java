@@ -37,19 +37,15 @@ public class Pet {
     @Column(name = "PET_PHONE", nullable = false, length = 100)
     private String petPhone;
 
-    @Column(name = "PET_OWNER", nullable = false, length = 100)
-    private String petOwner;
-
     @Column(name = "PET_BIRTH")
     private LocalDateTime petBirth;
 
     @Builder
-    public Pet(String petId, String petName, String petAddress, String petPhone, String petOwner, LocalDateTime petBirth) {
+    public Pet(String petId, String petName, String petAddress, String petPhone, LocalDateTime petBirth) {
         this.petId = petId;
         this.petName = petName;
         this.petAddress = petAddress;
         this.petPhone = petPhone;
-        this.petOwner = petOwner;
         this.petBirth = petBirth;
     }
 }

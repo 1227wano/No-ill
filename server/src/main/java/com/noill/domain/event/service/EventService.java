@@ -3,6 +3,9 @@ package com.noill.domain.event.service;
 import com.noill.domain.care.entity.Care;
 import com.noill.domain.event.entity.Event;
 import com.noill.domain.event.repository.EventRepository;
+import com.noill.domain.notification.entity.FcmToken;
+import com.noill.domain.notification.repository.FcmTokenRepository;
+import com.noill.domain.notification.service.FcmService;
 import com.noill.domain.pet.entity.Pet;
 import com.noill.domain.pet.repository.PetRepository;
 import com.noill.domain.user.entity.User;
@@ -22,7 +25,10 @@ public class EventService {
 
     private final EventRepository eventRepository;
     private final PetRepository petRepository;
-    // private final FcmService fcmService; // FCM
+
+    // FCM
+    private final FcmTokenRepository fcmTokenRepository;
+    private final FcmService fcmService;
 
     @Transactional
     public void alertEvent(MultipartFile file) {
@@ -46,21 +52,34 @@ public class EventService {
 
         // 4. 보호자 조회 및 FCM 발송
         List<Care> cares = pet.getCares();
+        if (cares.isEmpty()) {
+            log.info("이 펫({})에 연결된 보호자가 없습니다.", pet.getPetName());
+            return;
+        }
 
         for (Care care : cares) {
             User user = care.getUser();
-            log.info("보호자({})에게 낙상 알림 전송 로직 수행", user.getUsername());
-            // TODO: FCM 전송 로직 호출
+            sendPushToUser(user, care.getCareName(), file);
         }
     }
 
-    private void sendPushToUser(User user, String petName) {
-        // TODO: User와 연결된 Token을 조회하여 FCM 발송
-        // Token 엔티티나 로직이 User에 없어서 주석으로 흐름만 작성합니다.
-        // 예: List<Token> tokens = tokenRepository.findByUser(user);
-        // for (Token token : tokens) {
-        //      fcmService.send(token.getValue(), "낙상 감지", petName + " 로봇이 낙상을 감지했습니다!");
-        // }
-        log.info("FCM 발송 시도 - 대상: {}, 내용: {} 로봇 낙상 감지", user.getUsername(), petName);
+    private void sendPushToUser(User user, String careName, MultipartFile file) {
+        // User의 토큰 조회
+        List<FcmToken> tokens = fcmTokenRepository.findByUser(user);
+
+        if (tokens.isEmpty()) {
+            log.info("유저({})는 등록된 FCM 토큰이 없습니다.", user.getUsername());
+            return;
+        }
+
+        String title = "낙상 감지 알림";
+        String body = String.format("%s 님의 낙상을 감지했습니다! 확인해주세요.", careName);
+
+        // 등록된 모든 기기(토큰)로 전송
+        for (FcmToken fcmToken : tokens) {
+            fcmService.sendNotification(fcmToken.getToken(), title, body, file);
+        }
+
+        log.info("보호자({})의 기기 {}대에 알림 전송 완료", user.getUsername(), tokens.size());
     }
 }
