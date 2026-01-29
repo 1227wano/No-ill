@@ -18,7 +18,7 @@ public class NotificationController {
 
     private final NotificationService notificationService;
 
-    // FCM 토큰 등록 API (로그인 후 호출)
+    // FCM 토큰 등록 API (로그인 후 호출됨)
     @PostMapping("/token")
     public ResponseEntity<Void> registerToken(@AuthenticationPrincipal User user,
                                               @RequestBody @Valid FcmTokenRequest request) {

@@ -51,6 +51,7 @@ test:
   variables:
     SPRING_PROFILES_ACTIVE: test
   script:
+    - cp $FIREBASE_KEY_JSON src/main/resources/firebase-service-account.json
     - ./gradlew test
   artifacts:
     when: always
@@ -81,10 +82,10 @@ docker:
     - docker buildx create --use --name multiarch --driver docker-container --bootstrap
   script:
     - docker buildx build
-        --platform linux/amd64
-        --tag $IMAGE_TAG
-        --push
-        ./server
+      --platform linux/amd64
+      --tag $IMAGE_TAG
+      --push
+      ./server
 
 
 deploy:
@@ -113,6 +114,8 @@ deploy:
         -p $PORT:$PORT \
         -e SERVER_PORT=$PORT \
         --env-file /opt/server/.env \
+        -v /opt/server/firebase-service-account.json:/app/firebase-service-account.json:ro \
+        -e GOOGLE_APPLICATION_CREDENTIALS=/app/firebase-service-account.json \
         $IMAGE_TAG
       sleep 30
       curl -f http://localhost:$PORT/actuator/health \

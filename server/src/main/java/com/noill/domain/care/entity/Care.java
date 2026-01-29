@@ -42,13 +42,14 @@ public class Care {
 
     @CreatedDate
     @Column(name = "CARE_START", nullable = false, updatable = false)
-    private LocalDateTime careStart; // 보호 시작일
+    private LocalDateTime careStart;
 
     @Builder
-    public Care(User user, Pet pet, String careName) {
+    public Care(User user, Pet pet, String careName, LocalDateTime careStart) {
         this.user = user;
         this.pet = pet;
         this.careName = careName;
+        this.careStart = careStart;
     }
 
     public void updateCareName(String newName) {
