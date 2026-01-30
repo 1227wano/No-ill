@@ -17,7 +17,7 @@ const LoginForm = ({ onSubmit, isLoading, error }) => {
             <div className="mb-6">
                 <label
                     htmlFor="petNo"
-                    className="block text-lg font-medium text-gray-700 mb-2"
+                    className="block text-body font-medium text-text-main mb-2"
                 >
                     로봇펫 번호
                 </label>
@@ -27,23 +27,23 @@ const LoginForm = ({ onSubmit, isLoading, error }) => {
                     value={petNo}
                     onChange={(e) => setPetNo(e.target.value)}
                     placeholder="로봇펫 번호를 입력하세요"
-                    className="w-full px-4 py-3 text-lg border-2 border-gray-200 rounded-xl focus:border-[#5BA3D0] focus:outline-none transition-colors"
+                    className="w-full px-4 py-4 text-body bg-surface border border-border rounded-input focus:border-[#5BA3D0] focus:ring-2 focus:ring-[#5BA3D0]/20 focus:outline-none transition-colors"
                     disabled={isLoading}
                     autoFocus
                 />
                 {!isValid && petNo.length > 0 && (
-                    <p className="mt-2 text-sm text-orange-500">
+                    <p className="mt-2 text-caption text-danger">
                         4자 이상 입력해주세요
                     </p>
                 )}
                 {error && (
-                    <p className="mt-2 text-sm text-red-500">{error}</p>
+                    <p className="mt-2 text-caption text-danger">{error}</p>
                 )}
             </div>
             <button
                 type="submit"
                 disabled={!isValid || isLoading}
-                className="w-full py-4 text-xl font-semibold text-white bg-[#5BA3D0] rounded-xl hover:bg-[#4A90C2] disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors shadow-lg"
+                className="w-full h-[52px] text-body font-semibold text-white bg-[#5BA3D0] rounded-button hover:bg-[#4A90C2] disabled:bg-border disabled:cursor-not-allowed transition-colors shadow-card"
             >
                 {isLoading ? '로그인 중...' : '로그인'}
             </button>

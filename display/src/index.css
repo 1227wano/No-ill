@@ -2,6 +2,43 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Pretendard 폰트 CDN */
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+
+/* ========================================
+   NoIll Design System - CSS Variables
+   ======================================== */
+:root {
+  /* Colors */
+  --color-primary: #5BA3D0;
+  --color-danger: #E53935;
+  --color-background: #FDFBF7;
+  --color-surface: #FFFFFF;
+  --color-border: #E0E0E0;
+  --color-text-main: #212529;
+  --color-text-body: #495057;
+
+  /* Typography */
+  --font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+  --font-size-h1: 20px;
+  --font-size-body: 16px;
+  --font-size-caption: 14px;
+
+  /* Spacing (8px base) */
+  --spacing-unit: 8px;
+
+  /* Border Radius */
+  --radius-card: 16px;
+  --radius-button: 24px;
+  --radius-input: 8px;
+
+  /* Shadows */
+  --shadow-card: 0px 4px 10px rgba(0, 0, 0, 0.1);
+
+  /* Component Sizes */
+  --button-height: 52px;
+}
+
 @layer base {
   * {
     margin: 0;
@@ -9,10 +46,17 @@
     box-sizing: border-box;
   }
 
+  html {
+    font-family: var(--font-family);
+  }
+
   body {
     margin: 0;
     min-width: 320px;
     min-height: 100vh;
+    background-color: var(--color-background);
+    color: var(--color-text-main);
+    font-family: var(--font-family);
   }
 
   #root {

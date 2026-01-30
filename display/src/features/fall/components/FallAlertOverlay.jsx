@@ -23,13 +23,13 @@ const FallAlertOverlay = () => {
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-red-600">
-            <div className="w-full max-w-2xl mx-4 p-8 bg-white rounded-3xl shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-danger">
+            <div className="w-full max-w-2xl mx-4 p-10 bg-surface rounded-card shadow-card">
                 {/* 헤더 */}
-                <div className="text-center mb-6">
-                    <div className="inline-flex items-center justify-center w-20 h-20 bg-red-100 rounded-full mb-4">
+                <div className="text-center mb-8">
+                    <div className="inline-flex items-center justify-center w-24 h-24 bg-danger/10 rounded-full mb-6">
                         <svg
-                            className="w-12 h-12 text-red-600 animate-pulse"
+                            className="w-14 h-14 text-danger animate-pulse"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -42,42 +42,42 @@ const FallAlertOverlay = () => {
                             />
                         </svg>
                     </div>
-                    <h1 className="text-4xl font-bold text-red-600 mb-2">
+                    <h1 className="text-5xl font-bold text-danger mb-4">
                         낙상 감지!
                     </h1>
-                    <p className="text-xl text-gray-700">
+                    <p className="text-2xl text-text-main font-medium">
                         {fallAlert.message || '낙상이 감지되었습니다!'}
                     </p>
                 </div>
 
                 {/* 이미지 */}
                 {fallAlert.imageBase64 && (
-                    <div className="mb-6 rounded-2xl overflow-hidden border-4 border-red-200">
+                    <div className="mb-8 rounded-card overflow-hidden border-4 border-danger/30">
                         <img
                             src={`data:image/jpeg;base64,${fallAlert.imageBase64}`}
                             alt="낙상 감지 이미지"
-                            className="w-full h-64 object-cover"
+                            className="w-full h-72 object-cover"
                         />
                     </div>
                 )}
 
                 {/* 상세 정보 */}
                 <div className="grid grid-cols-3 gap-4 mb-8 text-center">
-                    <div className="bg-gray-100 rounded-xl p-4">
-                        <p className="text-sm text-gray-500">감지 시간</p>
-                        <p className="text-lg font-semibold text-gray-800">
+                    <div className="bg-background rounded-card p-5">
+                        <p className="text-body text-text-body mb-1">감지 시간</p>
+                        <p className="text-xl font-bold text-text-main">
                             {formatTime(fallAlert.detectedAt)}
                         </p>
                     </div>
-                    <div className="bg-gray-100 rounded-xl p-4">
-                        <p className="text-sm text-gray-500">위치</p>
-                        <p className="text-lg font-semibold text-gray-800">
+                    <div className="bg-background rounded-card p-5">
+                        <p className="text-body text-text-body mb-1">위치</p>
+                        <p className="text-xl font-bold text-text-main">
                             {fallAlert.location || '알 수 없음'}
                         </p>
                     </div>
-                    <div className="bg-gray-100 rounded-xl p-4">
-                        <p className="text-sm text-gray-500">신뢰도</p>
-                        <p className="text-lg font-semibold text-gray-800">
+                    <div className="bg-background rounded-card p-5">
+                        <p className="text-body text-text-body mb-1">신뢰도</p>
+                        <p className="text-xl font-bold text-text-main">
                             {fallAlert.confidence
                                 ? `${Math.round(fallAlert.confidence * 100)}%`
                                 : '-'}
@@ -86,18 +86,18 @@ const FallAlertOverlay = () => {
                 </div>
 
                 {/* 버튼 */}
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-6">
                     <button
                         onClick={handleEmergencyCall}
-                        className="py-6 px-8 bg-red-600 text-white text-2xl font-bold rounded-2xl hover:bg-red-700 active:bg-red-800 transition-colors shadow-lg"
+                        className="py-6 px-8 bg-danger text-white text-3xl font-bold rounded-button hover:bg-danger/90 active:scale-[0.98] transition-all shadow-card"
                     >
-                        119 신고
+                        🚨 119 신고
                     </button>
                     <button
                         onClick={dismissAlert}
-                        className="py-6 px-8 bg-green-500 text-white text-2xl font-bold rounded-2xl hover:bg-green-600 active:bg-green-700 transition-colors shadow-lg"
+                        className="py-6 px-8 bg-primary text-white text-3xl font-bold rounded-button hover:bg-primary/90 active:scale-[0.98] transition-all shadow-card"
                     >
-                        괜찮아요
+                        ✓ 괜찮아요
                     </button>
                 </div>
             </div>
