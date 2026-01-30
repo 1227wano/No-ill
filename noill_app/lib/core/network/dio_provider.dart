@@ -1,27 +1,23 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'api_constants.dart';
-import '../../providers/auth_provider.dart'; // providers 폴더는 UI 상 변하는 데이터, dio_provider는 전체 통신/인프라에 해당하므로 별도 관리
-
-const storage = FlutterSecureStorage();
+import '../storage/storage_provider.dart'; // 👈 공통 저장소 사용
 
 final dioProvider = Provider<Dio>((ref) {
   final dio = Dio(
     BaseOptions(
       baseUrl: ApiConstants.baseUrl,
       connectTimeout: const Duration(seconds: 5),
+      receiveTimeout: const Duration(seconds: 3),
     ),
   );
 
-  // 2. 인터셉터 추가
+  final storage = ref.watch(storageProvider);
+
   dio.interceptors.add(
     InterceptorsWrapper(
-      // [요청 전] 모든 요청에 토큰을 자동으로 실어 보냄
-      // [진짜 코드]
+      // [1. 요청 전] 헤더에 토큰 삽입
       onRequest: (options, handler) async {
-        // 여기에 저장소에서 토큰을 읽어와서 헤더에 넣는 로직을 추가할 수 있습니다.
         final accessToken = await storage.read(key: 'accessToken');
         if (accessToken != null) {
           options.headers['Authorization'] = 'Bearer $accessToken';
@@ -29,18 +25,19 @@ final dioProvider = Provider<Dio>((ref) {
         return handler.next(options);
       },
 
-      // [에러 발생 시] 서버가 401 에러를 던지면 낚아챔
+      // [2. 에러 발생 시] 401 응답일 때만 로그아웃 처리
       onError: (DioException e, handler) async {
-        // if (e.response?.statusCode == 401) {
-        print('🚨 [AUTH] 토큰 만료 (401). 자동 로그아웃을 실행합니다.');
+        // ✅ [수정] 401(Unauthorized) 에러인 경우만 체크
+        if (e.response?.statusCode == 401) {
+          print('🚨 [AUTH] 토큰 만료(401) 감지. 세션을 종료합니다.');
 
-        // 🔥 핵심: authProvider의 로그아웃 로직을 호출
-        // 이 함수 안에서 토큰 삭제와 상태 초기화가 한 번에 일어납니다.
-        await ref.read(authProvider.notifier).logout();
+          // 저장소 데이터를 삭제하여 다음 앱 실행 시 로그인 화면으로 가게 함
+          await storage.deleteAll();
 
-        // 참고: 여기서 바로 로그인 화면으로 이동시키는 코드를 넣거나,
-        // main.dart에서 authProvider의 상태 변화를 감시해 이동시킬 수 있습니다.
-        // }
+          // 주의: 여기서 직접 authProvider를 read하면 순환 참조가 생길 수 있으므로
+          // 필요한 경우에만 최소한으로 호출하거나, UI 레이어에서 상태 감시 후 이동 권장
+        }
+
         return handler.next(e);
       },
     ),

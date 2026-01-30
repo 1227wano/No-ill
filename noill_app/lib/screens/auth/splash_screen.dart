@@ -8,7 +8,6 @@ import 'package:noill_app/widgets/atoms/gradient_background.dart';
 import '../../core/constants/color_constants.dart';
 import 'login_screen.dart';
 import '../../core/constants/asset_constants.dart';
-import '../home/home_screen.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});

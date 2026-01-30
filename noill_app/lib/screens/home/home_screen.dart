@@ -8,6 +8,8 @@ import '../../widgets/atoms/light_diffusion_background.dart';
 
 import '../../providers/auth_provider.dart';
 
+import '../accident/alarm_screen.dart';
+
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
@@ -59,13 +61,9 @@ class HomeScreen extends ConsumerWidget {
       children: [
         Row(
           children: [
-            // [수정] 버튼 클릭 시 Drawer를 여는 함수 호출
             IconButton(
               icon: const Icon(Icons.menu, size: 28),
-              onPressed: () {
-                // 현재 context에서 가장 가까운 Scaffold(MainScreen)의 Drawer를 엽니다.
-                Scaffold.of(context).openDrawer();
-              },
+              onPressed: () => Scaffold.of(context).openDrawer(),
             ),
             const SizedBox(width: 8),
             const Text(
@@ -78,19 +76,34 @@ class HomeScreen extends ConsumerWidget {
             ),
           ],
         ),
-        Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10),
-            ],
-          ),
-          child: const Icon(
-            Icons.notifications_none,
-            size: 24,
-            color: NoIllColors.primary,
+        // ✅ [수정] 클릭 가능한 알림 아이콘
+        InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const AlarmScreen(),
+              ), // 알림 목록으로 이동
+            );
+          },
+          borderRadius: BorderRadius.circular(20), // 클릭 피드백 영역
+          child: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                ),
+              ],
+            ),
+            child: const Icon(
+              Icons.notifications_none,
+              size: 24,
+              color: NoIllColors.primary,
+            ),
           ),
         ),
       ],
@@ -117,15 +130,17 @@ class HomeScreen extends ConsumerWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(16),
-            child: Image.asset(
-              'assets/images/room_view.png',
+            child: Container(
               height: 140,
               width: double.infinity,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => Container(
-                height: 140,
-                color: Colors.grey[200],
-                child: const Icon(Icons.image_not_supported),
+              decoration: BoxDecoration(
+                color: NoIllColors.primary.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: const Icon(
+                Icons.home_outlined,
+                size: 60,
+                color: NoIllColors.primary,
               ),
             ),
           ),
@@ -148,11 +163,11 @@ class HomeScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 8),
           const Text(
-            "Everything looks good",
+            "특이사항 없습니다.",
             style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
           ),
           const Text(
-            "Last updated: 2 minutes ago",
+            "마지막 업데이트: 2 minutes ago",
             style: TextStyle(color: Colors.grey, fontSize: 13),
           ),
         ],

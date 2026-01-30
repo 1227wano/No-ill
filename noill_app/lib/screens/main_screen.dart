@@ -37,10 +37,11 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     // authProvider 의 상태 실시간 감시 -> 로그아웃 시 화면 재빌드
     ref.listen(authProvider, (previous, next) {
       // 이전에는 로그인, 현재 로그아웃 상태로 변한다면
-      final previousData = previous?.value; // 이전 데이터
-      final nextData = next.value; // 현재 데이터
+      final previousStatus = previous?.status; // 이전 데이터
+      final nextStatus = next.status;
 
-      if (previousData != null && nextData == null) {
+      if (previousStatus == AuthStatus.authenticated &&
+          nextStatus == AuthStatus.unauthenticated) {
         //  1. 하단에 검은색 스낵바 띄우기
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(

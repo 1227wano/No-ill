@@ -40,6 +40,9 @@ dependencies:
   flutter_secure_storage: ^10.0.0
   firebase_core: ^4.4.0
   firebase_messaging: ^16.1.1
+  flutter_local_notifications: ^20.0.0
+  http: ^1.1.0 # 이미지 다운로드용
+  path_provider: ^2.1.1 # 임시 폴더 접근용
 
 dev_dependencies:
   flutter_test:

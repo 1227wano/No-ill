@@ -1,16 +1,20 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../core/network/dio_provider.dart';
 import '../core/network/api_constants.dart';
 import '../models/auth_models.dart';
 
+final authServiceProvider = Provider<AuthService>((ref) {
+  final dio = ref.watch(dioProvider); // 인터셉터가 달린 공통 Dio 사용
+  return AuthService(dio);
+});
+
 class AuthService {
-  // 💡 BaseOptions에 타임아웃을 설정하여 무한 대기를 방지합니다.
-  final Dio _dio = Dio(
-    BaseOptions(
-      baseUrl: ApiConstants.baseUrl,
-      connectTimeout: const Duration(seconds: 2),
-      receiveTimeout: const Duration(seconds: 3),
-    ),
-  );
+  // ✅ 수정: 직접 생성하지 않고 외부(Provider)에서 주입받습니다.
+  // 이렇게 해야 dioProvider에 설정한 '토큰 자동 삽입' 인터셉터를 사용할 수 있습니다.
+  final Dio _dio;
+
+  AuthService(this._dio);
 
   // [로그인]
   Future<LoginResponse> login(String id, String password) async {
@@ -18,10 +22,7 @@ class AuthService {
     try {
       final response = await _dio.post(
         ApiConstants.login,
-        data: {
-          "userId": id, // 명세서 규격 준수
-          "userPassword": password, // 명세서 규격 준수
-        },
+        data: {"userId": id, "userPassword": password},
       );
 
       print("✅ 로그인 성공: ${response.data}");
@@ -34,12 +35,11 @@ class AuthService {
 
   // [회원가입]
   Future<CommonResponse> signUp(SignupRequest request) async {
-    // 💡 이제 request.toJson()에는 우리가 추가한 'pets' 리스트가 자동으로 포함됩니다.
     print("🚀 [POST] 회원가입 요청 데이터: ${request.toJson()}");
 
     try {
       final response = await _dio.post(
-        ApiConstants.signup, // 보통 "/auth/signup"
+        ApiConstants.signup,
         data: request.toJson(),
       );
 
@@ -52,6 +52,8 @@ class AuthService {
   }
 
   // [로그아웃]
+  // 💡 주의: 이 함수는 서버에 로그아웃을 '통보'만 합니다.
+  // 실제 기기의 토큰 삭제는 AuthProvider에서 처리해야 합니다.
   Future<CommonResponse> logout() async {
     print("🚀 [GET] 로그아웃 시도");
     try {
@@ -63,7 +65,6 @@ class AuthService {
     }
   }
 
-  // 💡 공통 에러 핸들러: 기획자님이 디버깅하기 편하도록 상세 로그를 찍습니다.
   void _handleError(String functionName, DioException e) {
     print("❌ $functionName 실패");
     print("- 상태 코드: ${e.response?.statusCode}");

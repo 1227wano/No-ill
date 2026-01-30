@@ -116,23 +116,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   // 로그인 시도 함수
-  Future<void> _handleLogin() async {
-    final id = _idController.text.trim();
-    final pw = _pwController.text.trim();
+  void _handleLogin() async {
+    final id = _idController.text;
+    final pw = _pwController.text;
 
-    if (id.isEmpty || pw.isEmpty) {
-      _showSnackBar("아이디와 비밀번호를 입력해 주세요.");
-      return;
-    }
+    // success 변수 대신 상태를 확인하도록 변경하거나, login 함수가 bool을 주게 수정
+    await ref.read(authProvider.notifier).login(id, pw);
 
-    // Provider를 통해 서버에 로그인 요청
-    final success = await ref.read(authProvider.notifier).login(id, pw);
-
-    if (success && mounted) {
-      // 로그인 성공 시 홈 화면으로 이동 (스택 제거)
+    // 성공 여부는 authProvider의 status가 authenticated로 변했는지로 확인합니다.
+    if (ref.read(authProvider).status == AuthStatus.authenticated && mounted) {
+      // 홈으로 이동
       Navigator.pushNamedAndRemoveUntil(context, '/main', (route) => false);
-    } else if (mounted) {
-      _showSnackBar("로그인 실패: 정보를 다시 확인해 주세요.");
     }
   }
 

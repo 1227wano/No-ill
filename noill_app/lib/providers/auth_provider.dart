@@ -1,140 +1,100 @@
-// lib/providers/auth_provider.dart
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart'; // 👈 추가
-import '../services/auth_service.dart';
-import '../services/fcm_service.dart';
 import '../models/auth_models.dart';
+import '../services/auth_service.dart';
+import '../core/storage/storage_provider.dart';
 
-final authServiceProvider = Provider((ref) => AuthService());
-final fcmServiceProvider = Provider((ref) => FcmService());
+// 1. 인증 상태 정의 (상태에 따라 UI가 자동으로 변합니다)
+enum AuthStatus { initial, loading, authenticated, unauthenticated, error }
 
-// 💡 보안 저장소 인스턴스 생성
-const _storage = FlutterSecureStorage();
+class AuthState {
+  final AuthStatus status;
+  final String? errorMessage;
 
-class AuthNotifier extends Notifier<AsyncValue<LoginData?>> {
+  const AuthState({required this.status, this.errorMessage});
+
+  factory AuthState.initial() => const AuthState(status: AuthStatus.initial);
+
+  // ✅ UI에서 쉽게 쓰도록 도우미 변수(Getter) 추가
+  bool get isLoading => status == AuthStatus.loading;
+  bool get isAuthenticated => status == AuthStatus.authenticated;
+}
+
+// 2. AuthNotifier 정의 (로그인/로그아웃 로직 담당)
+class AuthNotifier extends Notifier<AuthState> {
   @override
-  AsyncValue<LoginData?> build() {
-    // 초기 상태는 데이터가 없는(null) 상태입니다.
-    return const AsyncValue.data(null);
+  AuthState build() {
+    // 앱이 실행될 때 자동으로 로그인 상태를 점검합니다.
+    checkAuthStatus();
+    return AuthState.initial();
   }
 
-  // 1. 로그인 로직
-  Future<bool> login(String id, String password) async {
-    state = const AsyncValue.loading();
+  /// [상태 점검] 저장소에 토큰이 있는지 확인하여 자동 로그인 처리
+  Future<void> checkAuthStatus() async {
+    final storage = ref.read(storageProvider);
+    final token = await storage.read(key: 'accessToken');
+
+    if (token != null) {
+      state = const AuthState(status: AuthStatus.authenticated);
+    } else {
+      state = const AuthState(status: AuthStatus.unauthenticated);
+    }
+  }
+
+  /// [로그인] 성공 시 토큰을 저장하고 상태를 변경합니다.
+  Future<void> login(String id, String password) async {
+    state = const AuthState(status: AuthStatus.loading);
     try {
       final response = await ref.read(authServiceProvider).login(id, password);
 
-      if (response.success && response.data != null) {
-        // Debug log: 로그인 응답 확인
-        // ignore: avoid_print
-        print('AuthNotifier: login success, storing tokens');
+      // 기기 저장소에 토큰 저장
+      final storage = ref.read(storageProvider);
+      await storage.write(
+        key: 'accessToken',
+        value: response.data?.accessToken ?? '',
+      );
+      await storage.write(
+        key: 'refreshToken',
+        value: response.data?.refreshToken ?? '',
+      );
 
-        // ✅ [핵심] 토큰을 기기에 안전하게 저장합니다.
-        await _storage.write(
-          key: 'accessToken',
-          value: response.data!.accessToken,
-        );
-        await _storage.write(
-          key: 'refreshToken',
-          value: response.data!.refreshToken,
-        );
-
-        // Debug log: 토큰 저장 완료
-        // ignore: avoid_print
-        print(
-          'AuthNotifier: tokens saved (accessToken length=${response.data!.accessToken.length})',
-        );
-
-        state = AsyncValue.data(response.data);
-
-        // 🔥 [새로운 기능] 로그인 후 FCM 토큰 전송
-        _handlePostLoginFcm(response.data!.accessToken);
-
-        return true;
-      } else {
-        // Debug log: 로그인 실패 원인 출력
-        // ignore: avoid_print
-        print('AuthNotifier: login failed - ${response.message}');
-        state = AsyncValue.error(response.message, StackTrace.current);
-        return false;
-      }
-    } catch (e, stack) {
-      // Debug log: 예외 발생
-      // ignore: avoid_print
-      print('AuthNotifier: login exception - $e');
-      state = AsyncValue.error(e, stack);
-      return false;
-    }
-  }
-
-  // 🔥 [새로운 함수] 로그인 후 FCM 처리
-  Future<void> _handlePostLoginFcm(String accessToken) async {
-    try {
-      final fcmService = ref.read(fcmServiceProvider);
-
-      // 1. FCM 토큰 가져오기
-      final fcmToken = await fcmService.getFcmToken();
-
-      if (fcmToken != null) {
-        // 2. 서버로 토큰 전송
-        final success = await fcmService.sendTokenToServer(
-          fcmToken,
-          accessToken,
-        );
-
-        if (success) {
-          // 3. 토큰 갱신 리스너 등록 (이후 토큰이 갱신되면 자동 전송)
-          fcmService.listenToTokenRefresh(accessToken);
-
-          // 4. 메시지 리스너 등록
-          fcmService.listenToForegroundMessages();
-
-          // ignore: avoid_print
-          print('✅ AuthNotifier: FCM 토큰 전송 및 리스너 등록 완료');
-        } else {
-          // ignore: avoid_print
-          print('⚠️ AuthNotifier: FCM 토큰 전송 실패 - 나중에 재시도 필요');
-        }
-      } else {
-        // ignore: avoid_print
-        print('⚠️ AuthNotifier: FCM 토큰 획득 실패');
-      }
+      state = const AuthState(status: AuthStatus.authenticated);
     } catch (e) {
-      // ignore: avoid_print
-      print('❌ AuthNotifier: FCM 처리 중 오류 - $e');
+      state = AuthState(status: AuthStatus.error, errorMessage: e.toString());
     }
   }
 
-  // 2. 회원가입 로직
   Future<bool> signUp(SignupRequest request) async {
-    state = const AsyncValue.loading();
+    state = const AuthState(status: AuthStatus.loading);
     try {
-      // 💡 여기서 전달되는 request.pets는 이미 []로 처리되어 있겠죠?
-      final response = await ref.read(authServiceProvider).signUp(request);
-      state = const AsyncValue.data(null);
-      return response.success;
-    } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
-      return false;
+      await ref.read(authServiceProvider).signUp(request);
+      state = const AuthState(
+        status: AuthStatus.unauthenticated,
+      ); // 가입 후 로그인 유도
+      return true; // 성공 시 true 반환
+    } catch (e) {
+      state = AuthState(status: AuthStatus.error, errorMessage: e.toString());
+      return false; // 실패 시 false 반환
     }
   }
 
-  // 3. 로그아웃 로직
+  /// [로그아웃] 서버 통보 후 저장소를 비워 자동 로그인을 해제합니다.
   Future<void> logout() async {
     try {
-      // 서버 로그아웃 호출
+      // 1. 서버에 로그아웃 통보 (실패해도 진행)
       await ref.read(authServiceProvider).logout();
     } catch (e) {
-      // 서버 에러와 무관하게 클라이언트는 청소합니다.
+      print("서버 로그아웃 통보 실패: $e");
     } finally {
-      // ✅ [핵심] 저장된 모든 토큰을 삭제합니다.
-      await _storage.deleteAll();
-      state = const AsyncValue.data(null);
+      // 2. 핵심: 기기 저장소 데이터 완전 삭제
+      await ref.read(storageProvider).deleteAll();
+
+      // 3. 상태 초기화 -> UI가 이를 감지해 로그인 화면으로 이동
+      state = const AuthState(status: AuthStatus.unauthenticated);
     }
   }
 }
 
-final authProvider = NotifierProvider<AuthNotifier, AsyncValue<LoginData?>>(
-  () => AuthNotifier(),
-);
+// 3. 전역에서 접근 가능한 authProvider 선언
+final authProvider = NotifierProvider<AuthNotifier, AuthState>(() {
+  return AuthNotifier();
+});
