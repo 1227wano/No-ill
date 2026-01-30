@@ -15,10 +15,14 @@ class NoilSTTNode(Node):
     def __init__(self):
         super().__init__('stt_node')
         
+        # Publishers
         self.is_chatting_pub = self.create_publisher(Bool, 'is_chatting', 10)
         self.stt_result_pub = self.create_publisher(String, 'stt_result', 10)
-        self.tts_done_sub = self.create_subscription(Bool, 'tts_done', self.tts_done_callback, 10)
         self.tts_done_pub = self.create_publisher(Bool, 'tts_done', 10)
+        
+        # Subscribers
+        self.tts_done_sub = self.create_subscription(Bool, 'tts_done', self.tts_done_callback, 10)
+        self.force_listen_sub = self.create_subscription(Bool, 'force_listen', self.force_listen_callback, 10)  # 추가
 
         self.is_chatting = False
         self.can_listen = False
@@ -42,10 +46,9 @@ class NoilSTTNode(Node):
             tokens=f"{model_dir}/tokens.txt", num_threads=2, model_type="zipformer"
         )
         
-        # [수정] 엔드포인트 역치 조정: 대화 종료 판단을 더 여유있게 변경
         endpoint_config = EndpointConfig(
             rule1=EndpointRule(must_contain_nonsilence=True, min_trailing_silence=3.0, min_utterance_length=0.0),
-            rule2=EndpointRule(must_contain_nonsilence=True, min_trailing_silence=2.0, min_utterance_length=0.5), # 1.2 -> 2.0초
+            rule2=EndpointRule(must_contain_nonsilence=True, min_trailing_silence=2.0, min_utterance_length=0.5),
             rule3=EndpointRule(must_contain_nonsilence=False, min_trailing_silence=0.0, min_utterance_length=20.0)
         )
         
@@ -78,10 +81,18 @@ class NoilSTTNode(Node):
         with open(filepath, 'r', encoding='utf-8') as f:
             return [line.strip().split(':')[0].strip() for line in f if line.strip()]
 
+    def force_listen_callback(self, msg):
+        """긴급 상황 강제 청취 모드"""
+        if msg.data is True:
+            self.get_logger().info("Force listen mode activated.")
+            self.recognizer.reset(self.stream)
+            self.can_listen = True
+            self.reset_timeout_timer()
+
     def tts_done_callback(self, msg):
         if msg.data and self.is_chatting:
             self.get_logger().info("TTS 종료. 입력 대기 시작.")
-            self.recognizer.reset(self.stream) 
+            self.recognizer.reset(self.stream)
             self.can_listen = True
             self.reset_timeout_timer()
         else:
@@ -89,7 +100,7 @@ class NoilSTTNode(Node):
 
     def reset_timeout_timer(self):
         if self.timeout_timer: self.timeout_timer.cancel()
-        self.timeout_timer = threading.Timer(7.0, self.handle_timeout) # 5.0 -> 7.0초로 연장
+        self.timeout_timer = threading.Timer(7.0, self.handle_timeout)
         self.timeout_timer.start()
 
     def handle_timeout(self):
@@ -117,8 +128,7 @@ class NoilSTTNode(Node):
                         self.get_logger().info(f"▶ 핫워드 감지: {raw_text}")
                         self.is_chatting = True
                         self.is_chatting_pub.publish(Bool(data=True))
-                        # 대화 시작 시에는 tts_done_pub을 통해 내부 로직 트리거
-                        self.tts_done_pub.publish(Bool(data=True)) 
+                        self.tts_done_pub.publish(Bool(data=True))
                         self.recognizer.reset(self.stream)
                 
                 elif self.can_listen:
@@ -138,3 +148,6 @@ def main(args=None):
     try: rclpy.spin(node)
     except KeyboardInterrupt: pass
     finally: node.destroy_node(); rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
