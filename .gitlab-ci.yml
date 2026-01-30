@@ -109,11 +109,18 @@ deploy:
         docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
         docker pull $IMAGE_TAG
         docker stop server || true && docker rm server || true
-        
-        docker run -d --name server -p 8080:8080 \
+        docker run -d --name server \
+        --add-host=host.docker.internal:host-gateway \
+        -p $PORT:$PORT \
+        -e SERVER_PORT=$PORT \
+        --env-file /opt/server/.env \
+        -v /opt/server/firebase-service-account.json:/config/firebase-service-account.json:ro \
         -v /home/ubuntu/images:/app/images \
         -e SERVER_URL="http://$SERVER:8080" \
         -e FILE_DIR="/app/images/" \
         -e TZ=Asia/Seoul \
         $IMAGE_TAG
+      sleep 30
+      curl -f http://localhost:$PORT/actuator/health \
+        --retry 5 --retry-delay 10 --retry-all-errors
       EOF
