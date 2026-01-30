@@ -48,6 +48,7 @@ public class PetService {
                     .petName(request.getPetName())
                     .petAddress(request.getPetAddress())
                     .petPhone(request.getPetPhone())
+                    .petBirth(request.getPetBirth() != null ? request.getPetBirth().atStartOfDay() : null)
                     .build();
             petRepository.save(pet);
         }

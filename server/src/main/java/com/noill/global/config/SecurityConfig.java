@@ -45,6 +45,7 @@ public class SecurityConfig {
                         .requestMatchers("/ws/**").permitAll()  // WebSocket
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/api/events/**").permitAll()  // Fall-event
+                        .requestMatchers("/images/**").permitAll()  // image
 
                         .anyRequest().authenticated()
                 )

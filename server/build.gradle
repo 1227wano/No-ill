@@ -60,6 +60,9 @@ dependencies {
     // [FCM] Firebase Admin SDK 추가
     implementation 'com.google.firebase:firebase-admin:9.2.0'
 
+    // [Solapi(문자 전송 API)] SDK
+    implementation 'net.nurigo:sdk:4.3.0'
+
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     runtimeOnly 'com.mysql:mysql-connector-j'

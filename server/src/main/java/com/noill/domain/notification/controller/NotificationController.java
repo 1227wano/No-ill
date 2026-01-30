@@ -3,6 +3,7 @@ package com.noill.domain.notification.controller;
 import com.noill.domain.notification.dto.FcmTokenRequest;
 import com.noill.domain.notification.service.NotificationService;
 import com.noill.domain.user.entity.User;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ public class NotificationController {
 
     private final NotificationService notificationService;
 
-    // FCM 토큰 등록 API (로그인 후 호출됨)
+    @Operation(summary = "FCM 토큰 등록", description = "로그인 후 호출되어 FCM 토큰 등록")
     @PostMapping("/token")
     public ResponseEntity<Void> registerToken(@AuthenticationPrincipal User user,
                                               @RequestBody @Valid FcmTokenRequest request) {
@@ -26,7 +27,7 @@ public class NotificationController {
         return ResponseEntity.ok().build();
     }
 
-    // FCM 토큰 삭제 API (로그아웃 시 호출)
+    @Operation(summary = "FCM 토큰 삭제", description = "FCM 토큰 삭제")
     @DeleteMapping("/token")
     public ResponseEntity<Void> removeToken(@RequestBody @Valid FcmTokenRequest request) {
         notificationService.deleteToken(request.getToken());
