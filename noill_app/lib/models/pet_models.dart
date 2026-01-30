@@ -4,6 +4,7 @@ class PetRegistrationRequest {
   final String petAddress; // 어르신 거주 주소
   final String petPhone; // 어르신 비상 연락처
   final String careName; // 어르신 성함 (care 테이블용 데이터)
+  final String petBirth; // 펫 정보 등록 일자 (YYYY-MM-DD)
 
   PetRegistrationRequest({
     this.petId = '',
@@ -11,7 +12,14 @@ class PetRegistrationRequest {
     this.petAddress = '',
     this.petPhone = '',
     this.careName = '',
-  });
+    String? petBirth,
+  }) : petBirth = petBirth ?? _getTodayDate();
+
+  // 현재 날짜를 YYYY-MM-DD 형식으로 반환하는 정적 메서드
+  static String _getTodayDate() {
+    final now = DateTime.now();
+    return '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+  }
 
   PetRegistrationRequest copyWith({
     String? petId,
@@ -19,6 +27,7 @@ class PetRegistrationRequest {
     String? petAddress,
     String? petPhone,
     String? careName,
+    String? petBirth,
   }) {
     return PetRegistrationRequest(
       petId: petId ?? this.petId,
@@ -26,6 +35,7 @@ class PetRegistrationRequest {
       petAddress: petAddress ?? this.petAddress,
       petPhone: petPhone ?? this.petPhone,
       careName: careName ?? this.careName,
+      petBirth: petBirth ?? this.petBirth,
     );
   }
 
@@ -34,6 +44,7 @@ class PetRegistrationRequest {
     "petName": petName,
     "petAddress": petAddress,
     "petPhone": petPhone,
+    "petBirth": petBirth,
     "careName": careName,
   };
 }

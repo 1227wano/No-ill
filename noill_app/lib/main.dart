@@ -9,6 +9,8 @@ import 'package:noill_app/core/theme/app_theme.dart';
 import 'package:noill_app/screens/auth/splash_screen.dart';
 import 'screens/main_screen.dart';
 
+import 'services/fcm_service.dart';
+
 // ✅ 1. 백그라운드 메시지 핸들러의 정확한 위치: 최상위(Top-level)
 // 클래스 외부, main 함수 외부에 위치해야 합니다.
 @pragma('vm:entry-point') // 💡 중요: 별도의 Isolate에서 실행되기 위해 필요합니다.
@@ -20,6 +22,9 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print('   - 제목: ${message.notification?.title}');
   print('   - 내용: ${message.notification?.body}');
   print('   - 데이터: ${message.data}');
+
+  // 2. 💡 FcmService의 정적 함수를 호출하여 백그라운드에서도 알림을 띄웁니다!
+  await FcmService.showNotificationBackground(message);
 }
 
 void main() async {
@@ -34,13 +39,17 @@ void main() async {
   // 앱이 종료된 상태에서도 이 함수가 입구 역할을 하게 됩니다.
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-  runApp(const ProviderScope(child: NoIllApp()));
+  // Create a ProviderContainer so we can initialize providers before showing UI
+  final container = ProviderContainer();
 
-  // 권한 요청 및 포그라운드 설정 진행
-  _initializeNotification();
+  // 권한 요청 및 FCM 초기화 (포그라운드 알림 리스너 포함)
+  await _initializeNotification(container);
+
+  // Start the app with the prepared container
+  runApp(ProviderScope(child: const NoIllApp()));
 }
 
-Future<void> _initializeNotification() async {
+Future<void> _initializeNotification(ProviderContainer container) async {
   try {
     FirebaseMessaging messaging = FirebaseMessaging.instance;
 
@@ -57,9 +66,13 @@ Future<void> _initializeNotification() async {
     } else {
       print('❌ [FCM] 알림 권한 거부 또는 설정 필요');
     }
-
-    // 💡 [참고] 여기서는 이미 main에서 등록했으므로
-    // onBackgroundMessage를 또 등록할 필요가 없습니다.
+    // FcmService 초기화: 채널 생성과 포그라운드 리스너 등록
+    try {
+      await container.read(fcmServiceProvider).initialize();
+      print('✅ [FCM] FcmService 초기화 완료');
+    } catch (e) {
+      print('⚠️ FcmService 초기화 실패: $e');
+    }
 
     print('✅ [FCM] 알림 초기화 완료');
   } catch (e) {

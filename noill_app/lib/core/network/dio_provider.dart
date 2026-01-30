@@ -18,9 +18,20 @@ final dioProvider = Provider<Dio>((ref) {
     InterceptorsWrapper(
       // [1. 요청 전] 헤더에 토큰 삽입
       onRequest: (options, handler) async {
-        final accessToken = await storage.read(key: 'accessToken');
-        if (accessToken != null) {
-          options.headers['Authorization'] = 'Bearer $accessToken';
+        // 일부 엔드포인트는 인증없이 호출되어야 합니다 (로그인/회원가입 등).
+        const noAuthPaths = <String>{ApiConstants.login, ApiConstants.signup};
+
+        // 요청 경로가 noAuthPaths에 포함되어 있지 않다면 토큰을 삽입합니다.
+        final requestPath = options.path;
+        final bool requiresAuth = !noAuthPaths.any(
+          (p) => requestPath.contains(p),
+        );
+
+        if (requiresAuth) {
+          final accessToken = await storage.read(key: 'accessToken');
+          if (accessToken != null && accessToken.isNotEmpty) {
+            options.headers['Authorization'] = 'Bearer $accessToken';
+          }
         }
         return handler.next(options);
       },

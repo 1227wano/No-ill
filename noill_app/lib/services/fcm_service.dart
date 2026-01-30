@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import '../core/network/dio_provider.dart';
+import '../core/network/api_constants.dart';
 
 final fcmServiceProvider = Provider((ref) {
   final dio = ref.read(dioProvider);
@@ -55,9 +56,13 @@ class FcmService {
     AndroidNotificationChannel channel,
   ) async {
     final notification = message.notification;
-    final String? imageUrl = message.data['file']; // 💡 서버/목업 데이터의 'file' 키 활용
+    if (notification == null) return; // null 체크
 
-    BigPictureStyleInformation? bigPictureStyle;
+    final String? imageUrl = message.data['file'];
+    final String title = notification.title ?? '⚠️ 사고 발생';
+    final String body = notification.body ?? '즉시 확인이 필요합니다.';
+
+    BigPictureStyleInformation? style;
 
     try {
       if (imageUrl != null && imageUrl.isNotEmpty) {
@@ -67,30 +72,40 @@ class FcmService {
           'fcm_image_${DateTime.now().millisecondsSinceEpoch}',
         );
 
-        bigPictureStyle = BigPictureStyleInformation(
+        style = BigPictureStyleInformation(
           FilePathAndroidBitmap(filePath),
           largeIcon: FilePathAndroidBitmap(filePath),
-          contentTitle: notification?.title ?? "⚠️ 사고 발생",
-          summaryText: notification?.body ?? "즉시 확인이 필요합니다.",
+          contentTitle: title,
+          summaryText: body,
+          hideExpandedLargeIcon: false, // 확장했을 때도 아이콘 표시
         );
       }
+    } catch (e) {
+      print('❌ [FCM] 이미지 다운로드 중 에러: $e');
+      // 이미지 로드 실패해도 알림은 표시
+    }
 
+    try {
       // 실제 상단 팝업 띄우기
       await _localNotifications.show(
-        id: notification.hashCode,
-        title: notification?.title,
-        body: notification?.body,
+        id: DateTime.now().millisecondsSinceEpoch.hashCode,
+        title: title,
+        body: body,
         notificationDetails: NotificationDetails(
           android: AndroidNotificationDetails(
             channel.id,
             channel.name,
             importance: Importance.max,
             priority: Priority.high,
-            styleInformation: bigPictureStyle, // 👈 사진 스타일 적용!
+            styleInformation: style, // 👈 사진 스타일 적용!
+            showWhen: true,
+            enableVibration: true,
+            playSound: true,
           ),
         ),
         payload: imageUrl,
       );
+      print('✅ [FCM] 알림 표시 완료 - 이미지: ${style != null ? '포함' : '없음'}');
     } catch (e) {
       print('❌ [FCM] 알림 표시 중 에러: $e');
     }
@@ -98,12 +113,24 @@ class FcmService {
 
   /// [3. 이미지 다운로드 헬퍼]
   Future<String> _downloadAndSaveFile(String url, String fileName) async {
-    final Directory directory = await getTemporaryDirectory();
-    final String filePath = '${directory.path}/$fileName';
-    final http.Response response = await http.get(Uri.parse(url));
-    final File file = File(filePath);
-    await file.writeAsBytes(response.bodyBytes);
-    return filePath;
+    try {
+      final Directory directory = await getTemporaryDirectory();
+      final String filePath = '${directory.path}/$fileName.jpg';
+
+      // Dio를 사용해 더 안정적으로 다운로드
+      await _dio.download(url, filePath);
+
+      final File file = File(filePath);
+      if (await file.exists()) {
+        print('✅ 이미지 다운로드 완료: $filePath');
+        return filePath;
+      } else {
+        throw Exception('파일 저장 실패');
+      }
+    } catch (e) {
+      print('❌ 이미지 다운로드 실패: $e');
+      rethrow;
+    }
   }
 
   /// [4. FCM 토큰 관리]
@@ -120,12 +147,94 @@ class FcmService {
   Future<bool> sendTokenToServer(String fcmToken) async {
     try {
       final response = await _dio.post(
-        '/api/users/notifications',
+        ApiConstants.registerNotification,
         data: {'token': fcmToken},
       );
       return response.statusCode == 200 || response.statusCode == 201;
     } catch (e) {
       return false;
+    }
+  }
+
+  // [5. 포그라운드 메시지 리스너 등록]
+  void listenToForegroundMessages(AndroidNotificationChannel channel) {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print('📩 [FCM] 포그라운드 메시지 수신: ${message.messageId}');
+      _showNotification(message, channel);
+    });
+  }
+
+  /// [6. 백그라운드 메시지 처리용 정적 메서드]
+  static Future<void> showNotificationBackground(RemoteMessage message) async {
+    final notification = message.notification;
+    if (notification == null) return;
+
+    final String? imageUrl = message.data['file'];
+    final String title = notification.title ?? '⚠️ 사고 발생';
+    final String body = notification.body ?? '즉시 확인이 필요합니다.';
+
+    // 백그라운드에서 사용할 FlutterLocalNotificationsPlugin 인스턴스
+    final FlutterLocalNotificationsPlugin localNotifications =
+        FlutterLocalNotificationsPlugin();
+
+    // 채널 초기화 (필요한 경우)
+    const AndroidNotificationChannel channel = AndroidNotificationChannel(
+      'high_importance_channel',
+      '긴급 사고 알림',
+      description: '어르신의 낙상 사고 알림을 실시간으로 수신합니다.',
+      importance: Importance.max,
+      playSound: true,
+    );
+
+    await localNotifications
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >()
+        ?.createNotificationChannel(channel);
+
+    try {
+      // 이미지가 있으면 다운로드 시도 (백그라운드에서는 간단히 처리)
+      BigPictureStyleInformation? style;
+      if (imageUrl != null && imageUrl.isNotEmpty) {
+        try {
+          final response = await http.get(Uri.parse(imageUrl));
+          final Directory directory = await getTemporaryDirectory();
+          final String filePath =
+              '${directory.path}/bg_notification_${DateTime.now().millisecondsSinceEpoch}.jpg';
+          await File(filePath).writeAsBytes(response.bodyBytes);
+
+          style = BigPictureStyleInformation(
+            FilePathAndroidBitmap(filePath),
+            largeIcon: FilePathAndroidBitmap(filePath),
+            contentTitle: title,
+            summaryText: body,
+          );
+        } catch (e) {
+          print('⚠️ 백그라운드 이미지 다운로드 실패: $e');
+        }
+      }
+
+      await localNotifications.show(
+        id: DateTime.now().millisecondsSinceEpoch.hashCode,
+        title: title,
+        body: body,
+        notificationDetails: NotificationDetails(
+          android: AndroidNotificationDetails(
+            channel.id,
+            channel.name,
+            importance: Importance.max,
+            priority: Priority.high,
+            styleInformation: style,
+            showWhen: true,
+            enableVibration: true,
+            playSound: true,
+          ),
+        ),
+        payload: imageUrl,
+      );
+      print('✅ [FCM] 백그라운드 알림 표시 완료');
+    } catch (e) {
+      print('❌ [FCM] 백그라운드 알림 표시 실패: $e');
     }
   }
 }

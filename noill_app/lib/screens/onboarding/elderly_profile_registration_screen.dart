@@ -35,16 +35,35 @@ class _ElderlyProfileRegistrationScreenState
 
   // 2. 등록 실행 함수
   Future<void> _handleRegistration() async {
+    // 입력값 유효성 검사
+    if (_nameController.text.isEmpty ||
+        _addressController.text.isEmpty ||
+        _phoneController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('모든 항목을 입력해주세요.'),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+      return;
+    }
+
     final notifier = ref.read(petRegistrationProvider.notifier);
 
     // [Step 1] 입력값들을 Provider에 업데이트
+    // _nameController.text → careName (어르신 성함)
+    // _addressController.text → petAddress (거주 주소)
+    // _phoneController.text → petPhone (비상 연락처)
     notifier.updateProfile(
       name: _nameController.text,
       address: _addressController.text,
       phone: _phoneController.text,
     );
 
-    // [Step 2] 서버로 전송 (여기서 정보 합침)
+    // [Step 2] 서버로 전송 (모든 정보가 합쳐집니다)
+    // petId, petName (기기 등록 화면)
+    // careName, petAddress, petPhone (어르신 등록 화면)
+    // petBirth (자동 설정: 현재 날짜)
     final success = await notifier.submit();
 
     if (success) {
@@ -58,7 +77,7 @@ class _ElderlyProfileRegistrationScreenState
         });
       }
     } else {
-      // 실패 시 에러 알림 (핀테크 서비스라면 필수!)
+      // 실패 시 에러 알림
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
