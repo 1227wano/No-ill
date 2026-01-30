@@ -1,7 +1,11 @@
 # 공통 설정
 
+file:
+  dir: ${FILE_DIR:/app/images/}
+
 server:
   port: ${SERVER_PORT:8080}
+  url: ${SERVER_URL:http://localhost:8080}
 
 spring:
   profiles:
@@ -44,3 +48,9 @@ gms:
     url: ${GMS_API_URL}
     model: gpt-4.1
 
+# 문자 API
+#coolsms:
+#  api:
+#    key: ${SOLAPI_API_KEY}
+#    secret: ${SOLAPI_API_SECRET}
+#    sender: ${WANO_PHONE}
