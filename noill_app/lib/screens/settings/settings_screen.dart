@@ -6,12 +6,21 @@ import '../../core/constants/color_constants.dart';
 import '../../providers/auth_provider.dart';
 import '../auth/splash_screen.dart';
 import '../onboarding/device_pairing_screen.dart';
+import '../mypage/mypage_screen.dart';
+import '../accident/accident_history_screen.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Unsplash 실시간 랜덤 이미지 URL (인물 사진 키워드)
+    const String randomProfileUrl =
+        "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80";
+    // 유저 네임
+    final authState = ref.watch(authProvider);
+    final user = authState.userData;
+
     return Scaffold(
       backgroundColor: NoIllColors.background,
       body: SafeArea(
@@ -23,20 +32,21 @@ class SettingsScreen extends ConsumerWidget {
               style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 32),
+
             // 프로필 섹션
-            const Row(
+            Row(
               children: [
                 CircleAvatar(
                   radius: 35,
-                  backgroundImage: AssetImage('assets/images/user_profile.png'),
+                  backgroundImage: NetworkImage(randomProfileUrl),
                 ),
                 SizedBox(width: 20),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Justin Mason",
-                      style: TextStyle(
+                      user?.userName ?? "사용자", // 유기적 변경
+                      style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
@@ -47,8 +57,34 @@ class SettingsScreen extends ConsumerWidget {
               ],
             ),
             const SizedBox(height: 40),
+
             // 설정 메뉴 리스트
-            _buildMenuTile(Icons.person_outline, "내 정보 수정", onTap: () {}),
+            _buildMenuTile(
+              Icons.person_outline,
+              "마이페이지",
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MyPageScreen()),
+                );
+              },
+            ),
+
+            // 2. 사고기록 조회
+            _buildMenuTile(
+              Icons.history,
+              "사고기록 조회",
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AccidentHistoryScreen(),
+                  ),
+                );
+              },
+            ),
+
+            // 3. 기기 관리
             _buildMenuTile(
               Icons.smart_toy_outlined,
               "기기 관리 (Aibo-Bot v2)",
@@ -66,6 +102,8 @@ class SettingsScreen extends ConsumerWidget {
             _buildMenuTile(Icons.notifications_none, "알림 설정", onTap: () {}),
             const Divider(height: 40),
             _buildMenuTile(Icons.help_outline, "고객 센터", onTap: () {}),
+
+            // 로그아웃
             _buildMenuTile(
               Icons.logout,
               "로그아웃",

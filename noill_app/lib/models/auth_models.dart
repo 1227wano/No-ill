@@ -80,13 +80,11 @@ class LoginData {
   final String accessToken;
   final String refreshToken;
   final String userName;
-  final String userType;
 
   LoginData({
     required this.accessToken,
     required this.refreshToken,
     required this.userName,
-    required this.userType,
   });
 
   factory LoginData.fromJson(Map<String, dynamic> json) {
@@ -94,7 +92,6 @@ class LoginData {
       accessToken: json['accessToken'] ?? "",
       refreshToken: json['refreshToken'] ?? "",
       userName: json['userName'] ?? "",
-      userType: json['userType'] ?? "",
     );
   }
 }

@@ -61,11 +61,6 @@ class HomeScreen extends ConsumerWidget {
       children: [
         Row(
           children: [
-            IconButton(
-              icon: const Icon(Icons.menu, size: 28),
-              onPressed: () => Scaffold.of(context).openDrawer(),
-            ),
-            const SizedBox(width: 8),
             const Text(
               "No-ill",
               style: TextStyle(

@@ -9,8 +9,9 @@ enum AuthStatus { initial, loading, authenticated, unauthenticated, error }
 class AuthState {
   final AuthStatus status;
   final String? errorMessage;
+  final LoginData? userData; // 사용자 정보를 담을 변수
 
-  const AuthState({required this.status, this.errorMessage});
+  const AuthState({required this.status, this.errorMessage, this.userData});
 
   factory AuthState.initial() => const AuthState(status: AuthStatus.initial);
 
@@ -32,9 +33,17 @@ class AuthNotifier extends Notifier<AuthState> {
   Future<void> checkAuthStatus() async {
     final storage = ref.read(storageProvider);
     final token = await storage.read(key: 'accessToken');
+    final name = await storage.read(key: 'userName');
 
     if (token != null) {
-      state = const AuthState(status: AuthStatus.authenticated);
+      state = AuthState(
+        status: AuthStatus.authenticated,
+        userData: LoginData(
+          accessToken: token,
+          refreshToken: '',
+          userName: name ?? '',
+        ),
+      );
     } else {
       state = const AuthState(status: AuthStatus.unauthenticated);
     }
@@ -46,18 +55,23 @@ class AuthNotifier extends Notifier<AuthState> {
     try {
       final response = await ref.read(authServiceProvider).login(id, password);
 
-      // 기기 저장소에 토큰 저장
-      final storage = ref.read(storageProvider);
-      await storage.write(
-        key: 'accessToken',
-        value: response.data?.accessToken ?? '',
-      );
-      await storage.write(
-        key: 'refreshToken',
-        value: response.data?.refreshToken ?? '',
-      );
+      if (response.success && response.data != null) {
+        final storage = ref.read(storageProvider);
 
-      state = const AuthState(status: AuthStatus.authenticated);
+        // 토큰과 함께 사용자 정보도 저장소에 저장 (자동 로그인용)
+        await storage.write(
+          key: 'accessToken',
+          value: response.data!.accessToken,
+        );
+        await storage.write(key: 'userName', value: response.data!.userName);
+
+        // 상태(State)에 데이터 주입
+        state = AuthState(
+          status: AuthStatus.authenticated,
+          userData: response.data,
+        );
+        print("✅ 로그인 성공: ${response.data!.userName}"); // 콘솔에서 이름이 찍히는지 확인
+      }
     } catch (e) {
       state = AuthState(status: AuthStatus.error, errorMessage: e.toString());
     }
