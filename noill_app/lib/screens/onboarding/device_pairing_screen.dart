@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:noill_app/screens/main_screen.dart';
 import 'package:noill_app/widgets/atoms/custom_input_field.dart';
 import '../../widgets/atoms/gradient_background.dart';
 import '../../widgets/atoms/otp_input.dart';
 import '../../widgets/atoms/solid_button.dart';
 import '../../core/constants/color_constants.dart';
 import '../../providers/pet_provider.dart';
+import '../../providers/care_provider.dart';
+import '../../models/auth_models.dart';
 import 'elderly_profile_registration_screen.dart';
 
 class DevicePairingScreen extends ConsumerStatefulWidget {
@@ -108,23 +111,43 @@ class _DevicePairingScreenState extends ConsumerState<DevicePairingScreen>
               SolidButton(
                 text: "기기 등록 및 계속하기",
                 onPressed: _inputSerial.length == 5
-                    ? () {
-                        // 1. Provider에 기기 번호(petId) 저장
-                        ref
-                            .read(petRegistrationProvider.notifier)
-                            .updatePetName(_petNameController.text);
-                        ref
-                            .read(petRegistrationProvider.notifier)
-                            .updatePetId(_inputSerial);
-
-                        // 2. 다음 단계(어르신 프로필 등록)로 이동
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                const ElderlyProfileRegistrationScreen(),
-                          ),
+                    ? () async {
+                        // 1. 로딩 표시 (선택 사항이지만 UX상 권장)
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (context) =>
+                              const Center(child: CircularProgressIndicator()),
                         );
+
+                        // 2. 서버 연동 시도 (POST /api/auth/pets/login)
+                        final petData = await ref
+                            .read(petServiceProvider)
+                            .connectPet(_inputSerial);
+
+                        if (!mounted) return;
+                        Navigator.pop(context); // 로딩 창 닫기
+
+                        if (petData != null && petData.careName.isNotEmpty) {
+                          // 💡 [시나리오 A] 이미 등록된 어르신인 경우 -> 확인 팝업 (인증 UX)
+                          _showConfirmAccountDialog(context, petData);
+                        } else {
+                          // 💡 [시나리오 B] 신규 기기인 경우 -> 기존 등록 화면 이동
+                          ref
+                              .read(petRegistrationProvider.notifier)
+                              .updatePetName(_petNameController.text);
+                          ref
+                              .read(petRegistrationProvider.notifier)
+                              .updatePetId(_inputSerial);
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const ElderlyProfileRegistrationScreen(),
+                            ),
+                          );
+                        }
                       }
                     : null, // 5자리가 아니면 버튼이 비활성화(회색) 됩니다.
               ),
@@ -169,6 +192,79 @@ class _DevicePairingScreenState extends ConsumerState<DevicePairingScreen>
               fontSize: 16,
               fontWeight: FontWeight.w600,
               color: _isFound ? Colors.black87 : Colors.grey,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showConfirmAccountDialog(BuildContext context, PetRequest info) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const Center(child: Text("어르신 기기 확인")),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text("입력하신 번호로 등록된 정보를 찾았습니다."),
+            const SizedBox(height: 20),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.grey[100],
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                children: [
+                  Text(
+                    info.careName,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    info.petAddress,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.grey[600]),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+            const Text("이 어르신을 함께 관리하시겠습니까?"),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("다시 입력"),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF6A85B6),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            onPressed: () {
+              // ✅ 목록에 추가하고 메인으로 이동
+              ref.read(careListProvider.notifier).addPet(info);
+              ref.read(selectedPetIdProvider.notifier).state = info.petId;
+
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const MainScreen()),
+                (route) => false,
+              );
+            },
+            child: const Text(
+              "예, 연결합니다",
+              style: TextStyle(color: Colors.white),
             ),
           ),
         ],

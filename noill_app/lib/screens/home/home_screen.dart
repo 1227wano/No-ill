@@ -7,10 +7,8 @@ import '../../core/constants/color_constants.dart';
 import '../../widgets/atoms/light_diffusion_background.dart';
 
 import '../../models/auth_models.dart';
-import '../../providers/auth_provider.dart';
+import '../../providers/event_provider.dart';
 import '../../providers/care_provider.dart';
-
-import '../accident/alarm_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -18,11 +16,18 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // ref.watch는 데이터가 바뀌면 화면을 다시 그리라는 신호입니다.
-    // 서버에서 가져온 전체 목록 상태 (로딩/에러/데이터 포함)
-    final careListAsync = ref.watch(careListProvider);
-
-    // 위 목록 중 현재 사용자가 선택한 어르신 한 분의 정보
+    // 💡 이제 AsyncValue가 아니라 실제 List<PetRequest>가 반환됩니다.
+    final careList = ref.watch(careListProvider);
     final selectedCare = ref.watch(selectedCareProvider);
+
+    // 💡 [핵심] 24시간 이내 사고 리스트를 가져옵니다.
+    final activeAlarmsAsync = ref.watch(activeAlarmsProvider);
+
+    // 💡 데이터가 있고, 리스트가 비어있지 않으면 '경고' 상태로 정의합니다.
+    final bool isWarning = activeAlarmsAsync.maybeWhen(
+      data: (alarms) => alarms.isNotEmpty,
+      orElse: () => false,
+    );
 
     return LightDiffusionBackground(
       child: Container(
@@ -35,13 +40,12 @@ class HomeScreen extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 10),
-                _buildMainDropdown(
-                  ref,
-                  careListAsync,
-                  selectedCare,
-                ), // 어르신 드롭다운
+                _buildMainDropdown(ref, careList, selectedCare), // 어르신 드롭다운
                 const SizedBox(height: 32),
-                _buildStatusCard(), // 안심 상태 카드
+                _buildStatusCard(
+                  name: selectedCare?.careName ?? "어르신",
+                  isWarning: isWarning,
+                ), // 안심 상태 카드
                 const SizedBox(height: 32),
                 _buildRobotSection(context), // 로봇 상태 및 바텀시트 트리거
 
@@ -58,7 +62,7 @@ class HomeScreen extends ConsumerWidget {
   // --- [신규] 메인 구역 드롭다운 위젯 ---
   Widget _buildMainDropdown(
     WidgetRef ref,
-    AsyncValue<List<PetRequest>> listAsync,
+    List<PetRequest> list,
     PetRequest? selected,
   ) {
     return Container(
@@ -68,40 +72,41 @@ class HomeScreen extends ConsumerWidget {
         borderRadius: BorderRadius.circular(15),
         border: Border.all(color: NoIllColors.primary.withOpacity(0.3)),
       ),
-      child: listAsync.when(
-        data: (list) => DropdownButton<String>(
-          value: selected?.petId,
-          isExpanded: true, // 너비를 꽉 채우게
-          icon: const Icon(
-            Icons.arrow_drop_down_circle_outlined,
-            color: NoIllColors.primary,
-          ),
-          underline: const SizedBox(),
-          items: list
-              .map(
-                (pet) => DropdownMenuItem(
-                  value: pet.petId,
-                  child: Text(
-                    "${pet.careName} (${pet.petName})", // "어머니 댁 (복순이)" 형태
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
+      child: list.isEmpty
+          ? const Padding(
+              padding: EdgeInsets.symmetric(vertical: 12),
+              child: Text("등록된 어르신이 없습니다."),
+            )
+          : DropdownButton<String>(
+              value: selected?.petId,
+              isExpanded: true,
+              icon: const Icon(
+                Icons.arrow_drop_down_circle_outlined,
+                color: NoIllColors.primary,
+              ),
+              underline: const SizedBox(),
+              items: list
+                  .map(
+                    (pet) => DropdownMenuItem(
+                      value: pet.petId,
+                      child: Text(
+                        "${pet.careName} (${pet.petName})",
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              )
-              .toList(),
-          onChanged: (id) =>
-              ref.read(selectedPetIdProvider.notifier).state = id,
-        ),
-        loading: () => const CircularProgressIndicator(),
-        error: (_, __) => const Text("데이터를 불러올 수 없습니다."),
-      ),
+                  )
+                  .toList(),
+              onChanged: (id) =>
+                  ref.read(selectedPetIdProvider.notifier).state = id,
+            ),
     );
   }
 
   // --- [위젯] 안심 상태 카드 ---
-  Widget _buildStatusCard() {
+  Widget _buildStatusCard({required String name, required bool isWarning}) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
@@ -110,55 +115,69 @@ class HomeScreen extends ConsumerWidget {
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: isWarning
+                ? Colors.red.withOpacity(0.1) // 🚨 위험 시 붉은 그림자
+                : Colors.black.withOpacity(0.05),
             blurRadius: 20,
-            offset: const Offset(0, 10),
           ),
         ],
       ),
       child: Column(
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(16),
-            child: Container(
-              height: 140,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: NoIllColors.primary.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: const Icon(
-                Icons.home_outlined,
-                size: 60,
-                color: NoIllColors.primary,
-              ),
+          // 1. 상태 아이콘 영역
+          Container(
+            height: 140,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: isWarning
+                  ? Colors.red[50]
+                  : NoIllColors.primary.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Icon(
+              isWarning ? Icons.warning_rounded : Icons.home_outlined,
+              size: 60,
+              color: isWarning ? Colors.red : NoIllColors.primary,
             ),
           ),
           const SizedBox(height: 20),
+
+          // 2. 상태 텍스트 배지
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              Icon(Icons.check_circle, color: NoIllColors.primary, size: 20),
-              SizedBox(width: 8),
+            children: [
+              Icon(
+                isWarning ? Icons.error : Icons.check_circle,
+                color: isWarning ? Colors.red : NoIllColors.primary,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
               Text(
-                "STATUS: SAFE",
+                isWarning ? "STATUS: WARNING" : "STATUS: SAFE",
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
-                  color: NoIllColors.primary,
+                  color: isWarning ? Colors.red : NoIllColors.primary,
                   letterSpacing: 1.2,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 8),
-          const Text(
-            "특이사항 없습니다.",
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+
+          // 3. 메인 안내 문구
+          Text(
+            isWarning ? "$name님께 낙상이 감지되었습니다!" : "$name님은 현재 안전합니다.",
+            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
           ),
-          const Text(
-            "마지막 업데이트: 2 minutes ago",
-            style: TextStyle(color: Colors.grey, fontSize: 13),
+          Text(
+            isWarning ? "즉시 확인이 필요합니다." : "특이사항 없습니다.",
+            style: TextStyle(
+              color: isWarning ? Colors.redAccent : Colors.grey,
+              fontSize: 14,
+              fontWeight: isWarning ? FontWeight.bold : FontWeight.normal,
+            ),
           ),
         ],
       ),

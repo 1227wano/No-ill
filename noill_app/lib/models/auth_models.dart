@@ -23,6 +23,17 @@ class PetRequest {
       "careName": careName,
     };
   }
+
+  // 💡 이 부분이 빠져서 에러가 났을 거예요!
+  factory PetRequest.fromJson(Map<String, dynamic> json) {
+    return PetRequest(
+      petId: json['petId'] ?? json['PET_ID'] ?? '', // 서버 필드명에 맞춰 수정
+      petName: json['petName'] ?? '',
+      careName: json['careName'] ?? '',
+      petAddress: json['petAddress'] ?? '',
+      petPhone: json['petPhone'] ?? '',
+    );
+  }
 }
 
 /// 2. 회원가입 요청 모델 (SignupRequest)
