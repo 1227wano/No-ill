@@ -55,7 +55,7 @@ class _ElderlyProfileRegistrationScreenState
     // _addressController.text → petAddress (거주 주소)
     // _phoneController.text → petPhone (비상 연락처)
     notifier.updateProfile(
-      name: _nameController.text,
+      careName: _nameController.text,
       address: _addressController.text,
       phone: _phoneController.text,
     );

@@ -6,7 +6,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/color_constants.dart';
 import '../../widgets/atoms/light_diffusion_background.dart';
 
+import '../../models/auth_models.dart';
 import '../../providers/auth_provider.dart';
+import '../../providers/care_provider.dart';
 
 import '../accident/alarm_screen.dart';
 
@@ -15,8 +17,13 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Return only the page content so `MainScreen`'s Scaffold
-    // (which provides the Drawer and BottomNavigationBar) can host it.
+    // ref.watch는 데이터가 바뀌면 화면을 다시 그리라는 신호입니다.
+    // 서버에서 가져온 전체 목록 상태 (로딩/에러/데이터 포함)
+    final careListAsync = ref.watch(careListProvider);
+
+    // 위 목록 중 현재 사용자가 선택한 어르신 한 분의 정보
+    final selectedCare = ref.watch(selectedCareProvider);
+
     return LightDiffusionBackground(
       child: Container(
         color: Colors.transparent,
@@ -29,6 +36,12 @@ class HomeScreen extends ConsumerWidget {
               children: [
                 _buildHeader(context), // 상단 헤더 (메뉴 & 알림)
                 const SizedBox(height: 24),
+                _buildMainDropdown(
+                  ref,
+                  careListAsync,
+                  selectedCare,
+                ), // 어르신 드롭다운
+                const SizedBox(height: 32),
                 _buildStatusCard(), // 안심 상태 카드
                 const SizedBox(height: 32),
                 _buildRobotSection(context), // 로봇 상태 및 바텀시트 트리거
@@ -102,6 +115,51 @@ class HomeScreen extends ConsumerWidget {
           ),
         ),
       ],
+    );
+  }
+
+  // --- [신규] 메인 구역 드롭다운 위젯 ---
+  Widget _buildMainDropdown(
+    WidgetRef ref,
+    AsyncValue<List<PetRequest>> listAsync,
+    PetRequest? selected,
+  ) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.8),
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: NoIllColors.primary.withOpacity(0.3)),
+      ),
+      child: listAsync.when(
+        data: (list) => DropdownButton<String>(
+          value: selected?.petId,
+          isExpanded: true, // 너비를 꽉 채우게
+          icon: const Icon(
+            Icons.arrow_drop_down_circle_outlined,
+            color: NoIllColors.primary,
+          ),
+          underline: const SizedBox(),
+          items: list
+              .map(
+                (pet) => DropdownMenuItem(
+                  value: pet.petId,
+                  child: Text(
+                    "${pet.careName} (${pet.petName})", // "어머니 댁 (복순이)" 형태
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              )
+              .toList(),
+          onChanged: (id) =>
+              ref.read(selectedPetIdProvider.notifier).state = id,
+        ),
+        loading: () => const CircularProgressIndicator(),
+        error: (_, __) => const Text("데이터를 불러올 수 없습니다."),
+      ),
     );
   }
 

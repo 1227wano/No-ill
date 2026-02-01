@@ -2,7 +2,6 @@
 class PetRequest {
   final String petId; // Swagger 명세 기준
   final String petName;
-  final String petOwner;
   final String petAddress;
   final String petPhone;
   final String careName;
@@ -10,7 +9,6 @@ class PetRequest {
   PetRequest({
     required this.petId,
     required this.petName,
-    required this.petOwner,
     required this.petAddress,
     required this.petPhone,
     required this.careName,
@@ -20,7 +18,6 @@ class PetRequest {
     return {
       "petId": petId,
       "petName": petName,
-      "petOwner": petOwner,
       "petAddress": petAddress,
       "petPhone": petPhone,
       "careName": careName,
