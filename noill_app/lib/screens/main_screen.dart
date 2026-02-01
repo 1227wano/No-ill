@@ -3,9 +3,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../providers/auth_provider.dart';
+
 import '../widgets/molecules/bottom_nav_bar.dart';
 import '../widgets/atoms/light_diffusion_background.dart';
-import '../providers/auth_provider.dart';
+import '../widgets/molecules/main_app_bar.dart';
+
 import 'home/home_screen.dart';
 import 'schedule/schedule_screen.dart';
 import 'settings/settings_screen.dart';
@@ -61,6 +64,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         extendBody: true,
+        // 메인 상단
+        appBar: const MainAppBar(),
         body: IndexedStack(index: _currentIndex, children: _pages),
         bottomNavigationBar: CustomBottomNavBar(
           currentIndex: _currentIndex,

@@ -68,6 +68,7 @@ class FcmService {
     // 1. 푸시 데이터로 임시 이벤트 객체 생성
     final newEvent = FallEvent(
       id: DateTime.now().millisecondsSinceEpoch, // 임시 ID
+      petId: data['petId'] ?? '',
       title: data['title'] ?? "낙상 사고 감지",
       description: data['body'] ?? "실시간 사고가 감지되었습니다.",
       imageUrl: data['file'], // 전송한 이미지 주소

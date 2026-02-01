@@ -1,5 +1,6 @@
 class FallEvent {
   final int id;
+  final String petId; // 💡 [추가] 어떤 어르신(기기)의 사고인지 식별하는 ID
   final String title; // "낙상 사고 감지"로 고정
   final String description; // 고정된 안내 문구
   final String? imageUrl; // 푸시 알림으로 받은 실시간 이미지 (과거 기록은 null)
@@ -7,6 +8,7 @@ class FallEvent {
 
   FallEvent({
     required this.id,
+    required this.petId, // 💡 필수 인자로 추가
     this.title = "낙상 사고 감지", // 기본값 설정
     this.description = "기기에서 낙상 의심 상황을 감지하여 알림을 전송했습니다.",
     this.imageUrl,
@@ -17,6 +19,7 @@ class FallEvent {
     return FallEvent(
       // ERD의 EVENT_NO와 EVENT_TIME 필드에 맞춤
       id: json['EVENT_NO'] ?? 0,
+      petId: json['PET_ID'] ?? '',
       detectedAt: json['EVENT_TIME'] != null
           ? DateTime.parse(json['EVENT_TIME'])
           : DateTime.now(),

@@ -34,8 +34,7 @@ class HomeScreen extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildHeader(context), // 상단 헤더 (메뉴 & 알림)
-                const SizedBox(height: 24),
+                const SizedBox(height: 10),
                 _buildMainDropdown(
                   ref,
                   careListAsync,
@@ -45,18 +44,7 @@ class HomeScreen extends ConsumerWidget {
                 _buildStatusCard(), // 안심 상태 카드
                 const SizedBox(height: 32),
                 _buildRobotSection(context), // 로봇 상태 및 바텀시트 트리거
-                // HomeScreen 내부 Column의 children 중 하나로 추가
-                ElevatedButton(
-                  onPressed: () {
-                    // 🚨 401 에러가 발생했을 때와 동일한 '로그아웃' 명령을 강제로 내립니다.
-                    ref.read(authProvider.notifier).logout();
-                  },
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                  child: const Text(
-                    "세션 만료 강제 테스트",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
+
                 const SizedBox(height: 32),
                 _buildAgendaSection(), // 오늘의 일정
               ],
@@ -64,57 +52,6 @@ class HomeScreen extends ConsumerWidget {
           ),
         ),
       ),
-    );
-  }
-
-  // --- [위젯] 상단 헤더 ---
-  Widget _buildHeader(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          children: [
-            const Text(
-              "No-ill",
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF6A85B6),
-              ),
-            ),
-          ],
-        ),
-        // ✅ [수정] 클릭 가능한 알림 아이콘
-        InkWell(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const AlarmScreen(),
-              ), // 알림 목록으로 이동
-            );
-          },
-          borderRadius: BorderRadius.circular(20), // 클릭 피드백 영역
-          child: Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                ),
-              ],
-            ),
-            child: const Icon(
-              Icons.notifications_none,
-              size: 24,
-              color: NoIllColors.primary,
-            ),
-          ),
-        ),
-      ],
     );
   }
 
