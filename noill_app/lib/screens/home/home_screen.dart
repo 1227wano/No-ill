@@ -2,9 +2,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart'; // ✅ 사이즈 대응을 위해 추가 권장
 
 import '../../core/constants/color_constants.dart';
 import '../../widgets/atoms/light_diffusion_background.dart';
+import '../../widgets/atoms/custom_card.dart';
 
 import '../../models/auth_models.dart';
 import '../../providers/event_provider.dart';
@@ -30,27 +32,44 @@ class HomeScreen extends ConsumerWidget {
     );
 
     return LightDiffusionBackground(
-      child: Container(
-        color: Colors.transparent,
-        child: SafeArea(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        // ✅ 3. 상단 내비게이션(배경) 색상 최적화 (AppBar 제거 후 바디 상단 여백 활용)
+        body: SafeArea(
           bottom: false,
           child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(20, 10, 20, 120), // 내비바 공간 확보
+            // ✅ 2. 하단 내비게이션 밀착을 위해 패딩 조정 (80~100 정도로 하향)
+            padding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 100.h),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 10),
-                _buildMainDropdown(ref, careList, selectedCare), // 어르신 드롭다운
-                const SizedBox(height: 32),
+                SizedBox(height: 16.h), // 최상단 여백
+                // ✅ 1. 드롭다운: 목록이 없어도 일정한 버튼 디자인 유지
+                _buildSectionHeader("어르신 선택", "보호 중인 어르신 목록이에요"),
+                SizedBox(height: 8.h),
+                _buildMainDropdown(ref, careList, selectedCare),
+                SizedBox(height: 32.h), // ✅ 섹션 간 표준 간격
+                // ✅ 4. STATUS 카드: 슬림하고 모던한 카드 디자인 적용
+                _buildSectionHeader("실시간 상태", "어르신이 안전하게 계신지 확인하세요"),
+                SizedBox(height: 12.h),
                 _buildStatusCard(
                   name: selectedCare?.careName ?? "어르신",
                   isWarning: isWarning,
-                ), // 안심 상태 카드
-                const SizedBox(height: 32),
-                _buildRobotSection(context), // 로봇 상태 및 바텀시트 트리거
+                ),
+                SizedBox(height: 32.h),
 
-                const SizedBox(height: 32),
-                _buildAgendaSection(), // 오늘의 일정
+                //
+                _buildSectionHeader(
+                  "${selectedCare?.careName ?? '어르신'}님의 ${selectedCare?.petName ?? '로봇'}",
+                  "로봇의 현재 모드와 상태를 알려드려요",
+                ),
+                SizedBox(height: 8.h),
+                _buildRobotSection(context, selectedCare),
+                SizedBox(height: 32.h),
+                // 일정
+                _buildSectionHeader("오늘의 일정", "예정된 주요 일과들이에요"),
+                SizedBox(height: 8.h),
+                _buildscheduleSection(),
               ],
             ),
           ),
@@ -59,170 +78,175 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  // --- [신규] 메인 구역 드롭다운 위젯 ---
+  // --- 1. 개선된 메인 드롭다운 (공통 컴포넌트 적용) ---
   Widget _buildMainDropdown(
     WidgetRef ref,
     List<PetRequest> list,
     PetRequest? selected,
   ) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.8),
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: NoIllColors.primary.withOpacity(0.3)),
-      ),
-      child: list.isEmpty
-          ? const Padding(
-              padding: EdgeInsets.symmetric(vertical: 12),
-              child: Text("등록된 어르신이 없습니다."),
-            )
-          : DropdownButton<String>(
-              value: selected?.petId,
-              isExpanded: true,
-              icon: const Icon(
-                Icons.arrow_drop_down_circle_outlined,
-                color: NoIllColors.primary,
-              ),
-              underline: const SizedBox(),
-              items: list
-                  .map(
-                    (pet) => DropdownMenuItem(
-                      value: pet.petId,
-                      child: Text(
-                        "${pet.careName} (${pet.petName})",
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
+    // ✅ 1. Container 대신 CustomCard를 최상위에 둡니다.
+    return CustomCard(
+      onTap: null,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+      // 만약 유리 같은 느낌을 주고 싶다면 CustomCard 내부의 decoration을 수정하거나
+      // 아래처럼 파라미터로 넘기도록 CustomCard를 확장해서 써야 합니다.
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: selected?.petId,
+          isExpanded: true,
+          hint: const Text("등록된 어르신이 없습니다."),
+          icon: const Icon(
+            Icons.keyboard_arrow_down_rounded,
+            color: Colors.grey,
+          ),
+          items: list.isEmpty
+              ? null
+              : list
+                    .map(
+                      (pet) => DropdownMenuItem(
+                        value: pet.petId,
+                        child: Text(
+                          "${pet.careName} (${pet.petName})",
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 15,
+                          ),
                         ),
                       ),
-                    ),
-                  )
-                  .toList(),
-              onChanged: (id) =>
-                  ref.read(selectedPetIdProvider.notifier).state = id,
-            ),
+                    )
+                    .toList(),
+          onChanged: (id) =>
+              ref.read(selectedPetIdProvider.notifier).state = id,
+        ),
+      ),
     );
   }
 
-  // --- [위젯] 안심 상태 카드 ---
+  // 모든 위젯에 공통으로 들어가는 라벨링
+  Widget _buildSectionHeader(String title, String subtitle) {
+    return Padding(
+      padding: EdgeInsets.only(left: 4.w),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.baseline,
+        textBaseline: TextBaseline.alphabetic, // 글자 하단 라인을 맞춤
+        children: [
+          // 메인 타이틀 (굵고 진하게)
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w800,
+              color: Colors.black,
+              letterSpacing: -0.5,
+            ),
+          ),
+          SizedBox(width: 8.w), // 타이틀과 설명 사이 간격
+          // 서브 설명 (얇고 연하게)
+          Expanded(
+            child: Text(
+              subtitle,
+              style: TextStyle(
+                fontSize: 11.sp,
+                color: Colors.black45,
+                fontWeight: FontWeight.w500,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis, // 너무 길면 생략 처리
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // --- 4. 개선된 STATUS 카드 (슬림 & 모던) ---
   Widget _buildStatusCard({required String name, required bool isWarning}) {
+    final Color bgColor = isWarning
+        ? const Color(0xFFFFEBEE)
+        : const Color(0xFFF0F7FF);
+    final Color pointColor = isWarning ? Colors.red : NoIllColors.primary;
+
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(28),
-        boxShadow: [
-          BoxShadow(
-            color: isWarning
-                ? Colors.red.withOpacity(0.1) // 🚨 위험 시 붉은 그림자
-                : Colors.black.withOpacity(0.05),
-            blurRadius: 20,
-          ),
-        ],
+        color: bgColor,
+        borderRadius: BorderRadius.circular(24),
       ),
-      child: Column(
+      child: Row(
         children: [
-          // 1. 상태 아이콘 영역
+          // 좌측 아이콘 배지
           Container(
-            height: 140,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: isWarning
-                  ? Colors.red[50]
-                  : NoIllColors.primary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(16),
+            padding: const EdgeInsets.all(12),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
             ),
             child: Icon(
-              isWarning ? Icons.warning_rounded : Icons.home_outlined,
-              size: 60,
-              color: isWarning ? Colors.red : NoIllColors.primary,
+              isWarning
+                  ? Icons.warning_amber_rounded
+                  : Icons.health_and_safety_outlined,
+              color: pointColor,
+              size: 28,
             ),
           ),
-          const SizedBox(height: 20),
-
-          // 2. 상태 텍스트 배지
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                isWarning ? Icons.error : Icons.check_circle,
-                color: isWarning ? Colors.red : NoIllColors.primary,
-                size: 20,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                isWarning ? "STATUS: WARNING" : "STATUS: SAFE",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  color: isWarning ? Colors.red : NoIllColors.primary,
-                  letterSpacing: 1.2,
+          const SizedBox(width: 16),
+          // 우측 텍스트 정보
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  isWarning ? "STATUS: WARNING" : "STATUS: SAFE",
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w900,
+                    color: pointColor.withOpacity(0.7),
+                    letterSpacing: 1.1,
+                  ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-
-          // 3. 메인 안내 문구
-          Text(
-            isWarning ? "$name님께 낙상이 감지되었습니다!" : "$name님은 현재 안전합니다.",
-            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            textAlign: TextAlign.center,
-          ),
-          Text(
-            isWarning ? "즉시 확인이 필요합니다." : "특이사항 없습니다.",
-            style: TextStyle(
-              color: isWarning ? Colors.redAccent : Colors.grey,
-              fontSize: 14,
-              fontWeight: isWarning ? FontWeight.bold : FontWeight.normal,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // --- [위젯] 로봇 섹션 ---
-  Widget _buildRobotSection(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          "Companion: Aibo-Bot v2",
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 16),
-        // _buildRobotSection 내 카드 디자인 수정 부분
-        InkWell(
-          onTap: () => _showModeBottomSheet(context, "순찰모드"),
-          borderRadius: BorderRadius.circular(24),
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(24),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.03),
-                  blurRadius: 10,
+                const SizedBox(height: 2),
+                Text(
+                  isWarning ? "$name님 낙상 감지!" : "$name님은 안전합니다.",
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
               ],
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // --- 5. 로봇 섹션 (기능 없는 버튼 제거) ---
+  Widget _buildRobotSection(BuildContext context, PetRequest? selectedCare) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        InkWell(
+          onTap: () => _showModeBottomSheet(context, "순찰모드"),
+          borderRadius: BorderRadius.circular(20),
+          child: Container(
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: Colors.grey.shade100),
+            ),
             child: Row(
               children: [
-                // 배터리 아이콘 대신 '순찰모드' 아이콘 적용
                 const Icon(
                   Icons.visibility_outlined,
                   color: NoIllColors.primary,
-                  size: 30,
+                  size: 24,
                 ),
                 const SizedBox(width: 16),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: const [
-                    // 텍스트를 기기 모드 상태로 변경
                     Text(
                       "현재 모드: 순찰모드",
                       style: TextStyle(
@@ -237,66 +261,33 @@ class HomeScreen extends ConsumerWidget {
                   ],
                 ),
                 const Spacer(),
-                const Icon(Icons.chevron_right, color: Colors.grey),
+                const Icon(Icons.chevron_right, color: Colors.grey, size: 20),
               ],
             ),
           ),
         ),
-        const SizedBox(height: 16),
-        Row(
-          children: [
-            _buildActionBtn(Icons.videocam, "View Camera"),
-            const SizedBox(width: 12),
-            _buildActionBtn(Icons.phone, "Call Pet"),
-          ],
-        ),
+        // ✅ 5. View Camera, Call Pet 버튼 삭제 완료
       ],
-    );
-  }
-
-  Widget _buildActionBtn(IconData icon, String label) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 14),
-        decoration: BoxDecoration(
-          color: NoIllColors.primary,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: Colors.white, size: 20),
-            const SizedBox(width: 8),
-            Text(
-              label,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
   // --- [위젯] 오늘의 일정 ---
-  Widget _buildAgendaSection() {
+  Widget _buildscheduleSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          "Today’s Agenda",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        _buildscheduleItem("Evening Check-in", "6:00 PM", true),
+        _buildscheduleItem(
+          "Morning Medication",
+          "8:30 AM",
+          false,
+          isDone: true,
         ),
-        const SizedBox(height: 16),
-        _buildAgendaItem("Evening Check-in", "6:00 PM", true),
-        _buildAgendaItem("Morning Medication", "8:30 AM", false, isDone: true),
       ],
     );
   }
 
-  Widget _buildAgendaItem(
+  Widget _buildscheduleItem(
     String title,
     String time,
     bool isUrgent, {

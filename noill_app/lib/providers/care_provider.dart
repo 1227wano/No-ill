@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import '../models/auth_models.dart';
 import 'auth_provider.dart';
-import 'pet_provider.dart';
-import '../services/pet_service.dart';
 
 // 1. 관리 중인 어르신 목록을 관리하는 핵심 바구니 (Notifier)
 class CareListNotifier extends StateNotifier<List<PetRequest>> {

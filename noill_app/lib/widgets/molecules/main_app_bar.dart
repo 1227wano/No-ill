@@ -15,16 +15,16 @@ class MainAppBar extends ConsumerWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return AppBar(
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.white,
       elevation: 0,
-      centerTitle: false,
+      centerTitle: true,
       titleSpacing: 20,
 
       // 1. 왼쪽: 깔끔한 브랜드 로고
       title: const Text(
-        "No-ill",
+        "No-Ill",
         style: TextStyle(
-          color: Color(0xFF6A85B6),
+          color: NoIllColors.primary,
           fontWeight: FontWeight.bold,
           fontSize: 22,
         ),

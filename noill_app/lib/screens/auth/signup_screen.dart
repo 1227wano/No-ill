@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:kpostal/kpostal.dart';
 
 import 'package:noill_app/widgets/atoms/gradient_background.dart';
 import '../../widgets/atoms/custom_input_field.dart';
@@ -12,7 +13,6 @@ import '../../models/auth_models.dart';
 
 import 'package:noill_app/screens/main_screen.dart';
 import '../onboarding/device_pairing_screen.dart';
-import 'address_search_screen.dart';
 
 class SignupScreen extends ConsumerStatefulWidget {
   const SignupScreen({super.key});
@@ -216,20 +216,21 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   suffixIcon: IconButton(
                     icon: const Icon(Icons.search),
                     onPressed: () async {
-                      // 💡 작성하신 AddressSearchScreen 클래스로 이동합니다.
-                      final DataModel? result = await Navigator.push(
+                      // 2. KpostalView를 바로 띄웁니다.
+                      await Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const AddressSearchScreen(),
+                          builder: (_) => KpostalView(
+                            useLocalServer: true, // 💡 로컬 서버를 알아서 돌려줍니다.
+                            callback: (Kpostal result) {
+                              setState(() {
+                                // 3. 결과값을 컨트롤러에 바로 넣어줍니다.
+                                _addressController.text = result.address;
+                              });
+                            },
+                          ),
                         ),
                       );
-
-                      // 검색 결과가 있으면 컨트롤러에 값을 넣어줍니다.
-                      if (result != null) {
-                        setState(() {
-                          _addressController.text = result.address;
-                        });
-                      }
                     },
                   ),
                 ),

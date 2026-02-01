@@ -52,9 +52,22 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       child: Scaffold(
         backgroundColor: Colors.transparent, // 배경 그라데이션이 보이도록
         body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: _showWelcomeUI ? _buildWelcomeUI() : _buildLogoOnly(),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: ConstrainedBox(
+                  // ✅ 최소 높이를 화면 높이로 설정하여 Spacer가 작동할 수 있게 합니다.
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: IntrinsicHeight(
+                    // ✅ 자식들이 자신의 고유 높이를 갖게 함
+                    child: _showWelcomeUI
+                        ? _buildWelcomeUI()
+                        : _buildLogoOnly(),
+                  ),
+                ),
+              );
+            },
           ),
         ),
       ),

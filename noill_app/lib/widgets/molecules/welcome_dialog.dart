@@ -52,12 +52,15 @@ void showWelcomeDialog(BuildContext context, VoidCallback onStart) {
             const SizedBox(height: 32),
 
             // 3. 시작하기 버튼
-            SolidButton(
-              text: "서비스 시작하기",
-              onPressed: () {
-                Navigator.pop(context); // 팝업 닫기
-                onStart(); // 메인 화면으로 이동하는 콜백 실행
-              },
+            SizedBox(
+              width: double.infinity, // 버튼이 다이얼로그 너비에 맞게 꽉 차도록 설정
+              child: SolidButton(
+                text: "서비스 시작하기",
+                onPressed: () {
+                  Navigator.pop(context);
+                  onStart();
+                },
+              ),
             ),
           ],
         ),

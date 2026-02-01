@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:flutter/foundation.dart'; // kIsWeb 사용을 위함 (웹에서는 FCM 지원 안됨)
+// kIsWeb 사용을 위함 (웹에서는 FCM 지원 안됨)
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
