@@ -2,8 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:noill_app/core/constants/color_constants.dart';
 import '../../providers/auth_provider.dart';
-// import 'package:noill_app/screens/main_screen.dart'; // 기존 방식 대신 라우터 권장
 import '../../widgets/atoms/gradient_background.dart';
 import '../../widgets/atoms/custom_input_field.dart';
 import '../../widgets/atoms/solid_button.dart';
@@ -30,69 +31,92 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // 2. 현재 인증 상태를 지켜봅니다 (로딩 상태 등을 알기 위해)
     final authState = ref.watch(authProvider);
 
     return DualDiffusionBackground(
       child: Scaffold(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.transparent, // 배경 그라데이션 유지를 위해 투명화
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back_ios_new,
+              color: Colors.black,
+              size: 20.sp,
+            ),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ),
         body: SafeArea(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            // 💡 키보드가 올라올 때 화면이 잘리지 않도록 함
+            padding: EdgeInsets.symmetric(horizontal: 24.w),
             child: Column(
+              crossAxisAlignment:
+                  CrossAxisAlignment.start, // 💡 당근마켓 스타일: 왼쪽 정렬
               children: [
-                const SizedBox(height: 60),
-                const Icon(Icons.favorite, size: 40, color: Color(0xFF6DB3F2)),
-                const SizedBox(height: 16),
-                const Text(
-                  "No-ill",
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 60),
-                const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    "보호자님, 반갑습니다!",
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700),
+                SizedBox(height: 20.h),
+                // 메인 타이틀
+                Text(
+                  "안녕하세요!\n보호자님, 로그인해주세요.",
+                  style: TextStyle(
+                    fontSize: 26.sp,
+                    fontWeight: FontWeight.w800,
+                    height: 1.3,
+                    color: Colors.black87,
                   ),
                 ),
-                const SizedBox(height: 32),
+                SizedBox(height: 12.h),
+                Text(
+                  "어르신의 안전한 내일을 노일이 함께 지킵니다.",
+                  style: TextStyle(fontSize: 14.sp, color: Colors.black54),
+                ),
+                SizedBox(height: 48.h),
 
-                // 3. 컨트롤러를 인풋 필드에 연결합니다
+                // 입력 섹션
                 CustomInputField(
                   label: "아이디",
                   hintText: "ID를 입력하세요",
                   controller: _idController,
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16.h),
                 CustomInputField(
                   label: "비밀번호",
                   hintText: "비밀번호를 입력하세요",
                   obscureText: true,
                   controller: _pwController,
                 ),
-                const SizedBox(height: 32),
+                SizedBox(height: 40.h),
 
-                // 4. 로그인 버튼에 실제 서버 연동 로직을 연결합니다
+                // 로그인 버튼
                 SolidButton(
                   text: authState.isLoading ? "로그인 중..." : "로그인",
                   onPressed: authState.isLoading ? null : () => _handleLogin(),
                 ),
-                const SizedBox(height: 16),
-                // 비밀번호 찾기 버튼
-                TextButton(
-                  onPressed: () => _showSnackBar("비밀번호 찾기 기능은 곧 추가됩니다."),
-                  child: const Text(
-                    "비밀번호 찾기",
-                    style: TextStyle(color: Colors.blue),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                // 계정이 없는 경우 회원가입
+
+                SizedBox(height: 24.h),
+
+                // 하단 링크 섹션 (중앙 정렬 유지)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text("계정이 없으신가요? "),
+                    TextButton(
+                      onPressed: () => _showSnackBar("비밀번호 찾기 기능은 곧 추가됩니다."),
+                      child: Text(
+                        "비밀번호 찾기",
+                        style: TextStyle(
+                          color: Colors.black45,
+                          fontSize: 13.sp,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: 1,
+                      height: 12.h,
+                      color: Colors.grey[300],
+                      margin: EdgeInsets.symmetric(horizontal: 8.w),
+                    ),
                     TextButton(
                       onPressed: () => Navigator.push(
                         context,
@@ -100,12 +124,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           builder: (context) => const SignupScreen(),
                         ),
                       ),
-                      child: const Text(
+                      child: Text(
                         "회원가입",
-                        style: TextStyle(color: Colors.blue),
+                        style: TextStyle(
+                          color: NoIllColors.primary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13.sp,
+                        ),
                       ),
                     ),
                   ],
+                ),
+                // 키보드 여백 확보
+                SizedBox(
+                  height: MediaQuery.of(context).viewInsets.bottom + 20.h,
                 ),
               ],
             ),

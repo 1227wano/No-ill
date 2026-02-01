@@ -3,10 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'firebase_options.dart';
 
 import 'package:noill_app/core/theme/app_theme.dart';
-import 'package:noill_app/screens/auth/splash_screen.dart';
+import 'package:noill_app/screens/auth/welcome_screen.dart';
 import 'screens/main_screen.dart';
 import 'services/fcm_service.dart';
 
@@ -57,14 +58,24 @@ class NoIllApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'No-ill App',
-      theme: AppTheme.lightTheme,
-      debugShowCheckedModeBanner: false,
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const SplashScreen(),
-        '/main': (context) => const MainScreen(),
+    return ScreenUtilInit(
+      designSize: const Size(
+        393,
+        852,
+      ), // 👈 기획서(Figma)의 기준 사이즈를 적으세요 (보통 iPhone 14/15 기준)
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) {
+        return MaterialApp(
+          title: 'No-ill App',
+          theme: AppTheme.lightTheme,
+          debugShowCheckedModeBanner: false,
+          initialRoute: '/',
+          routes: {
+            '/': (context) => const SplashScreen(),
+            '/main': (context) => const MainScreen(),
+          },
+        );
       },
     );
   }

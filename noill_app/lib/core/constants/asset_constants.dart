@@ -2,7 +2,8 @@
 
 class NoIllAssets {
   static const String logo = 'assets/icons/ci_noill.png'; //
-  static const String robotIcon = 'assets/icons/robot_icon.png';
+  // static const String robotIcon = 'assets/icons/robot_icon.png';
+  static const String robot = 'assets/icons/robot.png';
 }
 
 // 사용 시

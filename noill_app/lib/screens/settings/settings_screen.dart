@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/color_constants.dart';
 import '../../providers/auth_provider.dart';
-import '../auth/splash_screen.dart';
+import '../auth/welcome_screen.dart';
 import '../onboarding/device_pairing_screen.dart';
 import '../mypage/mypage_screen.dart';
 import '../accident/accident_history_screen.dart';

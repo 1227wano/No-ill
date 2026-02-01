@@ -13,7 +13,7 @@ import 'home/home_screen.dart';
 import 'schedule/schedule_screen.dart';
 import 'settings/settings_screen.dart';
 import 'call/video_call_screen.dart'; // 화상 통화 화면 가져오기
-import 'auth/splash_screen.dart'; // Splash 화면으로 로그아웃 후 이동
+import 'auth/welcome_screen.dart'; // Splash 화면으로 로그아웃 후 이동
 
 class MainScreen extends ConsumerStatefulWidget {
   const MainScreen({super.key});

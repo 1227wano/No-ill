@@ -9,6 +9,8 @@ class CustomInputField extends StatelessWidget {
   final TextEditingController? controller;
   final String? errorText;
   final bool obscureText;
+  final bool readOnly; // 👈 1. 이 줄을 추가하세요.
+  final Widget? suffixIcon; // ✅ 이 줄이 있는지 꼭 확인하세요!
 
   const CustomInputField({
     super.key,
@@ -17,6 +19,8 @@ class CustomInputField extends StatelessWidget {
     this.controller,
     this.errorText,
     this.obscureText = false,
+    this.readOnly = false, // 👈 2. 기본값을 false로 설정하세요.
+    this.suffixIcon, // ✅ 여기에 추가되어야 밖에서 사용할 수 있습니다.
   });
 
   @override
@@ -38,6 +42,7 @@ class CustomInputField extends StatelessWidget {
         TextFormField(
           controller: controller,
           obscureText: obscureText,
+          readOnly: readOnly, // 👈 3. 여기에 넘겨줘야 진짜 작동합니다!
           style: const TextStyle(fontSize: 16, color: NoIllColors.textMain),
           decoration: InputDecoration(
             // 스타일
@@ -49,6 +54,7 @@ class CustomInputField extends StatelessWidget {
             ),
             // 힌트
             hintText: hintText,
+            suffixIcon: suffixIcon, // ✅ 여기에 전달해줘야 아이콘이 나타납니다.
             hintStyle: const TextStyle(color: NoIllColors.textBody),
             errorText: errorText, // 에러 메시지가 있으면 빨간색으로 자동 표시
             // 에러 발생 시 테두리 스타일
