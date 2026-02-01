@@ -30,6 +30,7 @@ final dioProvider = Provider<Dio>((ref) {
         if (requiresAuth) {
           final accessToken = await storage.read(key: 'accessToken');
           if (accessToken != null && accessToken.isNotEmpty) {
+            print('🚀 API 호출에 쓰이는 토큰: $accessToken'); // 여기에 추가!
             options.headers['Authorization'] = 'Bearer $accessToken';
           }
         }

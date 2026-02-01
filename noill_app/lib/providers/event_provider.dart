@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import '../services/event_service.dart';
 import '../models/event_models.dart';
 import '../core/network/dio_provider.dart';
@@ -9,9 +10,12 @@ final eventServiceProvider = Provider((ref) {
   return EventService(dio);
 });
 
+// ✅ 실시간 푸시 알림 데이터를 임시 저장하는 리스트 프로바이더
+final liveNotificationProvider = StateProvider<List<FallEvent>>((ref) => []);
+
 // 2. 전체 사고 데이터 프로바이더 (서버에서 원본을 긁어옴)
 final allEventsProvider = FutureProvider<List<FallEvent>>((ref) async {
-  return ref.watch(eventServiceProvider).fetchAccidents();
+  return ref.watch(eventServiceProvider).fetchAccidentsReal();
 });
 
 // 3. 🔥 [핵심] 실시간 알람 프로바이더 (24시간 이내 데이터 필터링)

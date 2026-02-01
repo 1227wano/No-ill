@@ -6,11 +6,11 @@ class EventService {
   EventService(this._dio);
 
   /// [1-1. 실제 사고 기록 전체 조회 (나중에 사용)]
-  /// 서버가 준비되면 아래 함수의 이름을 fetchAccidents로 바꾸고 사용하세요.
+  /// 서버가 준비되면 아래 함수의 이름을 fetchAccidents로 바꾸고 사용하세요. --> providers
   Future<List<FallEvent>> fetchAccidentsReal() async {
     try {
       // ✅ 알려주신 사고 전용 엔드포인트 사용
-      final response = await _dio.get('/api/events/report');
+      final response = await _dio.get('/events/report');
 
       if (response.statusCode == 200) {
         List<dynamic> data = response.data;
@@ -59,41 +59,41 @@ class EventService {
   // }
 
   // [TEST] MOCKUP 데이터 반환
-  Future<List<FallEvent>> fetchAccidents() async {
-    // 실제 API 호출 대신 1초 쉬었다가 가짜 데이터를 돌려줌
-    await Future.delayed(const Duration(seconds: 1));
+  //   Future<List<FallEvent>> fetchAccidents() async {
+  //     // 실제 API 호출 대신 1초 쉬었다가 가짜 데이터를 돌려줌
+  //     await Future.delayed(const Duration(seconds: 1));
 
-    return [
-      FallEvent(
-        id: "evt_001",
-        title: "⚠️ 거실 낙상 감지",
-        description: "거실 소파 근처에서 어르신의 낙상이 감지되었습니다. 즉시 확인이 필요합니다.",
-        imageUrl:
-            "https://images.unsplash.com/photo-1516733968668-dbdce39c46ef?q=80&w=800",
-        detectedAt: DateTime.now().subtract(
-          const Duration(minutes: 45),
-        ), // 45분 전 (최근 사고)
-      ),
-      FallEvent(
-        id: "evt_002",
-        title: "⚠️ 침실 낙상 감지",
-        description: "침대 하단에서 미끄러짐이 감지되었습니다. 통화를 시도해 보세요.",
-        imageUrl:
-            "https://images.unsplash.com/photo-1581056771107-24ca5f033842?q=80&w=800",
-        detectedAt: DateTime.now().subtract(
-          const Duration(hours: 5),
-        ), // 5시간 전 (최근 사고)
-      ),
-      FallEvent(
-        id: "evt_003",
-        title: "⚠️ 주방 사고 기록",
-        description: "어제 오후 식탁 근처에서 발생한 사고 기록입니다.",
-        imageUrl:
-            "https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?q=80&w=800",
-        detectedAt: DateTime.now().subtract(
-          const Duration(hours: 32),
-        ), // 32시간 전 (24시간 경과 - 만료 테스트용)
-      ),
-    ];
-  }
+  //     return [
+  //       FallEvent(
+  //         id: "evt_001",
+  //         title: "⚠️ 거실 낙상 감지",
+  //         description: "거실 소파 근처에서 어르신의 낙상이 감지되었습니다. 즉시 확인이 필요합니다.",
+  //         imageUrl:
+  //             "https://images.unsplash.com/photo-1516733968668-dbdce39c46ef?q=80&w=800",
+  //         detectedAt: DateTime.now().subtract(
+  //           const Duration(minutes: 45),
+  //         ), // 45분 전 (최근 사고)
+  //       ),
+  //       FallEvent(
+  //         id: "evt_002",
+  //         title: "⚠️ 침실 낙상 감지",
+  //         description: "침대 하단에서 미끄러짐이 감지되었습니다. 통화를 시도해 보세요.",
+  //         imageUrl:
+  //             "https://images.unsplash.com/photo-1581056771107-24ca5f033842?q=80&w=800",
+  //         detectedAt: DateTime.now().subtract(
+  //           const Duration(hours: 5),
+  //         ), // 5시간 전 (최근 사고)
+  //       ),
+  //       FallEvent(
+  //         id: "evt_003",
+  //         title: "⚠️ 주방 사고 기록",
+  //         description: "어제 오후 식탁 근처에서 발생한 사고 기록입니다.",
+  //         imageUrl:
+  //             "https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?q=80&w=800",
+  //         detectedAt: DateTime.now().subtract(
+  //           const Duration(hours: 32),
+  //         ), // 32시간 전 (24시간 경과 - 만료 테스트용)
+  //       ),
+  //     ];
+  //   }
 }

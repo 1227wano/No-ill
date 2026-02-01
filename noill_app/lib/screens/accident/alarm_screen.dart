@@ -10,6 +10,7 @@ class AlarmScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // 💡 24시간 이내의 활성 알람만 가져오는 Provider 구독
     final alarmsAsync = ref.watch(activeAlarmsProvider);
+    final liveAlarms = ref.watch(liveNotificationProvider); // ✅ 실시간 데이터
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
@@ -23,16 +24,21 @@ class AlarmScreen extends ConsumerWidget {
         iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: alarmsAsync.when(
-        data: (alarms) => alarms.isEmpty
-            ? _buildEmptyState()
-            : ListView.builder(
-                padding: const EdgeInsets.all(16),
-                itemCount: alarms.length,
-                itemBuilder: (context, index) {
-                  final alarm = alarms[index];
-                  return _buildAlarmCard(context, alarm);
-                },
-              ),
+        data: (serverAlarms) {
+          // 🚀 [여기서 합칩니다!] 실시간 알람과 서버 알람을 하나로 합침
+          final allAlarms = [...liveAlarms, ...serverAlarms];
+
+          return allAlarms.isEmpty
+              ? _buildEmptyState()
+              : ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: allAlarms.length,
+                  itemBuilder: (context, index) {
+                    final alarm = allAlarms[index]; // 합쳐진 리스트에서 하나씩 꺼냄
+                    return _buildAlarmCard(context, alarm);
+                  },
+                );
+        },
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, stack) => Center(child: Text("알림을 불러오지 못했습니다: $err")),
       ),
@@ -87,10 +93,10 @@ class AlarmScreen extends ConsumerWidget {
               child: Image.network(
                 alarm.imageUrl,
                 fit: BoxFit.cover,
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return const Center(child: CircularProgressIndicator());
-                },
+                // loadingBuilder: (context, child, loadingProgress) {
+                //   if (loadingProgress == null) return child;
+                //   return const Center(child: CircularProgressIndicator());
+                // },
                 errorBuilder: (context, error, stackTrace) => Container(
                   color: Colors.grey[200],
                   child: const Center(child: Text("이미지를 불러올 수 없습니다.")),

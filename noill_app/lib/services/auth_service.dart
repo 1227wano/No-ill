@@ -57,7 +57,7 @@ class AuthService {
   Future<CommonResponse> logout() async {
     print("🚀 [GET] 로그아웃 시도");
     try {
-      final response = await _dio.get(ApiConstants.logout);
+      final response = await _dio.post(ApiConstants.logout);
       return CommonResponse.fromJson(response.data);
     } on DioException catch (e) {
       _handleError("로그아웃", e);

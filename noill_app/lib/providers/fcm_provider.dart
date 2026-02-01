@@ -6,7 +6,7 @@ import '../services/fcm_service.dart'; // 수정했던 FcmService(dio)
 final fcmProvider = Provider((ref) {
   // 💡 [주의] 저번 턴에 수정했던 것처럼 dio를 주입해야 에러가 안 납니다!
   final dio = ref.read(dioProvider);
-  final service = FcmService(dio);
+  final service = FcmService(dio, ref);
 
   return FcmLogic(ref, service);
 });
@@ -23,7 +23,7 @@ class FcmLogic {
     if (token != null) {
       final success = await service.sendTokenToServer(token);
       if (success) {
-        service.initialize(); // 리스너 등록 등 포함
+        await service.initialize(); // 리스너 등록 등 포함
       }
     }
   }

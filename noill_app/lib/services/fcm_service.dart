@@ -1,25 +1,34 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart'; // kIsWeb 사용을 위함 (웹에서는 FCM 지원 안됨)
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
+import '../models/event_models.dart';
 import '../core/network/dio_provider.dart';
 import '../core/network/api_constants.dart';
+import '../providers/event_provider.dart';
+
+// ✅ 최신 사고 이미지 URL을 저장하는 전역 상태
+final latestAccidentImageProvider = StateProvider<String?>((ref) => null);
 
 final fcmServiceProvider = Provider((ref) {
   final dio = ref.read(dioProvider);
-  return FcmService(dio);
+  return FcmService(dio, ref);
 });
 
 class FcmService {
+  final Dio _dio;
+  final Ref _ref;
+
+  FcmService(this._dio, this._ref);
+
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;
   final FlutterLocalNotificationsPlugin _localNotifications =
       FlutterLocalNotificationsPlugin();
-  final Dio _dio;
-
-  FcmService(this._dio);
 
   /// [1. 초기화] 채널 설정 및 수신 리스너 등록
   Future<void> initialize() async {
@@ -48,6 +57,32 @@ class FcmService {
       (message) => _showNotification(message, channel),
     );
     print('🚀 [FCM SERVICE] 초기화 완료');
+
+    FirebaseMessaging.onMessage.listen((message) => _handleMessage(message));
+  }
+
+  void _handleMessage(RemoteMessage message) {
+    print("📩 알림 도착 확인! 데이터: ${message.data}"); // 👈 이 로그가 찍히나요?
+    final data = message.data;
+
+    // 1. 푸시 데이터로 임시 이벤트 객체 생성
+    final newEvent = FallEvent(
+      id: DateTime.now().millisecondsSinceEpoch, // 임시 ID
+      title: data['title'] ?? "낙상 사고 감지",
+      description: data['body'] ?? "실시간 사고가 감지되었습니다.",
+      imageUrl: data['file'], // 전송한 이미지 주소
+      detectedAt: DateTime.now(),
+    );
+
+    // 2. ✅ 화면에 바로 뜨도록 리스트 맨 앞에 추가
+    _ref.read(liveNotificationProvider.notifier).update((state) {
+      print("✅ 실시간 리스트에 추가됨! 현재 개수: ${state.length + 1}"); // 👈 이 로그도 확인!
+      return [newEvent, ...state];
+    });
+
+    // 3. 🔥 핵심: 알람이 왔으므로 전체 사고 목록 프로바이더를 새로고침함
+    // 이 코드로 인해 AlarmScreen과 AccidentHistory가 실시간으로 바뀝니다.
+    _ref.invalidate(allEventsProvider);
   }
 
   /// [2. 알림 표시 로직] 사진 다운로드 및 스타일 적용
