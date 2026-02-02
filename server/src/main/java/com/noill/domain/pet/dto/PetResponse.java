@@ -9,15 +9,20 @@ import lombok.Getter;
 public class PetResponse {
     private Long petNo;
     private String petId;
+    private String petName;
+    private String petAddress;
+    private String petPhone;
 
     private String careName;
     private String careStart;
 
-    // Care 엔티티를 받아서 DTO로 변환하는 생성자
     public static PetResponse from(Care care) {
         return PetResponse.builder()
                 .petNo(care.getPet().getPetNo())
                 .petId(care.getPet().getPetId())
+                .petName(care.getPet().getPetName())
+                .petAddress(care.getPet().getPetAddress())
+                .petPhone(care.getPet().getPetPhone())
                 .careName(care.getCareName())
                 .careStart(care.getCareStart().toString())
                 .build();

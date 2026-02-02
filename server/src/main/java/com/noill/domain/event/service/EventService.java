@@ -1,6 +1,7 @@
 package com.noill.domain.event.service;
 
 import com.noill.domain.care.entity.Care;
+import com.noill.domain.event.dto.EventResponse;
 import com.noill.domain.event.entity.Event;
 import com.noill.domain.event.repository.EventRepository;
 import com.noill.domain.notification.entity.FcmToken;
@@ -24,6 +25,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -36,7 +38,6 @@ public class EventService {
     private final FcmService fcmService;
     private final SmsService smsService;
 
-    // application.yml에서 주입받은 경로와 URL
     @Value("${file.dir}")
     private String fileDir;
 
@@ -96,6 +97,16 @@ public class EventService {
             // SMS 전송
             sendSmsToUser(user, care.getCareName(), pet.getPetAddress(), event.getEventTime());
         }
+    }
+
+    @Transactional(readOnly = true)
+    public List<EventResponse> getEvents(String petId) {
+
+        List<Event> events = eventRepository.findAllByPet_PetIdOrderByEventTimeDesc(petId);
+
+        return events.stream()
+                .map(EventResponse::from)
+                .collect(Collectors.toList());
     }
 
     // 확장자 추출 헬퍼 메서드
