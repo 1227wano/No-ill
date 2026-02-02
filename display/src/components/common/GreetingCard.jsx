@@ -1,9 +1,11 @@
 import React from 'react';
 import { useWeather } from '@/features/weather';
+import { useAuth } from '@/features/auth';
 import character from '@/assets/no-ill-character.png';
 
 const GreetingCard = () => {
   const { weather, airQuality, loading, error } = useWeather();
+  const { user } = useAuth();
 
   return (
     <div className="bg-surface rounded-card p-8 flex flex-col items-center shadow-card h-full">
@@ -14,7 +16,7 @@ const GreetingCard = () => {
 
       {/* 인사말 */}
       <div className="text-center mb-6">
-        <h2 className="text-4xl font-bold text-text-main mb-6">좋은 아침이에요, 할머니!</h2>
+        <h2 className="text-4xl font-bold text-text-main mb-6">좋은 아침이에요, {user?.userName || '사용자'}님!</h2>
         <p className="text-3xl text-primary font-medium">오늘도 활기찬 하루 시작해볼까요?</p>
       </div>
 
