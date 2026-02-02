@@ -17,8 +17,9 @@ class NoilTTSNode(Node):
         self.sub_chat = self.create_subscription(Bool, 'is_chatting', self.chat_state_callback, 10)
         self.sub_trigger = self.create_subscription(String, 'tts_trigger', self.emergency_tts_callback, 10)  # 추가
         
-        # Publisher
+        # Publishers
         self.done_pub = self.create_publisher(Bool, 'tts_done', 10)
+        self.emergency_done_pub = self.create_publisher(Bool, 'emergency_tts_done', 10)
         
         self.speaker_device_id = self.find_device_by_name("UACDemo")
         self.get_logger().info(f"선택된 스피커 장치 ID: {self.speaker_device_id}")
@@ -49,7 +50,10 @@ class NoilTTSNode(Node):
         if msg.data is True:
             self.is_session_active = True
             self.get_logger().info("대화 세션 활성화")
-        
+            self.play_tts("네, 말씀하세요.")
+            time.sleep(0.3)
+            self.done_pub.publish(Bool(data=True))
+
         elif msg.data is False:
             if self.is_session_active:
                 self.get_logger().info("대화 세션 종료 신호 수신. 종료 인사 출력.")
@@ -65,9 +69,11 @@ class NoilTTSNode(Node):
         self.done_pub.publish(Bool(data=True))
     
     def emergency_tts_callback(self, msg):
-        """긴급 메시지 TTS (tts_done 발행하지 않음)"""
+        """긴급 메시지 TTS"""
         self.get_logger().info(f'Emergency TTS: {msg.data}')
         self.play_tts(msg.data)
+        time.sleep(0.3)
+        self.emergency_done_pub.publish(Bool(data=True))
     
     def play_tts(self, text):
         try:

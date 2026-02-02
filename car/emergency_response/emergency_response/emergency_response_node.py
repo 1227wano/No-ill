@@ -12,11 +12,14 @@ class EmergencyResponseNode(Node):
             Bool, 'fall_arrived', self.arrived_callback, 10)
         self.sub_stt = self.create_subscription(
             String, 'stt_result', self.stt_callback, 10)
+        self.sub_emergency_tts_done = self.create_subscription(
+            Bool, 'emergency_tts_done', self.emergency_tts_done_callback, 10)
         
         # Publishers
         self.pub_tts_trigger = self.create_publisher(String, 'tts_trigger', 10)
         self.pub_capture = self.create_publisher(Bool, 'capture_command', 10)
         self.pub_check_accident = self.create_publisher(Bool, 'check_accident', 10)
+        self.pub_force_listen = self.create_publisher(Bool, 'force_listen', 10)
         
         # 상태 변수
         self.is_emergency_active = False
@@ -40,19 +43,29 @@ class EmergencyResponseNode(Node):
             self.get_logger().warn('No response after 5 attempts. Reporting...')
             self.report_accident()
             return
-        
+
         self.attempt_count += 1
         self.get_logger().info(f'Asking patient... (Attempt {self.attempt_count}/{self.max_attempts})')
-        
-        # TTS 트리거
+
+        # TTS 트리거 (완료 후 emergency_tts_done_callback에서 청취 활성화)
         tts_msg = String()
         tts_msg.data = "괜찮습니까?"
         self.pub_tts_trigger.publish(tts_msg)
-        
-        self.waiting_for_response = True
-        
-        # 5초 후 응답 확인
-        self.create_timer(5.0, self.check_response, callback_group=None)
+
+    def emergency_tts_done_callback(self, msg):
+        """Emergency TTS 완료 후 청취 활성화"""
+        if msg.data and self.is_emergency_active:
+            self.get_logger().info('Emergency TTS done. Activating listen mode.')
+
+            # STT 강제 청취 모드 활성화
+            listen_msg = Bool()
+            listen_msg.data = True
+            self.pub_force_listen.publish(listen_msg)
+
+            self.waiting_for_response = True
+
+            # 5초 후 응답 확인
+            self.create_timer(5.0, self.check_response, callback_group=None)
     
     def check_response(self):
         """5초 후 응답 확인"""
@@ -66,6 +79,12 @@ class EmergencyResponseNode(Node):
         if self.is_emergency_active and self.waiting_for_response:
             self.get_logger().info(f'Patient responded: {msg.data}')
             self.waiting_for_response = False
+
+            # 응답 확인 메시지 출력
+            tts_msg = String()
+            tts_msg.data = "네, 괜찮으시군요!"
+            self.pub_tts_trigger.publish(tts_msg)
+
             self.end_emergency()
     
     def report_accident(self):
@@ -89,12 +108,17 @@ class EmergencyResponseNode(Node):
         self.is_emergency_active = False
         self.waiting_for_response = False
         self.attempt_count = 0
-        
+
+        # STT 강제 청취 모드 해제
+        listen_msg = Bool()
+        listen_msg.data = False
+        self.pub_force_listen.publish(listen_msg)
+
         # check_accident False로 변경
         accident_msg = Bool()
         accident_msg.data = False
         self.pub_check_accident.publish(accident_msg)
-        
+
         # COOLDOWN (10초)
         self.create_timer(10.0, self.cooldown_done, callback_group=None)
     

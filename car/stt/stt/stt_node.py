@@ -86,8 +86,15 @@ class NoilSTTNode(Node):
         if msg.data is True:
             self.get_logger().info("Force listen mode activated.")
             self.recognizer.reset(self.stream)
+            self.is_chatting = True
             self.can_listen = True
             self.reset_timeout_timer()
+        else:
+            self.get_logger().info("Force listen mode deactivated.")
+            self.is_chatting = False
+            self.can_listen = False
+            if self.timeout_timer:
+                self.timeout_timer.cancel()
 
     def tts_done_callback(self, msg):
         if msg.data and self.is_chatting:
@@ -128,7 +135,6 @@ class NoilSTTNode(Node):
                         self.get_logger().info(f"▶ 핫워드 감지: {raw_text}")
                         self.is_chatting = True
                         self.is_chatting_pub.publish(Bool(data=True))
-                        self.tts_done_pub.publish(Bool(data=True))
                         self.recognizer.reset(self.stream)
                 
                 elif self.can_listen:

@@ -39,7 +39,7 @@ class YoloDetectorNode(Node):
         self.trt_context = self.engine.create_execution_context()
         self.inputs, self.outputs, self.bindings, self.stream = self.allocate_buffers(self.engine)
         
-        self.classes = ["Lying", "others"]
+        self.classes = ["lying", "others"]
         self.model_w = 224
         self.model_h = 224
         
@@ -171,7 +171,7 @@ class YoloDetectorNode(Node):
                     self.pub_y.publish(Int32(data=int(best_match['center'][1])))
                     self.pub_type.publish(String(data=obj_name))
 
-                    color = (0, 0, 255) if obj_name == "Lying" else (0, 255, 0)
+                    color = (0, 0, 255) if obj_name == "lying" else (0, 255, 0)
                     cv2.rectangle(input_canvas, (bx, by + pad_y), (bx+bw, by+bh+pad_y), color, 2)
                     cv2.putText(input_canvas, f"ID:{objectID} {obj_name}", (bx, by + pad_y - 10), 
                                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
