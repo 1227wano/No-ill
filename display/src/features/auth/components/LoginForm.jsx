@@ -13,11 +13,11 @@ const LoginForm = ({ onSubmit, isLoading, error }) => {
     const isValid = petNo.trim().length >= 4;
 
     return (
-        <form onSubmit={handleSubmit} className="w-full max-w-sm">
+        <form onSubmit={handleSubmit} className="w-full">
             <div className="mb-6">
                 <label
                     htmlFor="petNo"
-                    className="block text-body font-medium text-text-main mb-2"
+                    className="block text-3xl font-semibold text-text-main mb-5"
                 >
                     로봇펫 번호
                 </label>
@@ -27,7 +27,7 @@ const LoginForm = ({ onSubmit, isLoading, error }) => {
                     value={petNo}
                     onChange={(e) => setPetNo(e.target.value)}
                     placeholder="로봇펫 번호를 입력하세요"
-                    className="w-full px-4 py-4 text-body bg-surface border border-border rounded-input focus:border-[#5BA3D0] focus:ring-2 focus:ring-[#5BA3D0]/20 focus:outline-none transition-colors"
+                    className="w-full px-4 py-4 text-2xl bg-surface border border-border rounded-input focus:border-[#5BA3D0] focus:ring-2 focus:ring-[#5BA3D0]/20 focus:outline-none transition-colors mb-1"
                     disabled={isLoading}
                     autoFocus
                 />
@@ -43,7 +43,7 @@ const LoginForm = ({ onSubmit, isLoading, error }) => {
             <button
                 type="submit"
                 disabled={!isValid || isLoading}
-                className="w-full h-[52px] text-body font-semibold text-white bg-[#5BA3D0] rounded-button hover:bg-[#4A90C2] disabled:bg-border disabled:cursor-not-allowed transition-colors shadow-card"
+                className="w-full h-[52px] text-3xl font-semibold text-white bg-[#5BA3D0] rounded-button hover:bg-[#4A90C2] disabled:bg-border disabled:cursor-not-allowed transition-colors shadow-card"
             >
                 {isLoading ? '로그인 중...' : '로그인'}
             </button>

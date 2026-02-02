@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LoginForm from '../features/auth/components/LoginForm';
 import useAuth from '../features/auth/hooks/useAuth';
+import logo from '@/assets/no-ill-logo.png';
 
 const LoginPage = () => {
     const navigate = useNavigate();
@@ -31,19 +32,13 @@ const LoginPage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
-            <div className="bg-surface rounded-card shadow-card p-10 w-full max-w-md">
+        <div className="min-h-screen bg-background flex flex-col items-center justify-center p-10">
+            <div className="bg-surface rounded-card shadow-card p-16 w-full max-w-2xl">
                 {/* 로고 영역 */}
-                <div className="flex flex-col items-center mb-8">
-                    <div className="w-24 h-24 bg-[#5BA3D0] rounded-full flex items-center justify-center shadow-card mb-4">
-                        <div className="w-16 h-16 bg-surface rounded-full relative flex items-center justify-center">
-                            <div className="w-2.5 h-2.5 bg-[#5BA3D0] rounded-full absolute top-[22px] left-[18px]"></div>
-                            <div className="w-2.5 h-2.5 bg-[#5BA3D0] rounded-full absolute top-[22px] right-[18px]"></div>
-                            <div className="w-5 h-2.5 border-2 border-[#5BA3D0] border-t-0 rounded-b-[20px] absolute bottom-[18px] left-1/2 -translate-x-1/2"></div>
-                        </div>
-                    </div>
-                    <h1 className="text-h1 text-text-main">노일</h1>
-                    <p className="text-[#5BA3D0] text-body mt-1">No-ill</p>
+                <div className="flex flex-col items-center mb-12">
+                    <img src={logo} alt="No-ill 로고" className="w-48 h-48 object-contain mb-6" />
+                    <h1 className="text-8xl font-bold text-text-main mb-4">노일</h1>
+                    <p className="text-[#5BA3D0] text-5xl font-semibold mt-2">No-ill</p>
                 </div>
 
                 {/* 로그인 폼 */}
@@ -54,7 +49,7 @@ const LoginPage = () => {
                 />
 
                 {/* 안내 문구 */}
-                <p className="text-center text-caption text-text-body mt-6">
+                <p className="text-center text-2xl text-text-body mt-10">
                     로봇펫에 표시된 번호를 입력해주세요
                 </p>
             </div>
