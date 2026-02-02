@@ -67,14 +67,18 @@ class FcmService {
     print("📩 알림 도착 확인! 데이터: ${message.data}"); // 👈 이 로그가 찍히나요?
     final data = message.data;
 
-    // 1. 푸시 데이터로 임시 이벤트 객체 생성
+    // 1. 푸시 데이터로 임시 이벤트 객체 생성 (실시간으로 발생한 데이터와 데이터가 서버에 저장되는 그 순간을 메울 수 있는 데이터)
     final newEvent = FallEvent(
-      id: DateTime.now().millisecondsSinceEpoch, // 임시 ID
-      petId: data['petId'] ?? '',
+      eventNo: int.parse(data['event_no'] ?? '0'),
+      petNo: int.parse(data['pet_no'] ?? '0'),
       title: data['title'] ?? "낙상 사고 감지",
       description: data['body'] ?? "실시간 사고가 감지되었습니다.",
-      imageUrl: data['file'], // 전송한 이미지 주소
-      detectedAt: DateTime.now(),
+      imageUrl: data['file'],
+
+      // 💡 [수정] 서버가 보낸 시간을 우선 사용하고, 없을 때만 예외적으로 now()를 씁니다.
+      eventTime: data['event_time'] != null
+          ? DateTime.parse(data['event_time'])
+          : DateTime.now(),
     );
 
     // 2. ✅ 화면에 바로 뜨도록 리스트 맨 앞에 추가

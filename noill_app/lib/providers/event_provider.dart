@@ -26,7 +26,7 @@ final allEventsProvider = FutureProvider<List<FallEvent>>((ref) async {
 
   // ③ [필터링] 가져온 데이터 중, 현재 선택된 어르신의 ID와 일치하는 기록만 골라냅니다.
   // 💡 모델(FallEvent)에 petId 필드가 반드시 정의되어 있어야 합니다.
-  return allEvents.where((event) => event.petId == selectedId).toList();
+  return allEvents.where((event) => event.petNo == selectedId).toList();
 });
 
 // 3. 🔥 [핵심] 실시간 알람 프로바이더 (24시간 이내 데이터 필터링)
@@ -38,7 +38,7 @@ final activeAlarmsProvider = Provider<AsyncValue<List<FallEvent>>>((ref) {
     final now = DateTime.now();
     // 현재 시간으로부터 24시간이 지나지 않은 이벤트만 선별
     return events.where((event) {
-      final difference = now.difference(event.detectedAt).inHours;
+      final difference = now.difference(event.eventTime).inHours;
       return difference < 24;
     }).toList();
   });
@@ -52,7 +52,7 @@ final accidentHistoryProvider = Provider<AsyncValue<List<FallEvent>>>((ref) {
   return allEventsAsync.whenData((events) {
     // 최신순으로 정렬하여 반환
     final sortedEvents = [...events];
-    sortedEvents.sort((a, b) => b.detectedAt.compareTo(a.detectedAt));
+    sortedEvents.sort((a, b) => b.eventTime.compareTo(a.eventTime));
     return sortedEvents;
   });
 });

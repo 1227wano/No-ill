@@ -10,7 +10,7 @@ class AccidentDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final now = DateTime.now();
     // ✅ 24시간 경과 여부 판단
-    final bool isExpired = now.difference(event.detectedAt).inHours >= 24;
+    final bool isExpired = now.difference(event.eventTime).inHours >= 24;
 
     return Scaffold(
       appBar: AppBar(title: const Text("사고 상세 기록"), elevation: 0),
@@ -25,7 +25,7 @@ class AccidentDetailScreen extends StatelessWidget {
               children: [
                 _buildStatusBadge(isExpired),
                 Text(
-                  "${event.detectedAt.year}.${event.detectedAt.month}.${event.detectedAt.day} ${event.detectedAt.hour}:${event.detectedAt.minute}",
+                  "${event.eventTime.year}.${event.eventTime.month}.${event.eventTime.day} ${event.eventTime.hour}:${event.eventTime.minute}",
                   style: const TextStyle(color: Colors.grey, fontSize: 14),
                 ),
               ],

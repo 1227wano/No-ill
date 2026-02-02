@@ -7,59 +7,69 @@ class PetService {
   final Dio _dio;
   PetService(this._dio);
 
-  Future<bool> registerPet(PetRegistrationRequest request) async {
+  // 오류 3 해결: registerPetAndSenior에서 부를 수 있도록 이름 통일 혹은 래핑
+  Future<PetRequest> registerCare({
+    required String petId,
+    required String petName,
+    required String careName,
+    required String petAddress,
+    required String petPhone,
+  }) async {
     try {
-      print('🚀 [PetService] 펫 등록 요청: ${request.toJson()}');
-      // POST /api/users/pets 엔드포인트 (명세 준수)
+      // 💡 화면 1, 2의 데이터를 하나의 Request 객체로 합침
+      final request = PetRegistrationRequest(
+        petId: petId,
+        petName: petName,
+        careName: careName,
+        petAddress: petAddress,
+        petPhone: petPhone,
+      );
+
       final response = await _dio.post(
         ApiConstants.registerPet,
         data: request.toJson(),
       );
-      print('✅ [PetService] 펫 등록 성공: ${response.statusCode}');
-      return response.statusCode == 200 || response.statusCode == 201;
+
+      // 서버 응답 데이터를 PetRequest 모델로 변환 (서버 response 구조에 맞춰 수정 필요)
+      return PetRequest.fromJson(response.data['data']);
     } on DioException catch (e) {
-      print('❌ [PetService] 등록 실패');
-      print('- 상태 코드: ${e.response?.statusCode}');
-      print('- 에러 데이터: ${e.response?.data}');
-      print('- 에러 메시지: ${e.message}');
-      return false;
+      throw Exception('등록 실패: ${e.message}');
     }
   }
 
   // 드롭다운에 들어갈 데이터 -> care_provider에 들어가는 데이터
-  Future<List<PetRequest>> getMyPetList() async {
+  // 오류 2 해결: getMyPetList -> fetchMyPets로 이름 변경 (Provider와 통일)
+  Future<List<PetRequest>> fetchMyPets() async {
     try {
-      // 💡 실제 API가 생기면 아래 주석을 해제하세요.
-      // final response = await _dio.get('/api/users/pets');
-      // return (response.data['data'] as List).map((e) => PetRequest.fromJson(e)).toList();
+      // 실제 API 호출 시:
+      final response = await _dio.get(ApiConstants.getMyPets);
+      // 🔍 [필수 확인] 서버가 보내준 진짜 JSON 구조를 콘솔에서 보세요.
+      print("📡 [Server Raw Data]: ${response.data}");
 
-      // 지금은 테스트용 가짜 데이터를 반환합니다.
-      await Future.delayed(const Duration(milliseconds: 500)); // 통신하는 척!
-      return [
-        PetRequest(
-          petId: "SERIAL_123",
-          petName: "복순이",
-          careName: "어머니 댁",
-          petAddress: "서울",
-          petPhone: "010-1111-2222",
-        ),
-        PetRequest(
-          petId: "SERIAL_456",
-          petName: "철수",
-          careName: "아버지 댁",
-          petAddress: "부산",
-          petPhone: "010-3333-4444",
-        ),
-        PetRequest(
-          petId: "N0111",
-          petName: "노일이",
-          careName: "김노인",
-          petAddress: "서울시",
-          petPhone: "010-2222-3333",
-        ),
-      ];
-    } catch (e) {
-      return []; // 에러 시 빈 리스트
+      final List<dynamic> data = response.data;
+      print("✅ [PetService] 서버에서 받은 실제 데이터 갯수: ${data.length}개");
+      return data.map((e) => PetRequest.fromJson(e)).toList();
+      // 테스트용 가짜 데이터 (유지)
+      // await Future.delayed(const Duration(milliseconds: 500));
+      // return [
+      //   PetRequest(
+      //     petId: "SERIAL_123",
+      //     petName: "복순이",
+      //     careName: "어머니 댁",
+      //     petAddress: "서울",
+      //     petPhone: "010-1111-2222",
+      //   ),
+      //   PetRequest(
+      //     petId: "SERIAL_456",
+      //     petName: "철수",
+      //     careName: "아버지 댁",
+      //     petAddress: "부산",
+      //     petPhone: "010-3333-4444",
+      //   ),
+      // ];
+    } on DioException catch (e) {
+      print("❌ [API 에러]: ${e.response?.statusCode} - ${e.response?.data}");
+      rethrow;
     }
   }
 

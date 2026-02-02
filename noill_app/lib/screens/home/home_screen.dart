@@ -1,5 +1,4 @@
 // 메인화면
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart'; // ✅ 사이즈 대응을 위해 추가 권장
@@ -18,9 +17,9 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // ref.watch는 데이터가 바뀌면 화면을 다시 그리라는 신호입니다.
-    // 💡 이제 AsyncValue가 아니라 실제 List<PetRequest>가 반환됩니다.
-    final careList = ref.watch(careListProvider);
-    final selectedCare = ref.watch(selectedCareProvider);
+    // 1. 데이터 구독 (어르신 목록 및 선택된 어르신)
+    final careList = ref.watch(careListProvider); // 어르신 목록
+    final selectedCare = ref.watch(selectedCareProvider); // 선택된 어르신 (petNo 기반)
 
     // 💡 [핵심] 24시간 이내 사고 리스트를 가져옵니다.
     final activeAlarmsAsync = ref.watch(activeAlarmsProvider);
@@ -30,6 +29,9 @@ class HomeScreen extends ConsumerWidget {
       data: (alarms) => alarms.isNotEmpty,
       orElse: () => false,
     );
+
+    // 3. 💡 [추가] 선택된 어르신에 따른 스케줄 데이터 구독
+    // final scheduleAsync = ref.watch(scheduleProvider);
 
     return LightDiffusionBackground(
       child: Scaffold(
@@ -58,7 +60,7 @@ class HomeScreen extends ConsumerWidget {
                 ),
                 SizedBox(height: 32.h),
 
-                //
+                // 동적 데이터는 없음
                 _buildSectionHeader(
                   "${selectedCare?.careName ?? '어르신'}님의 ${selectedCare?.petName ?? '로봇'}",
                   "로봇의 현재 모드와 상태를 알려드려요",
@@ -70,6 +72,13 @@ class HomeScreen extends ConsumerWidget {
                 _buildSectionHeader("오늘의 일정", "예정된 주요 일과들이에요"),
                 SizedBox(height: 8.h),
                 _buildscheduleSection(),
+                // --- 스케줄: AsyncValue에 맞춰 로딩/에러/데이터 처리 ---
+                // scheduleAsync.when(
+                //   data: (schedules) => _buildscheduleSection(schedules),
+                //   loading: () =>
+                //       const Center(child: CircularProgressIndicator()),
+                //   error: (e, _) => const Text("일정을 불러오지 못했습니다."),
+                // ),
               ],
             ),
           ),
@@ -78,49 +87,92 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  // --- 1. 개선된 메인 드롭다운 (공통 컴포넌트 적용) ---
   Widget _buildMainDropdown(
     WidgetRef ref,
-    List<PetRequest> list,
-    PetRequest? selected,
+    AsyncValue<List<PetRequest>> careList,
+    PetRequest? selectedCare,
   ) {
-    // ✅ 1. Container 대신 CustomCard를 최상위에 둡니다.
     return CustomCard(
       onTap: null,
+      // ✅ 원래 쓰시던 여백과 디자인 그대로 유지
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-      // 만약 유리 같은 느낌을 주고 싶다면 CustomCard 내부의 decoration을 수정하거나
-      // 아래처럼 파라미터로 넘기도록 CustomCard를 확장해서 써야 합니다.
       child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          value: selected?.petId,
-          isExpanded: true,
-          hint: const Text("등록된 어르신이 없습니다."),
-          icon: const Icon(
-            Icons.keyboard_arrow_down_rounded,
-            color: Colors.grey,
-          ),
-          items: list.isEmpty
-              ? null
-              : list
-                    .map(
-                      (pet) => DropdownMenuItem(
-                        value: pet.petId,
-                        child: Text(
-                          "${pet.careName} (${pet.petName})",
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 15,
-                          ),
-                        ),
+        child: careList.when(
+          // ✅ 1. 데이터 로드 성공 시 (기존의 깔끔한 드롭다운)
+          data: (list) => DropdownButton<String>(
+            value: selectedCare?.petId, // 현재 선택된 ID
+            isExpanded: true,
+            hint: const Text("등록된 어르신이 없습니다."),
+            icon: const Icon(
+              Icons.keyboard_arrow_down_rounded,
+              color: Colors.grey,
+            ),
+            // 💡 위치가 튀는 걸 방지하기 위해 메뉴 박스 스타일만 살짝 조정
+            dropdownColor: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+
+            items: list
+                .map(
+                  (pet) => DropdownMenuItem(
+                    value: pet.petId,
+                    child: Text(
+                      "${pet.careName} (${pet.petName})",
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
                       ),
-                    )
-                    .toList(),
-          onChanged: (id) =>
-              ref.read(selectedPetIdProvider.notifier).state = id,
+                    ),
+                  ),
+                )
+                .toList(),
+
+            onChanged: (id) {
+              if (id != null) {
+                ref.read(selectedPetIdProvider.notifier).state = id;
+              }
+            },
+          ),
+
+          // ✅ 2. 로딩 중 (카드 높이 유지)
+          loading: () => const SizedBox(
+            height: 48,
+            child: Center(
+              child: SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+            ),
+          ),
+
+          // ✅ 3. 에러 발생 시
+          error: (err, _) => const SizedBox(
+            height: 48,
+            child: Center(child: Text("목록을 불러올 수 없습니다.")),
+          ),
         ),
       ),
     );
   }
+
+  // // --- 2. 동적 스케줄 섹션 ---
+  // Widget _buildscheduleSection(List<Schedule> schedules) {
+  //   if (schedules.isEmpty) {
+  //     return const Text("오늘 예정된 일정이 없습니다.");
+  //   }
+  //   return Column(
+  //     children: schedules
+  //         .map(
+  //           (item) => _buildscheduleItem(
+  //             item.title,
+  //             item.time,
+  //             item.isUrgent,
+  //             isDone: item.isCompleted,
+  //           ),
+  //         )
+  //         .toList(),
+  //   );
+  // }
 
   // 모든 위젯에 공통으로 들어가는 라벨링
   Widget _buildSectionHeader(String title, String subtitle) {

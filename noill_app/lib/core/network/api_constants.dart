@@ -9,5 +9,6 @@ class ApiConstants {
   static const String signup = '/auth/signup';
   static const String logout = '/auth/logout';
   static const String registerPet = '/users/pets';
+  static const String getMyPets = '/users/pets';
   static const String registerNotification = '/notifications/token';
 }

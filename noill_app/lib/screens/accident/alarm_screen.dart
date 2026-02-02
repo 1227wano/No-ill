@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'accident_detail.dart'; // 상세 화면 연결
+import 'package:intl/intl.dart'; // ✅ 시간 포맷팅을 위해 추가
+
 import '../../providers/event_provider.dart'; // 데이터 소스
+import 'accident_detail.dart'; // 상세 화면 연결
 
 class AlarmScreen extends ConsumerWidget {
   const AlarmScreen({super.key});
@@ -9,8 +11,8 @@ class AlarmScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // 💡 24시간 이내의 활성 알람만 가져오는 Provider 구독
-    final alarmsAsync = ref.watch(activeAlarmsProvider);
-    final liveAlarms = ref.watch(liveNotificationProvider); // ✅ 실시간 데이터
+    final alarmsAsync = ref.watch(activeAlarmsProvider); // 곧 생길 GET 요청
+    final liveAlarms = ref.watch(liveNotificationProvider); // 앱 실행 중 받은 실시간 데이터
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
@@ -30,11 +32,11 @@ class AlarmScreen extends ConsumerWidget {
 
           // 2. 중복 제거 (eventId가 같으면 하나만 남김)
           final uniqueAlarms = {
-            for (var item in combined) item.eventId: item,
+            for (var item in combined) item.eventNo: item,
           }.values.toList();
 
           // 3. 최신순 정렬 (detectedAt 기준 내림차순)
-          uniqueAlarms.sort((a, b) => b.detectedAt.compareTo(a.detectedAt));
+          uniqueAlarms.sort((a, b) => b.eventTime.compareTo(a.eventTime));
 
           return ListView.builder(
             itemCount: uniqueAlarms.length,
@@ -42,8 +44,34 @@ class AlarmScreen extends ConsumerWidget {
                 _buildAlarmCard(context, uniqueAlarms[index]),
           );
         },
+        // API가 아직 없어 에러가 나더라도 실시간 데이터는 보여줍니다.
+        error: (err, stack) => liveAlarms.isNotEmpty
+            ? _buildAlarmList(liveAlarms)
+            : _buildErrorState(err.toString()),
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, stack) => Center(child: Text("알림을 불러오지 못했습니다: $err")),
+      ),
+    );
+  }
+
+  // --- 위젯 분리: 알람 리스트 ---
+  Widget _buildAlarmList(List<dynamic> alarms) {
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: alarms.length,
+      itemBuilder: (context, index) => _buildAlarmCard(context, alarms[index]),
+    );
+  }
+
+  // --- 위젯 분리: 에러 상태 ---
+  Widget _buildErrorState(String message) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Text(
+          "서버 연결 대기 중...\n실시간 알림이 오면 여기에 표시됩니다.",
+          textAlign: TextAlign.center,
+          style: TextStyle(color: Colors.grey[600]),
+        ),
       ),
     );
   }
@@ -71,6 +99,11 @@ class AlarmScreen extends ConsumerWidget {
 
   // 2. 개별 알람 카드 위젯 (사진 + 텍스트)
   Widget _buildAlarmCard(BuildContext context, dynamic alarm) {
+    // 💡 DATETIME 포맷팅: "오후 02:05" 형식
+    final String formattedTime = DateFormat(
+      'aa hh:mm',
+      'ko_KR',
+    ).format(alarm.detectedAt);
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
       elevation: 2,

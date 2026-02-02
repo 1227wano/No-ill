@@ -1,30 +1,29 @@
 class FallEvent {
-  final int id;
-  final String petId; // 💡 [추가] 어떤 어르신(기기)의 사고인지 식별하는 ID
-  final String title; // "낙상 사고 감지"로 고정
-  final String description; // 고정된 안내 문구
-  final String? imageUrl; // 푸시 알림으로 받은 실시간 이미지 (과거 기록은 null)
-  final DateTime detectedAt;
+  final int eventNo; // DB: event_no
+  final int petNo; // DB: pet_no (이제 파일명이 아닌 이 숫자로 구분합니다)
+  final DateTime eventTime; // DB: event_time
+  final String? imageUrl;
+  final String title;
+  final String description;
 
   FallEvent({
-    required this.id,
-    required this.petId, // 💡 필수 인자로 추가
-    this.title = "낙상 사고 감지", // 기본값 설정
-    this.description = "기기에서 낙상 의심 상황을 감지하여 알림을 전송했습니다.",
+    required this.eventNo,
+    required this.petNo,
+    required this.eventTime,
     this.imageUrl,
-    required this.detectedAt,
+    this.title = "낙상 사고 감지",
+    this.description = "기기에서 낙상 의심 상황을 감지하여 알림을 전송했습니다.",
   });
 
   factory FallEvent.fromJson(Map<String, dynamic> json) {
     return FallEvent(
-      // ERD의 EVENT_NO와 EVENT_TIME 필드에 맞춤
-      id: json['EVENT_NO'] ?? 0,
-      petId: json['PET_ID'] ?? '',
-      detectedAt: json['EVENT_TIME'] != null
-          ? DateTime.parse(json['EVENT_TIME'])
+      // 💡 파일명이 아닌 JSON의 'pet_no' 필드를 직접 읽습니다.
+      eventNo: json['event_no'] ?? json['EVENT_NO'] ?? 0,
+      petNo: json['pet_no'] ?? json['PET_NO'] ?? 0,
+      eventTime: json['event_time'] != null
+          ? DateTime.parse(json['event_time'])
           : DateTime.now(),
-      // DB에 없는 필드는 생략하거나 null 처리
-      imageUrl: json['IMAGE_URL'],
+      imageUrl: json['image_url'] ?? json['IMAGE_URL'],
     );
   }
 }
