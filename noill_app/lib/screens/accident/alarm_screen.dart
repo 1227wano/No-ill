@@ -25,19 +25,22 @@ class AlarmScreen extends ConsumerWidget {
       ),
       body: alarmsAsync.when(
         data: (serverAlarms) {
-          // 🚀 [여기서 합칩니다!] 실시간 알람과 서버 알람을 하나로 합침
-          final allAlarms = [...liveAlarms, ...serverAlarms];
+          // 1. 모든 리스트를 하나로 합침
+          final combined = [...liveAlarms, ...serverAlarms];
 
-          return allAlarms.isEmpty
-              ? _buildEmptyState()
-              : ListView.builder(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: allAlarms.length,
-                  itemBuilder: (context, index) {
-                    final alarm = allAlarms[index]; // 합쳐진 리스트에서 하나씩 꺼냄
-                    return _buildAlarmCard(context, alarm);
-                  },
-                );
+          // 2. 중복 제거 (eventId가 같으면 하나만 남김)
+          final uniqueAlarms = {
+            for (var item in combined) item.eventId: item,
+          }.values.toList();
+
+          // 3. 최신순 정렬 (detectedAt 기준 내림차순)
+          uniqueAlarms.sort((a, b) => b.detectedAt.compareTo(a.detectedAt));
+
+          return ListView.builder(
+            itemCount: uniqueAlarms.length,
+            itemBuilder: (context, index) =>
+                _buildAlarmCard(context, uniqueAlarms[index]),
+          );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, stack) => Center(child: Text("알림을 불러오지 못했습니다: $err")),

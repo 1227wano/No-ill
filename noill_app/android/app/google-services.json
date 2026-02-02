@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "686450725098",
-    "project_id": "noill-app",
-    "storage_bucket": "noill-app.firebasestorage.app"
+    "project_number": "29696796556",
+    "project_id": "no-ill",
+    "storage_bucket": "no-ill.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:686450725098:android:6ce26564eecb2b3b1c0793",
+        "mobilesdk_app_id": "1:29696796556:android:47a118ca4251ada48ed8a9",
         "android_client_info": {
           "package_name": "com.example.noill_app"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBj8bESEd_tAqIgW9fTxQIxmMGZfuPIyEA"
+          "current_key": "AIzaSyC1nOqGWjiKQMy8ujfDjJD3ayQqSWRXUIU"
         }
       ],
       "services": {

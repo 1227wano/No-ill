@@ -45,6 +45,7 @@ dependencies:
   path_provider: ^2.1.1 # 임시 폴더 접근용
   flutter_screenutil: ^5.9.3
   kpostal: ^1.1.0
+  intl: ^0.20.2
 
 dev_dependencies:
   flutter_test:

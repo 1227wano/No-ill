@@ -11,6 +11,7 @@ import '../models/event_models.dart';
 import '../core/network/dio_provider.dart';
 import '../core/network/api_constants.dart';
 import '../providers/event_provider.dart';
+import 'package:noill_app/main.dart';
 
 // ✅ 최신 사고 이미지 URL을 저장하는 전역 상태
 final latestAccidentImageProvider = StateProvider<String?>((ref) => null);
@@ -273,5 +274,26 @@ class FcmService {
     } catch (e) {
       print('❌ [FCM] 백그라운드 알림 표시 실패: $e');
     }
+  }
+
+  // 앱 푸시 누르면 alarm_screen 으로 이동
+  Future<void> setupNotificationClickListeners() async {
+    // 1. 앱이 켜져 있는 상태(Background)에서 알림을 누른 경우
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      _handleMessageNavigation(message);
+    });
+
+    // 2. 앱이 완전히 꺼져 있는데(Terminated) 알림을 눌러서 켠 경우
+    RemoteMessage? initialMessage = await FirebaseMessaging.instance
+        .getInitialMessage();
+    if (initialMessage != null) {
+      _handleMessageNavigation(initialMessage);
+    }
+  }
+
+  void _handleMessageNavigation(RemoteMessage message) {
+    // 💡 context 없이도 화면 이동 가능! (type == accident 이런 조건 없이 무조건 사고로 인지)
+    print("🔔 알림 클릭 감지: 사고 화면으로 점프합니다.");
+    navigatorKey.currentState?.pushNamed('/alarms');
   }
 }
