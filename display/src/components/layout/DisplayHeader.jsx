@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import logo from '@/assets/no-ill-logo.png';
 
 const DisplayHeader = () => {
     const [time, setTime] = useState(new Date());
@@ -20,18 +21,16 @@ const DisplayHeader = () => {
 
 
     return (
-        <header className="flex justify-between items-center py-5 px-10 bg-surface shadow-card">
+        <header className="flex justify-between items-center py-6 px-10 bg-surface shadow-card">
             <div className="flex items-center">
-                <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-primary rounded-card flex items-center justify-center">
-                        <div className="w-7 h-7 bg-white rounded-full"></div>
-                    </div>
-                    <span className="text-2xl font-bold text-text-main">No-ill (노일)</span>
+                <div className="flex items-center gap-4">
+                    <img src={logo} alt="No-ill 로고" className="w-32 h-32 object-contain" />
+                    <span className="text-4xl font-bold text-text-main">No-ill (노일)</span>
                 </div>
             </div>
-            <div className="flex flex-col items-end gap-1">
-                <span className="text-3xl font-bold text-text-main">{timeString}</span>
-                <span className="text-body text-text-body">{dateString}</span>
+            <div className="flex flex-col items-end gap-2">
+                <span className="text-5xl font-bold text-text-main">{timeString}</span>
+                <span className="text-xl text-text-body">{dateString}</span>
             </div>
         </header>
     );

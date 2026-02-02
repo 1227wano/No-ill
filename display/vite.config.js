@@ -25,6 +25,21 @@ export default defineConfig({
         },
     },
 
-    // 추가적인 빌드 설정이 필요할 경우 여기에 추가
-    // 예: 서버 포트 변경, 환경 변수 설정 등
+    // 개발 서버 설정
+    server: {
+        proxy: {
+            // 기상청 API 프록시
+            '/api/weather': {
+                target: 'http://apis.data.go.kr',
+                changeOrigin: true,
+                rewrite: (path) => path.replace(/^\/api\/weather/, ''),
+            },
+            // 미세먼지 API 프록시
+            '/api/air': {
+                target: 'http://apis.data.go.kr',
+                changeOrigin: true,
+                rewrite: (path) => path.replace(/^\/api\/air/, ''),
+            },
+        },
+    },
 })

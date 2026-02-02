@@ -1,9 +1,8 @@
 import React from 'react';
 
-import DisplayHeader from '@/components/layout/DisplayHeader'; 
-import DisplayFooter from '@/components/layout/DisplayFooter';
+import DisplayHeader from '@/components/layout/DisplayHeader';
 import CommandsPanel from '@/components/common/CommandsPanel';
-import GreetingCard from '@/components/common/GreetingCard'; 
+import GreetingCard from '@/components/common/GreetingCard';
 import SchedulePanel from '@/features/schedule/DisplaySchedulePanel';
 
 const DisplayPage = () => {
@@ -21,7 +20,6 @@ const DisplayPage = () => {
                     <CommandsPanel />
                 </div>
             </main>
-            <DisplayFooter />
         </div>
     );
 };

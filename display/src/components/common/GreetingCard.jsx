@@ -1,21 +1,59 @@
 import React from 'react';
+import { useWeather } from '@/features/weather';
+import character from '@/assets/no-ill-character.png';
 
 const GreetingCard = () => {
+  const { weather, airQuality, loading, error } = useWeather();
+
   return (
-    <div className="bg-surface rounded-card p-8 flex flex-col items-center shadow-card relative overflow-hidden h-full">
-      <div className="text-6xl absolute top-4 right-6 animate-spin-slow">☀️</div>
-      <div className="my-6 relative z-10">
-        <div className="w-[140px] h-[140px] bg-primary rounded-full flex items-center justify-center shadow-card">
-          <div className="w-24 h-24 bg-white rounded-full relative flex items-center justify-center">
-            <div className="w-4 h-4 bg-primary rounded-full absolute top-[36px] left-[28px]"></div>
-            <div className="w-4 h-4 bg-primary rounded-full absolute top-[36px] right-[28px]"></div>
-            <div className="w-8 h-4 border-[3px] border-primary border-t-0 rounded-b-[24px] absolute bottom-6 left-1/2 -translate-x-1/2"></div>
-          </div>
-        </div>
+    <div className="bg-surface rounded-card p-8 flex flex-col items-center shadow-card h-full">
+      {/* 캐릭터 */}
+      <div className="my-4">
+        <img src={character} alt="노일이 캐릭터" className="w-[360px] h-[360px] object-contain" />
       </div>
-      <div className="text-center mt-4">
-        <h2 className="text-2xl font-bold text-text-main mb-3">좋은 아침이에요, 할머니!</h2>
-        <p className="text-xl text-primary font-medium">오늘도 활기찬 하루 시작해볼까요?</p>
+
+      {/* 인사말 */}
+      <div className="text-center mb-6">
+        <h2 className="text-4xl font-bold text-text-main mb-6">좋은 아침이에요, 할머니!</h2>
+        <p className="text-3xl text-primary font-medium">오늘도 활기찬 하루 시작해볼까요?</p>
+      </div>
+
+      {/* 날씨 정보 */}
+      <div className="w-full mt-auto">
+        {loading ? (
+          <p className="text-center text-xl text-text-body">날씨 정보 불러오는 중...</p>
+        ) : error ? (
+          <p className="text-center text-xl text-text-body">날씨 정보를 불러올 수 없습니다</p>
+        ) : (
+          <div className="flex flex-col gap-4">
+            {/* 기온 */}
+            <div className="flex items-center justify-between bg-background rounded-xl px-8 py-5">
+              <div className="flex items-center gap-4">
+                <span className="text-5xl">🌡️</span>
+                <span className="text-2xl text-text-body font-medium">현재 기온</span>
+              </div>
+              <span className="text-4xl font-bold text-text-main">{weather?.temp}°C</span>
+            </div>
+            {/* 습도 */}
+            <div className="flex items-center justify-between bg-background rounded-xl px-8 py-5">
+              <div className="flex items-center gap-4">
+                <span className="text-5xl">💧</span>
+                <span className="text-2xl text-text-body font-medium">습도</span>
+              </div>
+              <span className="text-4xl font-bold text-text-main">{weather?.humidity}%</span>
+            </div>
+            {/* 미세먼지 */}
+            <div className="flex items-center justify-between bg-background rounded-xl px-8 py-5">
+              <div className="flex items-center gap-4">
+                <span className="text-5xl">😷</span>
+                <span className="text-2xl text-text-body font-medium">미세먼지</span>
+              </div>
+              <span className={`text-4xl font-bold ${airQuality?.colorClass}`}>
+                {airQuality?.text}
+              </span>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
