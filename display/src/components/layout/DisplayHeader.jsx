@@ -21,16 +21,19 @@ const DisplayHeader = () => {
 
 
     return (
-        <header className="flex justify-between items-center py-6 px-10 bg-surface shadow-card">
-            <div className="flex items-center">
-                <div className="flex items-center gap-4">
-                    <img src={logo} alt="No-ill 로고" className="w-32 h-32 object-contain" />
-                    <span className="text-4xl font-bold text-text-main">No-ill (노일)</span>
-                </div>
+        <header className="grid grid-cols-3 items-center py-6 px-10 bg-surface shadow-card">
+            {/* 왼쪽: 로고 */}
+            <div className="flex items-center gap-4">
+                <img src={logo} alt="No-ill 로고" className="w-32 h-32 object-contain" />
+                <span className="text-5xl font-bold text-text-main">No-ill (노일)</span>
             </div>
-            <div className="flex flex-col items-end gap-2">
-                <span className="text-5xl font-bold text-text-main">{timeString}</span>
-                <span className="text-xl text-text-body">{dateString}</span>
+            {/* 중앙: 시간 */}
+            <div className="flex justify-center">
+                <span className="text-6xl font-bold text-text-main">{timeString}</span>
+            </div>
+            {/* 오른쪽: 날짜 */}
+            <div className="flex justify-end">
+                <span className="text-5xl font-semibold text-text-main">{dateString}</span>
             </div>
         </header>
     );
