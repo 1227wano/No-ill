@@ -5,6 +5,7 @@ import com.noill.domain.care.repository.CareRepository;
 import com.noill.domain.pet.dto.PetLoginRequest;
 import com.noill.domain.pet.dto.PetLoginResponse;
 import com.noill.domain.pet.dto.PetRegisterRequest;
+import com.noill.domain.pet.dto.PetResponse;
 import com.noill.domain.pet.entity.Pet;
 import com.noill.domain.pet.repository.PetRepository;
 import com.noill.domain.user.entity.User;
@@ -19,6 +20,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -102,5 +105,17 @@ public class PetService {
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();
+    }
+
+    public List<PetResponse> getMyPets(Long userNo) {
+
+        User user = userRepository.findById(userNo)
+                .orElseThrow(() -> new IllegalArgumentException("회원 정보가 없습니다."));
+
+        List<Care> cares = careRepository.findByUser(user);
+
+        return cares.stream()
+                .map(PetResponse::from)
+                .collect(Collectors.toList());
     }
 }
