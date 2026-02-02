@@ -48,9 +48,8 @@ gms:
     url: ${GMS_API_URL}
     model: gpt-4.1
 
-# 문자 API
-#coolsms:
-#  api:
-#    key: ${SOLAPI_API_KEY}
-#    secret: ${SOLAPI_API_SECRET}
-#    sender: ${WANO_PHONE}
+coolsms:
+  api:
+    key: ${SOLAPI_API_KEY:test_api_key}
+    secret: ${SOLAPI_API_SECRET:test_api_secret}
+    sender: ${WANO_PHONE:01000000000}

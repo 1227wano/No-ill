@@ -6,6 +6,7 @@ import com.noill.domain.event.repository.EventRepository;
 import com.noill.domain.notification.entity.FcmToken;
 import com.noill.domain.notification.repository.FcmTokenRepository;
 import com.noill.domain.notification.service.FcmService;
+import com.noill.domain.notification.service.SmsService;
 import com.noill.domain.pet.entity.Pet;
 import com.noill.domain.pet.repository.PetRepository;
 import com.noill.domain.user.entity.User;
@@ -19,6 +20,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,6 +34,7 @@ public class EventService {
     private final PetRepository petRepository;
     private final FcmTokenRepository fcmTokenRepository;
     private final FcmService fcmService;
+    private final SmsService smsService;
 
     // application.yml에서 주입받은 경로와 URL
     @Value("${file.dir}")
@@ -87,8 +91,17 @@ public class EventService {
 
         for (Care care : cares) {
             User user = care.getUser();
+            // App push
             sendPushToUser(user, care.getCareName(), imageUrl);
+            // SMS 전송
+            sendSmsToUser(user, care.getCareName(), pet.getPetAddress(), event.getEventTime());
         }
+    }
+
+    // 확장자 추출 헬퍼 메서드
+    private String extractExtension(String originalFilename) {
+        int pos = originalFilename.lastIndexOf(".");
+        return (pos == -1) ? ".jpg" : originalFilename.substring(pos);
     }
 
     private void sendPushToUser(User user, String careName, String imageUrl) {
@@ -98,17 +111,29 @@ public class EventService {
             return;
         }
 
-        String title = "낙상 감지 알림";
-        String body = String.format("%s 님의 낙상을 감지했습니다! 확인해주세요.", careName);
+        String title = "[낙상 감지 알림]";
+        String body = String.format("%s 님의 낙상을 감지했습니다!", careName);
 
         for (FcmToken fcmToken : tokens) {
             fcmService.sendNotification(fcmToken.getToken(), title, body, imageUrl);
         }
     }
 
-    // 확장자 추출 헬퍼 메서드
-    private String extractExtension(String originalFilename) {
-        int pos = originalFilename.lastIndexOf(".");
-        return (pos == -1) ? ".jpg" : originalFilename.substring(pos);
+    private void sendSmsToUser(User user, String careName, String petAddress, LocalDateTime eventTime) {
+        String phone = user.getUserPhone();
+
+        if (phone != null && !phone.isBlank()) {
+            // 하이픈 제거
+            String phoneNumber = phone.replaceAll("-", "");
+            // 날짜 포맷팅
+            String timeStr = eventTime.format(DateTimeFormatter.ofPattern("MM/dd HH:mm"));
+
+            String message = String.format("[낙상감지]%s%n 시간:%s%n 위치:%s",
+                    careName, timeStr, petAddress);
+
+            smsService.sendSms(phoneNumber, message);
+        } else {
+            log.warn("유저({})의 전화번호가 없어 SMS를 보내지 못했습니다.", user.getUsername());
+        }
     }
 }

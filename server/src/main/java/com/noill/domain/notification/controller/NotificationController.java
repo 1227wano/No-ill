@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "Notification", description = "FCM 알림 관련 API")
+@Tag(name = "Notification API", description = "FCM 알림 관련 API")
 @RestController
 @RequestMapping("/api/notifications")
 @RequiredArgsConstructor

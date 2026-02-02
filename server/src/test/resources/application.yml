@@ -32,3 +32,15 @@ jwt:
   secret: 6TrvbGXb9ISGOpEYzQspPPpEtn6N/jAEBdye/jXCN9Y=
   expiration: 86400000
   refresh-expiration: 604800000
+
+gms:
+  api:
+    key: "test-gms-key"
+    url: "http://localhost"
+    model: "gpt-4.1"
+
+coolsms:
+  api:
+    key: "test-key"
+    secret: "test-secret"
+    sender: "01000000000"
