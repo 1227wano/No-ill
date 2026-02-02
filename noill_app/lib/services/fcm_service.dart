@@ -52,13 +52,14 @@ class FcmService {
       ),
     );
 
-    // 포그라운드 리스너 연결
-    FirebaseMessaging.onMessage.listen(
-      (message) => _showNotification(message, channel),
-    );
-    print('🚀 [FCM SERVICE] 초기화 완료');
+    // 리스너 하나로 통합
+    FirebaseMessaging.onMessage.listen((message) {
+      print('📩 [FCM] 포그라운드 수신: ${message.data}');
+      _handleMessage(message); // 상태 업데이트 및 로직 처리
+      _showNotification(message, channel); // 알림 팝업 띄우기
+    });
 
-    FirebaseMessaging.onMessage.listen((message) => _handleMessage(message));
+    print('🚀 [FCM SERVICE] 초기화 완료');
   }
 
   void _handleMessage(RemoteMessage message) {

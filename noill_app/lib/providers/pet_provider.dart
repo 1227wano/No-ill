@@ -60,9 +60,21 @@ class PetRegistrationNotifier extends Notifier<PetRequest> {
   }
 
   // 최종 서버 전송
+  // 강제 타입 변경하지 말고 명시적 변경 필요
   Future<bool> submit() async {
     final service = ref.read(petServiceProvider);
-    return await service.registerPet(state as PetRegistrationRequest);
+
+    // 💡 데이터를 직접 매핑하여 새로운 객체 생성
+    final registrationData = PetRegistrationRequest(
+      petId: state.petId,
+      petName: state.petName,
+      careName: state.careName,
+      petAddress: state.petAddress,
+      petPhone: state.petPhone,
+      // 필요시 추가 필드 매핑
+    );
+
+    return await service.registerPet(registrationData);
   }
 }
 

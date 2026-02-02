@@ -23,6 +23,9 @@ class CustomCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 공통 곡률 값 정의
+    final double radiusValue = borderRadius ?? 24.r;
+
     return Container(
       decoration: BoxDecoration(
         color: backgroundColor ?? Colors.white.withOpacity(0.9), // 약간 투명하게
@@ -41,17 +44,13 @@ class CustomCard extends StatelessWidget {
       ),
       child: Material(
         color: backgroundColor ?? Colors.white,
-        borderRadius: BorderRadius.circular(borderRadius ?? 24.r),
         // ✅ 미세한 테두리로 경계선을 선명하게 (Border)
-        shape: showBorder
-            ? RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(borderRadius ?? 24.r),
-                side: BorderSide(
-                  color: Colors.black.withOpacity(0.05),
-                  width: 1,
-                ),
-              )
-            : null,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(radiusValue),
+          side: showBorder
+              ? BorderSide(color: Colors.black.withOpacity(0.05), width: 1)
+              : BorderSide.none, // null 대신 none을 권장
+        ),
         clipBehavior: Clip.antiAlias,
         child: onTap != null
             ? InkWell(

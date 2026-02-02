@@ -71,15 +71,12 @@ class PetService {
         '/auth/pets/login',
         data: {'petId': petId},
       );
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        // 서버에서 기존 어르신 정보를 담아서 보내준다면 모델로 변환
-        return PetRequest.fromJson(response.data);
+    } on DioException catch (e) {
+      // 💡 403 에러가 나면 '이미 누군가 쓰고 있다'는 정보를 담아서 던져야 합니다.
+      if (e.response?.statusCode == 403) {
+        print('🚨 이미 등록된 기기입니다 (인가 거부)');
+        // 여기서 null을 주기보다, 에러를 throw하거나 특정 플래그를 담은 객체를 줘야 합니다.
       }
-      return null;
-    } catch (e) {
-      // 404나 에러가 나면 '신규 기기'로 판단하거나 에러 처리
-      print('❌ 연동 실패: $e');
       return null;
     }
   }

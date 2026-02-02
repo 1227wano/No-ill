@@ -48,8 +48,9 @@ class CustomBottomNavBar extends StatelessWidget {
 
     // ✅ 2. 시각적 크기 보정: 아이콘마다 미세하게 다른 크기 감각 조정
     double iconSize = 26;
-    if (icon == Icons.calendar_today_outlined)
+    if (icon == Icons.calendar_today_outlined) {
       iconSize = 24; // 선이 얇은 아이콘은 소폭 조정
+    }
 
     return GestureDetector(
       onTap: () => onTap(index),
