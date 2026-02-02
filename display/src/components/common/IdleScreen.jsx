@@ -42,6 +42,7 @@ const IdleScreen = ({ onWakeUp }) => {
 
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth() + 1;
+    const day = currentDate.getDate();
 
     return (
         <div
@@ -50,23 +51,23 @@ const IdleScreen = ({ onWakeUp }) => {
             onTouchStart={onWakeUp}
         >
             {/* 시간 표시 */}
-            <div className="text-8xl font-bold text-text-main mb-6">
+            <div className="text-8xl font-bold text-text-main mb-10">
                 {timeString}
             </div>
 
-            {/* 년월 표시 */}
-            <div className="text-4xl font-semibold text-text-body mb-10">
-                {year}년 {month}월
+            {/* 년월일 표시 */}
+            <div className="text-7xl font-semibold text-text-body mt-10 mb-10">
+                {year}년 {month}월 {day}일
             </div>
 
             {/* 캘린더 */}
-            <div className="bg-surface rounded-card shadow-card p-8 w-full max-w-4xl">
+            <div className="bg-surface rounded-card shadow-card p-8 w-full max-w-7xl">
                 {/* 요일 헤더 */}
                 <div className="grid grid-cols-7 gap-2 mb-4">
                     {weekDays.map((day, index) => (
                         <div
                             key={day}
-                            className={`text-center text-2xl font-bold py-3 ${
+                            className={`text-center text-5xl font-bold py-3 ${
                                 index === 0 ? 'text-red-500' : index === 6 ? 'text-blue-500' : 'text-text-body'
                             }`}
                         >
@@ -80,7 +81,7 @@ const IdleScreen = ({ onWakeUp }) => {
                     {days.map((day, index) => (
                         <div
                             key={index}
-                            className={`text-center text-3xl py-4 rounded-lg ${
+                            className={`text-center text-5xl py-8 rounded-lg ${
                                 day === null
                                     ? ''
                                     : day === currentDate.getDate()
@@ -99,7 +100,7 @@ const IdleScreen = ({ onWakeUp }) => {
             </div>
 
             {/* 안내 문구 */}
-            <p className="text-2xl text-text-body mt-10 animate-pulse">
+            <p className="text-4xl text-text-body mt-10 animate-pulse">
                 화면을 터치하면 돌아갑니다
             </p>
         </div>
