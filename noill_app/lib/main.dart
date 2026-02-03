@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:noill_app/screens/accident/event_screen.dart';
 import 'firebase_options.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -108,7 +109,9 @@ class NoIllApp extends StatelessWidget {
             '/': (context) => const SplashScreen(),
             '/main': (context) => const MainScreen(),
             // 💡 3. 빨간 창 방지: 알림 화면 경로 등록!
-            '/alarms': (context) => const AlarmScreen(),
+            '/alarm': (context) => const AlarmScreen(),
+            // ✅ 이 줄이 누락되어 있거나 이름이 다를 확률 99%입니다!
+            '/event_screen': (context) => const EventScreen(),
           },
         );
       },

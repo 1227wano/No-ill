@@ -7,7 +7,8 @@ import '../../providers/auth_provider.dart';
 import '../auth/welcome_screen.dart';
 import '../onboarding/device_pairing_screen.dart';
 import '../mypage/mypage_screen.dart';
-import '../accident/accident_history_screen.dart';
+import '../accident/event_screen.dart';
+import '../accident/alarm_screen.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -77,9 +78,7 @@ class SettingsScreen extends ConsumerWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => const AccidentHistoryScreen(),
-                  ),
+                  MaterialPageRoute(builder: (context) => const AlarmScreen()),
                 );
               },
             ),
@@ -87,7 +86,7 @@ class SettingsScreen extends ConsumerWidget {
             // 3. 기기 관리
             _buildMenuTile(
               Icons.smart_toy_outlined,
-              "기기 관리 (Aibo-Bot v2)",
+              "노일이 관리",
               onTap: () {
                 // 💡 [핵심] 기기 연동 화면으로 이동합니다.
                 Navigator.push(

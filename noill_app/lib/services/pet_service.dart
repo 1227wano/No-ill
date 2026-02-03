@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:noill_app/models/event_models.dart';
 import '../models/pet_models.dart';
 import '../models/auth_models.dart';
 import '../core/network/api_constants.dart';
@@ -88,6 +89,32 @@ class PetService {
         // 여기서 null을 주기보다, 에러를 throw하거나 특정 플래그를 담은 객체를 줘야 합니다.
       }
       return null;
+    }
+    return null;
+  }
+
+  /// ✅ 추가: 특정 petId에 해당하는 사고 기록 가져오기
+  Future<List<EventModel>> fetchEvents(String petId) async {
+    try {
+      print("📡 [요청 시작] petId: $petId"); // 요청 출발 알림
+      // API 명세: GET /api/events?petId=N0111
+      final response = await _dio.get('/events/${petId}');
+      // 1. 서버 응답 성공 시 로그
+      print("✅ [응답 성공] 상태 코드: ${response.statusCode}");
+      print("📝 [원시 데이터(Raw)]: ${response.data}");
+
+      // 서버 응답이 리스트 형태 [{}, {}] 일 때
+      final List<dynamic> data = response.data;
+
+      // 모델로 변환 (factory에서 petId를 함께 받도록 설계)
+      return data.map((json) => EventModel.fromJson(json, petId)).toList();
+    } on DioException catch (e) {
+      print("🚨 [Dio 에러 발생]");
+      print("- 에러 타입: ${e.type}");
+      print("- 에러 메시지: ${e.message}");
+      print("- 응답 바디: ${e.response?.data}");
+      print("❌ [사고 기록 API 에러]: ${e.response?.statusCode}");
+      rethrow;
     }
   }
 }

@@ -9,6 +9,11 @@ final dioProvider = Provider<Dio>((ref) {
       baseUrl: ApiConstants.baseUrl,
       connectTimeout: const Duration(seconds: 5),
       receiveTimeout: const Duration(seconds: 3),
+      // ✅ [첨삭 1] 공통 헤더 추가: 서버와의 통신 규격을 명확히 함
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
     ),
   );
 
@@ -30,7 +35,7 @@ final dioProvider = Provider<Dio>((ref) {
         if (requiresAuth) {
           final accessToken = await storage.read(key: 'accessToken');
           if (accessToken != null && accessToken.isNotEmpty) {
-            print('🚀 API 호출에 쓰이는 토큰: $accessToken'); // 여기에 추가!
+            print('🚀 API 호출에 쓰이는 access 토큰: $accessToken'); // 여기에 추가!
             options.headers['Authorization'] = 'Bearer $accessToken';
           }
         }
@@ -39,15 +44,17 @@ final dioProvider = Provider<Dio>((ref) {
 
       // [2. 에러 발생 시] 401 응답일 때만 로그아웃 처리
       onError: (DioException e, handler) async {
-        // ✅ [수정] 401(Unauthorized) 에러인 경우만 체크
+        // ✅ [첨삭 3] 500 에러 발생 시 서버 메시지 출력 (디버깅 필수)
+        if (e.response?.statusCode == 500) {
+          print('🔥 [SERVER 500] 서버 내부 오류 발생!');
+          print('📝 [에러 바디]: ${e.response?.data}'); // 여기서 서버의 '진짜 이유' 확인 가능
+        }
+
+        // 401(Unauthorized) 에러 처리
         if (e.response?.statusCode == 401) {
-          print('🚨 [AUTH] 토큰 만료(401) 감지. 세션을 종료합니다.');
-
-          // 저장소 데이터를 삭제하여 다음 앱 실행 시 로그인 화면으로 가게 함
+          print('🚨 [AUTH] 토큰 만료(401). 세션을 종료합니다.');
           await storage.deleteAll();
-
-          // 주의: 여기서 직접 authProvider를 read하면 순환 참조가 생길 수 있으므로
-          // 필요한 경우에만 최소한으로 호출하거나, UI 레이어에서 상태 감시 후 이동 권장
+          // TODO: UI 레이어에서 로그아웃 상태를 감지하여 로그인 화면으로 이동시키는 로직 필요
         }
 
         return handler.next(e);

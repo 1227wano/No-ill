@@ -10,7 +10,6 @@ import 'package:path_provider/path_provider.dart';
 import '../models/event_models.dart';
 import '../core/network/dio_provider.dart';
 import '../core/network/api_constants.dart';
-import '../providers/event_provider.dart';
 import 'package:noill_app/main.dart';
 
 // ✅ 최신 사고 이미지 URL을 저장하는 전역 상태
@@ -64,32 +63,31 @@ class FcmService {
   }
 
   void _handleMessage(RemoteMessage message) {
-    print("📩 알림 도착 확인! 데이터: ${message.data}"); // 👈 이 로그가 찍히나요?
+    print('=============================================');
+    print('📩 [FCM RAW DATA CHECK]');
+    print('알림 제목: ${message.notification?.title}');
+    print('알림 내용: ${message.notification?.body}');
+    print('전달된 데이터(Payload): ${message.data}'); // 👈 여기서 모든 키-값을 볼 수 있습니다.
+    print('=============================================');
     final data = message.data;
+    if (data.isNotEmpty) {
+      // ✅ 오류 해결: EventModel 생성자 규격에 맞춤
+      final newEvent = EventModel(
+        eventNo: int.parse(
+          data['eventNo'] ?? '0',
+        ), // 서버 키값 확인 필요 (event_no vs eventNo)
+        eventTime: DateTime.parse(
+          data['eventTime'] ?? DateTime.now().toIso8601String(),
+        ),
+        petId: data['petId'] ?? '',
+        imageUrl: data['imageUrl'] ?? '', // 푸시 데이터의 이미지 키값에 맞춤
+      );
 
-    // 1. 푸시 데이터로 임시 이벤트 객체 생성 (실시간으로 발생한 데이터와 데이터가 서버에 저장되는 그 순간을 메울 수 있는 데이터)
-    final newEvent = FallEvent(
-      eventNo: int.parse(data['event_no'] ?? '0'),
-      petNo: int.parse(data['pet_no'] ?? '0'),
-      title: data['title'] ?? "낙상 사고 감지",
-      description: data['body'] ?? "실시간 사고가 감지되었습니다.",
-      imageUrl: data['file'],
-
-      // 💡 [수정] 서버가 보낸 시간을 우선 사용하고, 없을 때만 예외적으로 now()를 씁니다.
-      eventTime: data['event_time'] != null
-          ? DateTime.parse(data['event_time'])
-          : DateTime.now(),
-    );
-
-    // 2. ✅ 화면에 바로 뜨도록 리스트 맨 앞에 추가
-    _ref.read(liveNotificationProvider.notifier).update((state) {
-      print("✅ 실시간 리스트에 추가됨! 현재 개수: ${state.length + 1}"); // 👈 이 로그도 확인!
-      return [newEvent, ...state];
-    });
-
-    // 3. 🔥 핵심: 알람이 왔으므로 전체 사고 목록 프로바이더를 새로고침함
-    // 이 코드로 인해 AlarmScreen과 AccidentHistory가 실시간으로 바뀝니다.
-    _ref.invalidate(allEventsProvider);
+      navigatorKey.currentState?.pushNamed(
+        '/event_screen',
+        arguments: newEvent,
+      );
+    }
   }
 
   /// [2. 알림 표시 로직] 사진 다운로드 및 스타일 적용

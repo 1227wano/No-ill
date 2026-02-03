@@ -21,12 +21,16 @@ class HomeScreen extends ConsumerWidget {
     final careList = ref.watch(careListProvider); // 어르신 목록
     final selectedCare = ref.watch(selectedCareProvider); // 선택된 어르신 (petNo 기반)
 
-    // 💡 [핵심] 24시간 이내 사고 리스트를 가져옵니다.
-    final activeAlarmsAsync = ref.watch(activeAlarmsProvider);
+    // 💡 [수정] 선택된 어르신이 있을 때만 해당 ID로 프로바이더를 호출합니다.
+    // 만약 선택된 어르신이 없다면 빈 리스트 상태를 유지합니다.
+    final reportAsync = selectedCare != null
+        ? ref.watch(singlePetReportProvider(selectedCare.petId))
+        : const AsyncValue.data([]);
 
-    // 💡 데이터가 있고, 리스트가 비어있지 않으면 '경고' 상태로 정의합니다.
-    final bool isWarning = activeAlarmsAsync.maybeWhen(
-      data: (alarms) => alarms.isNotEmpty,
+    // 2. 실시간 상태(Warning) 판단 로직
+    // 데이터가 있고, 리스트가 비어있지 않다면 최신 사고가 있는 것으로 간주하여 WARNING 표시
+    final bool isWarning = reportAsync.maybeWhen(
+      data: (reports) => reports.isNotEmpty,
       orElse: () => false,
     );
 
