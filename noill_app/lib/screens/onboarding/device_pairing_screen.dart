@@ -8,7 +8,7 @@ import '../../widgets/atoms/solid_button.dart';
 import '../../core/constants/color_constants.dart';
 import '../../providers/pet_provider.dart';
 import '../../providers/care_provider.dart';
-import '../../models/auth_models.dart';
+import '../../models/auth_model.dart';
 import 'elderly_profile_registration_screen.dart';
 
 class DevicePairingScreen extends ConsumerStatefulWidget {
@@ -199,7 +199,8 @@ class _DevicePairingScreenState extends ConsumerState<DevicePairingScreen>
     );
   }
 
-  void _showConfirmAccountDialog(BuildContext context, PetRequest info) {
+  void _showConfirmAccountDialog(BuildContext context, data) {
+    // 👈 'data'로 받음
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -220,7 +221,7 @@ class _DevicePairingScreenState extends ConsumerState<DevicePairingScreen>
               child: Column(
                 children: [
                   Text(
-                    info.careName,
+                    data.careName, // 👈 'info' 대신 'data' 사용
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -228,7 +229,8 @@ class _DevicePairingScreenState extends ConsumerState<DevicePairingScreen>
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    info.petAddress,
+                    // 💡 모델에 petAddress가 없다면 petId를 임시로 보여주세요.
+                    "기기 번호: ${data.petId}",
                     textAlign: TextAlign.center,
                     style: TextStyle(color: Colors.grey[600]),
                   ),
@@ -252,10 +254,13 @@ class _DevicePairingScreenState extends ConsumerState<DevicePairingScreen>
               ),
             ),
             onPressed: () {
-              // ✅ 목록에 추가하고 메인으로 이동
-              ref.read(careListProvider.notifier).addPet(info);
-              ref.read(selectedPetIdProvider.notifier).state = info.petId;
+              // ✅ 1. 목록 새로고침 (서버에 이미 등록된 경우이므로 싱크만 맞춤)
+              ref.invalidate(careListProvider);
 
+              // ✅ 2. 현재 선택된 어르신 변경
+              ref.read(selectedPetIdProvider.notifier).state = data.petId;
+
+              // ✅ 3. 메인으로 점프
               Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (context) => const MainScreen()),

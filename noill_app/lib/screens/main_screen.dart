@@ -10,7 +10,7 @@ import '../widgets/atoms/light_diffusion_background.dart';
 import '../widgets/molecules/main_app_bar.dart';
 
 import 'home/home_screen.dart';
-import 'schedule/schedule_screen.dart';
+import 'schedule/schedule_main_screen.dart';
 import 'settings/settings_screen.dart';
 import 'call/video_call_screen.dart'; // 화상 통화 화면 가져오기
 import 'auth/welcome_screen.dart'; // Splash 화면으로 로그아웃 후 이동
@@ -29,7 +29,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   final List<Widget> _pages = [
     const HomeScreen(),
     const SizedBox.shrink(), // 화상통화 더미
-    const ScheduleScreen(),
+    const ScheduleMainScreen(),
     const SettingsScreen(),
   ];
 

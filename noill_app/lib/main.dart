@@ -3,48 +3,40 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:noill_app/screens/accident/event_screen.dart';
-import 'firebase_options.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:noill_app/screens/auth/welcome_screen.dart';
 
+import 'firebase_options.dart';
 import 'package:noill_app/core/theme/app_theme.dart';
-import 'screens/auth/welcome_screen.dart';
+
+// ✅ 화면 및 서비스 임포트
 import 'screens/main_screen.dart';
 import 'screens/accident/alarm_screen.dart';
-
+import 'screens/accident/event_screen.dart';
 import 'services/fcm_service.dart';
 import 'providers/fcm_provider.dart';
 
-// ✅ 백그라운드 핸들러 (최상위 유지)
-@pragma('vm:entry-point')
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  // 💡 수정: 앱이 없을 때만 초기화
-  if (Firebase.apps.isEmpty) {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-  }
-  print('📬 [FCM] 백그라운드 메시지 수신: ${message.data}');
-  await FcmService.showNotificationBackground(message);
-}
-
-// 💡 1. 전역 내비게이터 키 생성 (MaterialApp 바깥에 선언)
+// 1. 전역 내비게이터 키 (최상위 선언)
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
+// 2. 백그라운드 핸들러
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await showNotificationBackground(message);
+} //
+
+// 3. 메인 함수
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
 
-  // 💡 수정: 중복 방지 로직
   try {
     if (Firebase.apps.isEmpty) {
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
       );
       print("🔥 [Firebase] 신규 초기화 성공");
-    } else {
-      Firebase.app(); // 이미 있으면 기존 앱 연결
-      print("🔥 [Firebase] 기존 앱 연결됨");
     }
   } catch (e) {
     print("❌ [Firebase] 초기화 중 예외 발생: $e");
@@ -53,54 +45,47 @@ void main() async {
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   final container = ProviderContainer();
-  await _initializeNotification(container);
+  await initializeNotification(container);
 
   runApp(
     UncontrolledProviderScope(container: container, child: const NoIllApp()),
   );
 }
 
-Future<void> _initializeNotification(ProviderContainer container) async {
+// 4. 알림 초기화 로직
+Future<void> initializeNotification(ProviderContainer container) async {
   try {
     FirebaseMessaging messaging = FirebaseMessaging.instance;
     await messaging.requestPermission(alert: true, badge: true, sound: true);
 
     String? token = await messaging.getToken();
-    print('🚀 [FCM TOKEN]: $token');
-
     if (token != null) {
-      // 💡 [핵심] fcmProvider를 통해 서버 DB에 토큰 저장!
-      // fcm_provider.dart에 정의된 fcmProvider 이름을 정확히 사용해야 합니다.
+      print('🚀 [FCM TOKEN]: $token');
       final fcmLogic = container.read(fcmProvider);
 
-      // 서버로 토큰 전송 시도
+      // 서비스 인스턴스를 통한 초기화
       await fcmLogic.service.sendTokenToServer(token);
-
-      // 리스너 및 초기화 실행
       await fcmLogic.service.initialize();
-
-      print('✅ [DB] 토큰 저장 및 FCM 초기화 성공');
+      print('✅ [FCM] 초기화 및 토큰 저장 완료');
     }
   } catch (e) {
     print('❌ [FCM] 초기화 에러: $e');
   }
 }
 
+// 5. 앱 클래스
 class NoIllApp extends StatelessWidget {
   const NoIllApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-      designSize: const Size(
-        393,
-        852,
-      ), // 👈 기획서(Figma)의 기준 사이즈를 적으세요 (보통 iPhone 14/15 기준)
+      designSize: const Size(393, 852), // iPhone 기준
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
         return MaterialApp(
-          navigatorKey: navigatorKey, // 키를 꽂아서 app push 누르면 알람 화면으로 이동할 수 있도록!
+          navigatorKey: navigatorKey,
           title: 'No-ill App',
           theme: AppTheme.lightTheme,
           debugShowCheckedModeBanner: false,
@@ -108,9 +93,7 @@ class NoIllApp extends StatelessWidget {
           routes: {
             '/': (context) => const SplashScreen(),
             '/main': (context) => const MainScreen(),
-            // 💡 3. 빨간 창 방지: 알림 화면 경로 등록!
             '/alarm': (context) => const AlarmScreen(),
-            // ✅ 이 줄이 누락되어 있거나 이름이 다를 확률 99%입니다!
             '/event_screen': (context) => const EventScreen(),
           },
         );

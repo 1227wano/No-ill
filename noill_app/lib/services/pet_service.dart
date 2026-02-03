@@ -1,15 +1,14 @@
 import 'package:dio/dio.dart';
-import 'package:noill_app/models/event_models.dart';
-import '../models/pet_models.dart';
-import '../models/auth_models.dart';
+import 'package:noill_app/models/event_model.dart';
+import '../models/pet_model.dart'; // ✅ 통합 모델 하나만 사용
 import '../core/network/api_constants.dart';
 
 class PetService {
   final Dio _dio;
   PetService(this._dio);
 
-  // 오류 3 해결: registerPetAndSenior에서 부를 수 있도록 이름 통일 혹은 래핑
-  Future<PetRequest> registerCare({
+  /// 1. 어르신/로봇 정보 등록 (POST)
+  Future<PetModel> registerCare({
     required String petId,
     required String petName,
     required String careName,
@@ -17,8 +16,8 @@ class PetService {
     required String petPhone,
   }) async {
     try {
-      // 💡 화면 1, 2의 데이터를 하나의 Request 객체로 합침
-      final request = PetRegistrationRequest(
+      // ✅ PetModel 객체 생성 (petNo는 등록 전이라 null)
+      final pet = PetModel(
         petId: petId,
         petName: petName,
         careName: careName,
@@ -28,91 +27,58 @@ class PetService {
 
       final response = await _dio.post(
         ApiConstants.registerPet,
-        data: request.toJson(),
+        data: pet.toJson(), // ✅ 통합된 toJson 사용
       );
 
-      // 서버 응답 데이터를 PetRequest 모델로 변환 (서버 response 구조에 맞춰 수정 필요)
-      return PetRequest.fromJson(response.data['data']);
+      // 서버 응답 구조가 { "data": { ... } } 인 경우 처리
+      return PetModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       throw Exception('등록 실패: ${e.message}');
     }
   }
 
-  // 드롭다운에 들어갈 데이터 -> care_provider에 들어가는 데이터
-  // 오류 2 해결: getMyPetList -> fetchMyPets로 이름 변경 (Provider와 통일)
-  Future<List<PetRequest>> fetchMyPets() async {
+  /// 2. 내 어르신 목록 조회 (GET) -> care_provider와 연동
+  Future<List<PetModel>> fetchMyPets() async {
     try {
-      // 실제 API 호출 시:
       final response = await _dio.get(ApiConstants.getMyPets);
-      // 🔍 [필수 확인] 서버가 보내준 진짜 JSON 구조를 콘솔에서 보세요.
       print("📡 [Server Raw Data]: ${response.data}");
 
       final List<dynamic> data = response.data;
-      print("✅ [PetService] 서버에서 받은 실제 데이터 갯수: ${data.length}개");
-      return data.map((e) => PetRequest.fromJson(e)).toList();
-      // 테스트용 가짜 데이터 (유지)
-      // await Future.delayed(const Duration(milliseconds: 500));
-      // return [
-      //   PetRequest(
-      //     petId: "SERIAL_123",
-      //     petName: "복순이",
-      //     careName: "어머니 댁",
-      //     petAddress: "서울",
-      //     petPhone: "010-1111-2222",
-      //   ),
-      //   PetRequest(
-      //     petId: "SERIAL_456",
-      //     petName: "철수",
-      //     careName: "아버지 댁",
-      //     petAddress: "부산",
-      //     petPhone: "010-3333-4444",
-      //   ),
-      // ];
+      // ✅ PetModel.fromJson으로 통일하여 변환
+      return data.map((e) => PetModel.fromJson(e)).toList();
     } on DioException catch (e) {
       print("❌ [API 에러]: ${e.response?.statusCode} - ${e.response?.data}");
       rethrow;
     }
   }
 
-  // 어르신 인증
-  Future<PetRequest?> connectPet(String petId) async {
+  /// 3. 기기 연결/로그인 (POST)
+  Future<PetModel?> connectPet(String petId) async {
     try {
-      // 💡 POST /api/auth/pets/login 호출
       final response = await _dio.post(
         '/auth/pets/login',
         data: {'petId': petId},
       );
+
+      if (response.statusCode == 200 && response.data != null) {
+        return PetModel.fromJson(response.data);
+      }
+      return null;
     } on DioException catch (e) {
-      // 💡 403 에러가 나면 '이미 누군가 쓰고 있다'는 정보를 담아서 던져야 합니다.
       if (e.response?.statusCode == 403) {
         print('🚨 이미 등록된 기기입니다 (인가 거부)');
-        // 여기서 null을 주기보다, 에러를 throw하거나 특정 플래그를 담은 객체를 줘야 합니다.
       }
       return null;
     }
-    return null;
   }
 
-  /// ✅ 추가: 특정 petId에 해당하는 사고 기록 가져오기
+  /// 4. 사고 기록 가져오기 (기존 로직 유지)
   Future<List<EventModel>> fetchEvents(String petId) async {
     try {
-      print("📡 [요청 시작] petId: $petId"); // 요청 출발 알림
-      // API 명세: GET /api/events?petId=N0111
-      final response = await _dio.get('/events/${petId}');
-      // 1. 서버 응답 성공 시 로그
-      print("✅ [응답 성공] 상태 코드: ${response.statusCode}");
-      print("📝 [원시 데이터(Raw)]: ${response.data}");
-
-      // 서버 응답이 리스트 형태 [{}, {}] 일 때
+      final response = await _dio.get('/events/$petId');
       final List<dynamic> data = response.data;
-
-      // 모델로 변환 (factory에서 petId를 함께 받도록 설계)
       return data.map((json) => EventModel.fromJson(json, petId)).toList();
     } on DioException catch (e) {
-      print("🚨 [Dio 에러 발생]");
-      print("- 에러 타입: ${e.type}");
-      print("- 에러 메시지: ${e.message}");
-      print("- 응답 바디: ${e.response?.data}");
       print("❌ [사고 기록 API 에러]: ${e.response?.statusCode}");
       rethrow;
     }

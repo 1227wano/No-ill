@@ -47,6 +47,7 @@ dependencies:
   kpostal: ^1.1.0
   intl: ^0.20.2
   cached_network_image: ^3.4.1
+  table_calendar: ^3.2.0
 
 dev_dependencies:
   flutter_test:

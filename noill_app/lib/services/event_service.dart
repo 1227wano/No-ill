@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:noill_app/models/event_models.dart';
+import 'package:noill_app/models/event_model.dart';
 
 class EventService {
   final Dio _dio;
@@ -9,8 +9,8 @@ class EventService {
   /// 엔드포인트: /api/events/{petId}
   Future<List<EventModel>> fetchEvents(String petId) async {
     try {
-      final response = await _dio.get('/events/$petId');
-
+      final response = await _dio.get('/events/report');
+      print(response.data);
       if (response.statusCode == 200) {
         final List<dynamic> data = response.data;
         return data.map((json) => EventModel.fromJson(json, petId)).toList();

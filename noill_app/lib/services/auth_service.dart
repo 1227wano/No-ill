@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/network/dio_provider.dart';
 import '../core/network/api_constants.dart';
-import '../models/auth_models.dart';
+import '../models/auth_model.dart';
 
 final authServiceProvider = Provider<AuthService>((ref) {
   final dio = ref.watch(dioProvider); // 인터셉터가 달린 공통 Dio 사용

@@ -7,7 +7,6 @@ import '../../providers/auth_provider.dart';
 import '../auth/welcome_screen.dart';
 import '../onboarding/device_pairing_screen.dart';
 import '../mypage/mypage_screen.dart';
-import '../accident/event_screen.dart';
 import '../accident/alarm_screen.dart';
 
 class SettingsScreen extends ConsumerWidget {

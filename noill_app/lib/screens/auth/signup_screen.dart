@@ -9,7 +9,7 @@ import '../../widgets/atoms/custom_input_field.dart';
 import '../../widgets/atoms/solid_button.dart';
 
 import '../../providers/auth_provider.dart';
-import '../../models/auth_models.dart';
+import '../../models/auth_model.dart';
 
 import 'package:noill_app/screens/main_screen.dart';
 import '../onboarding/device_pairing_screen.dart';

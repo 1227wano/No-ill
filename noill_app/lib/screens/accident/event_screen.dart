@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../providers/event_provider.dart';
-import '../../models/event_models.dart';
+import '../../models/event_model.dart';
 
 class EventScreen extends ConsumerWidget {
   const EventScreen({super.key});

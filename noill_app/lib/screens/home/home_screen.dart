@@ -2,12 +2,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart'; // ✅ 사이즈 대응을 위해 추가 권장
+import 'package:noill_app/models/pet_model.dart';
 
 import '../../core/constants/color_constants.dart';
 import '../../widgets/atoms/light_diffusion_background.dart';
 import '../../widgets/atoms/custom_card.dart';
 
-import '../../models/auth_models.dart';
+import '../../models/auth_model.dart';
 import '../../providers/event_provider.dart';
 import '../../providers/care_provider.dart';
 
@@ -19,13 +20,13 @@ class HomeScreen extends ConsumerWidget {
     // ref.watch는 데이터가 바뀌면 화면을 다시 그리라는 신호입니다.
     // 1. 데이터 구독 (어르신 목록 및 선택된 어르신)
     final careList = ref.watch(careListProvider); // 어르신 목록
-    final selectedCare = ref.watch(selectedCareProvider); // 선택된 어르신 (petNo 기반)
+    final selectedCare = ref.watch(selectedPetProvider); // 선택된 어르신 (petNo 기반)
 
     // 💡 [수정] 선택된 어르신이 있을 때만 해당 ID로 프로바이더를 호출합니다.
     // 만약 선택된 어르신이 없다면 빈 리스트 상태를 유지합니다.
     final reportAsync = selectedCare != null
         ? ref.watch(singlePetReportProvider(selectedCare.petId))
-        : const AsyncValue.data([]);
+        : const AsyncValue<List<dynamic>>.data([]);
 
     // 2. 실시간 상태(Warning) 판단 로직
     // 데이터가 있고, 리스트가 비어있지 않다면 최신 사고가 있는 것으로 간주하여 WARNING 표시
@@ -93,8 +94,8 @@ class HomeScreen extends ConsumerWidget {
 
   Widget _buildMainDropdown(
     WidgetRef ref,
-    AsyncValue<List<PetRequest>> careList,
-    PetRequest? selectedCare,
+    AsyncValue<List<PetModel>> careList,
+    PetModel? selectedCare,
   ) {
     return CustomCard(
       onTap: null,
@@ -277,16 +278,73 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  // --- 5. 로봇 섹션 (기능 없는 버튼 제거) ---
-  Widget _buildRobotSection(BuildContext context, PetRequest? selectedCare) {
+  // --- 5. 로봇 섹션 (오류 해결 및 디자인 강화 버전) ---
+  Widget _buildRobotSection(BuildContext context, PetModel? selectedCare) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // 🤖 로봇 상태 요약 카드 (배터리, 연결 상태 등)
+        CustomCard(
+          onTap: null,
+          padding: EdgeInsets.all(16.w),
+          child: Row(
+            children: [
+              Container(
+                width: 50.w,
+                height: 50.w,
+                decoration: BoxDecoration(
+                  color: NoIllColors.primary.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.smart_toy_rounded,
+                  color: NoIllColors.primary,
+                ),
+              ),
+              SizedBox(width: 12.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      // ✅ [주의] 변수가 포함되므로 이 위젯을 감싸는 부모에 const가 있으면 안 됩니다.
+                      "${selectedCare?.petName ?? '노일봇'} 상태",
+                      style: TextStyle(
+                        fontSize: 15.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 4.h),
+                    Row(
+                      children: [
+                        // ✅ 아래에 정의된 헬퍼 메서드를 호출합니다.
+                        _buildRobotStatusTag(
+                          Icons.battery_charging_full_rounded,
+                          "85%",
+                          Colors.green,
+                        ),
+                        SizedBox(width: 8.w),
+                        _buildRobotStatusTag(
+                          Icons.wifi_rounded,
+                          "연결됨",
+                          Colors.blue,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: 12.h),
+
+        // 🔘 현재 모드 및 변경 버튼
         InkWell(
           onTap: () => _showModeBottomSheet(context, "순찰모드"),
           borderRadius: BorderRadius.circular(20),
           child: Container(
-            padding: const EdgeInsets.all(18),
+            padding: EdgeInsets.all(18.w),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(20),
@@ -299,9 +357,10 @@ class HomeScreen extends ConsumerWidget {
                   color: NoIllColors.primary,
                   size: 24,
                 ),
-                const SizedBox(width: 16),
+                SizedBox(width: 16.w),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  // ✅ [주의] 여기에 const가 붙어있다면 내부 텍스트에 변수를 쓸 수 없습니다.
                   children: const [
                     Text(
                       "현재 모드: 순찰모드",
@@ -317,12 +376,33 @@ class HomeScreen extends ConsumerWidget {
                   ],
                 ),
                 const Spacer(),
-                const Icon(Icons.chevron_right, color: Colors.grey, size: 20),
+                const Icon(
+                  Icons.keyboard_arrow_right_rounded,
+                  color: Colors.grey,
+                  size: 24,
+                ),
               ],
             ),
           ),
         ),
-        // ✅ 5. View Camera, Call Pet 버튼 삭제 완료
+      ],
+    );
+  }
+
+  // ✅ [필수 추가] 로봇 상태를 표시하는 작은 태그 위젯입니다.
+  Widget _buildRobotStatusTag(IconData icon, String label, Color color) {
+    return Row(
+      children: [
+        Icon(icon, size: 14.sp, color: color),
+        SizedBox(width: 2.w),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 12.sp,
+            color: color,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ],
     );
   }

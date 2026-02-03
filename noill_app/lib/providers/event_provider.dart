@@ -1,7 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:noill_app/models/event_models.dart';
-import '../models/event_models.dart';
-import 'care_provider.dart';
+import 'package:noill_app/models/event_model.dart';
 import '../services/pet_service.dart';
 import '../core/network/dio_provider.dart';
 
