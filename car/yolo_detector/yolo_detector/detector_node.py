@@ -39,7 +39,7 @@ class YoloDetectorNode(Node):
         self.trt_context = self.engine.create_execution_context()
         self.inputs, self.outputs, self.bindings, self.stream = self.allocate_buffers(self.engine)
         
-        self.classes = ["lying", "others"]
+        self.classes = ["desk", "lying", "others"]
         self.model_w = 224
         self.model_h = 224
         
@@ -59,7 +59,7 @@ class YoloDetectorNode(Node):
         self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 224)
         self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 160)
         
-        self.timer = self.create_timer(0.033, self.inference_loop)
+        self.timer = self.create_timer(0.05, self.inference_loop)
         self.get_logger().info('YOLOv11: Emergency Capture Mode Enabled.')
 
     def capture_callback(self, msg):
@@ -115,12 +115,12 @@ class YoloDetectorNode(Node):
         cuda.memcpy_dtoh_async(self.outputs[0]['host'], self.outputs[0]['device'], self.stream)
         self.stream.synchronize()
 
-        output = self.outputs[0]['host'].reshape(6, -1)
+        output = self.outputs[0]['host'].reshape(7, -1)
         boxes, confs, class_ids, centroids = [], [], [], []
 
         probs = output[4:, :]
         max_probs = np.max(probs, axis=0)
-        mask = max_probs > 0.50 
+        mask = max_probs > 0.70 
         candidates = output[:, mask]
 
         if candidates.shape[1] > 0:
@@ -137,7 +137,7 @@ class YoloDetectorNode(Node):
                 confs.append(float(scores[cls_id]))
                 class_ids.append(int(cls_id))
 
-            indices = cv2.dnn.NMSBoxes(boxes, confs, 0.50, 0.4)
+            indices = cv2.dnn.NMSBoxes(boxes, confs, 0.70, 0.4)
             final_detections = []
             if len(indices) > 0:
                 for i in indices.flatten():
@@ -158,13 +158,17 @@ class YoloDetectorNode(Node):
                     if dist < min_dist:
                         min_dist = dist
                         best_match = det
-                
+
                 if best_match:
                     self.history[objectID].append(best_match['class'])
                     recent = list(self.history[objectID])
                     stable_cls = max(set(recent), key=recent.count) if len(recent) > 5 else best_match['class']
                     
                     obj_name = self.classes[stable_cls]
+
+                    if obj_name == "desk":
+                      continue
+
                     bx, by, bw, bh = best_match['box']
                     
                     self.pub_x.publish(Int32(data=int(best_match['center'][0])))

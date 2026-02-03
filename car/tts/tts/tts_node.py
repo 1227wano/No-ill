@@ -20,6 +20,7 @@ class NoilTTSNode(Node):
         # Publishers
         self.done_pub = self.create_publisher(Bool, 'tts_done', 10)
         self.emergency_done_pub = self.create_publisher(Bool, 'emergency_tts_done', 10)
+        self.stt_mute_pub = self.create_publisher(Bool, 'stt_mute', 10)  # STT 뮤트 제어
         
         self.speaker_device_id = self.find_device_by_name("UACDemo")
         self.get_logger().info(f"선택된 스피커 장치 ID: {self.speaker_device_id}")
@@ -77,16 +78,24 @@ class NoilTTSNode(Node):
     
     def play_tts(self, text):
         try:
+            # TTS 재생 전 STT 뮤트
+            self.stt_mute_pub.publish(Bool(data=True))
+
             audio = self.tts.generate(text, sid=0)
             samples = audio.samples
             duration = len(samples) / audio.sample_rate
             resampled = np.interp(np.linspace(0, duration, int(duration * self.target_sample_rate)),
                                  np.linspace(0, duration, len(samples)), samples)
-            
+
             sd.play((resampled * 32767).astype(np.int16), self.target_sample_rate, device=self.speaker_device_id)
             sd.wait()
+
+            # TTS 재생 완료 후 STT 언뮤트
+            self.stt_mute_pub.publish(Bool(data=False))
         except Exception as e:
             self.get_logger().error(f"TTS 재생 실패: {e}")
+            # 예외 발생 시에도 언뮤트
+            self.stt_mute_pub.publish(Bool(data=False))
 
 def main(args=None):
     rclpy.init(args=args)
