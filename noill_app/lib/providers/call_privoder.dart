@@ -2,7 +2,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:noill_app/models/call_state.dart';
-import 'package:noill_app/screens/call/call_screen.dart' hide CallState;
 import 'package:noill_app/services/call_service.dart';
 
 final callProvider = StateNotifierProvider<CallNotifier, CallState>((ref) {

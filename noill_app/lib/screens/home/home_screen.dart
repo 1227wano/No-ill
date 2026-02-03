@@ -8,7 +8,6 @@ import '../../core/constants/color_constants.dart';
 import '../../widgets/atoms/light_diffusion_background.dart';
 import '../../widgets/atoms/custom_card.dart';
 
-import '../../models/auth_model.dart';
 import '../../providers/event_provider.dart';
 import '../../providers/care_provider.dart';
 

@@ -4,13 +4,10 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:http/http.dart' as http;
 import 'package:noill_app/models/event_model.dart';
 import 'package:noill_app/providers/call_privoder.dart';
 import 'package:noill_app/providers/event_provider.dart';
 import 'package:noill_app/screens/auth/welcome_screen.dart';
-import 'package:noill_app/services/fcm_service.dart';
-import 'package:noill_app/services/fcm_service.dart';
 
 import 'firebase_options.dart';
 import 'package:noill_app/core/theme/app_theme.dart';
@@ -19,7 +16,6 @@ import 'package:noill_app/core/theme/app_theme.dart';
 import 'screens/main_screen.dart';
 import 'screens/accident/alarm_screen.dart';
 import 'screens/accident/event_screen.dart';
-import 'services/fcm_service.dart';
 import 'providers/fcm_provider.dart';
 
 // 1. 전역 내비게이터 키 (최상위 선언)

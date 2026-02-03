@@ -50,8 +50,8 @@ dependencies:
   table_calendar: ^3.2.0
 
   # 영상 통화 핵심 패키지
-  openvidu_official_android_ios: ^0.0.3 # 공식 오픈비두 SDK
-  flutter_webrtc: ^0.12.3 # 오픈비두 내부에서 사용하는 엔진
+  flutter_webrtc: ^1.2.0 # 오픈비두 내부에서 사용하는 엔진
+  openvidu_flutter: ^0.0.15
 
   # 하드웨어 권한 관리
   permission_handler: ^11.3.1

@@ -8,7 +8,6 @@ import '../../widgets/atoms/solid_button.dart';
 import '../../core/constants/color_constants.dart';
 import '../../providers/pet_provider.dart';
 import '../../providers/care_provider.dart';
-import '../../models/auth_model.dart';
 import 'elderly_profile_registration_screen.dart';
 
 class DevicePairingScreen extends ConsumerStatefulWidget {
