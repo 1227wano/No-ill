@@ -58,7 +58,6 @@ const useSchedule = () => {
     }, [scheduleItems]);
 
     const handleDelete = async (id) => {
-        if (!window.confirm("정말 삭제하시겠습니까?")) return;
         try {
             await deleteSchedule(id);
             await loadSchedules(); // 삭제 후 목록 갱신
