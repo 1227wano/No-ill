@@ -33,7 +33,19 @@ void main() async {
   await dotenv.load(fileName: ".env");
 
   // Firebase 초기화
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  // 이미 초기화되었는지 확인 후 실행 [default 에러 방지]
+  try {
+    // 앱이 이미 실행 중이거나 Hot Restart 시 중복 호출되는 것을 방지
+    if (Firebase.apps.isEmpty) {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+      print("Firebase 초기화 성공");
+    }
+  } catch (e) {
+    // 중복 에러가 나더라도 앱은 계속 실행되도록 함
+    print("Firebase 초기화 건너뜀 (이미 실행 중): $e");
+  }
 
   // 💡 [여기입니다!] 실물 기기의 새로운 토큰을 가져와 콘솔에 찍기
   String? token = await FirebaseMessaging.instance.getToken();
@@ -44,41 +56,6 @@ void main() async {
 
   // Riverpod 컨테이너 생성
   final container = ProviderContainer();
-
-  // 🔔 [핵심 수정] 포그라운드 리스너 위치 및 로직
-  // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-  //   if (message.data.isNotEmpty) {
-  //     const String baseUrl = "http://i14a301.p.ssafy.io:8080";
-
-  //     // 1. eventNo 변환 (String -> int)
-  //     // 데이터가 없으면 0, 있으면 숫자로 바꿉니다.
-  //     final int eventNo = int.tryParse(message.data['eventNo'] ?? '0') ?? 0;
-
-  //     // 2. 파일명 낚아채기
-  //     final String? fileName = message.data['imageUrl'];
-
-  //     if (fileName != null && fileName.isNotEmpty) {
-  //       final String finalImageUrl = "$baseUrl/images/$fileName";
-
-  //       // 3. 🧩 EventModel 생성 (기존 필드 모두 포함)
-  //       final newEvent = EventModel(
-  //         eventNo: eventNo,
-  //         eventTime: DateTime.now(), // 실시간 사고이므로 현재 시간을 넣어줍니다.
-  //         title: message.data['title'] ?? "낙상 사고 발생",
-  //         body: message.data['body'] ?? "어르신의 상태를 확인해 주세요.",
-  //         imageUrl: finalImageUrl,
-  //         petId: message.data['petId'] ?? "N0111", // 데이터에 없으면 기본값 사용
-  //       );
-
-  //       print("🚀 [FCM] 모델 생성 및 주소 조립 완료: ${newEvent.imageUrl}");
-
-  //       // 4. 📦 보관함(Provider) 업데이트
-  //       container.read(recentEventProvider.notifier).state = newEvent;
-
-  //       print("📸 이미지 로딩 준비 완료: ${newEvent.imageUrl}");
-  //     }
-  //   }
-  // });
 
   // TEST
   // main.dart의 onMessage 리스너 부분
@@ -119,9 +96,10 @@ void main() async {
   // 알림 초기화 실행
   await initializeNotification(container);
 
-  runApp(
-    UncontrolledProviderScope(container: container, child: const NoIllApp()),
-  );
+  // runApp(
+  //   UncontrolledProviderScope(container: container, child: const NoIllApp()),
+  // );
+  runApp(const ProviderScope(child: NoIllApp()));
 }
 
 // 4. 알림 초기화 로직

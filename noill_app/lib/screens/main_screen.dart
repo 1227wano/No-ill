@@ -26,9 +26,9 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   int _currentIndex = 0;
 
   // 1:1 매칭을 위한 페이지 리스트
-  final List<Widget> _pages = [
+  List<Widget> get _pages => [
     const HomeScreen(),
-    const SizedBox.shrink(), // 화상통화 더미
+    const VideoCallScreen(), // 화상통화 더미
     const ScheduleMainScreen(),
     const SettingsScreen(),
   ];
