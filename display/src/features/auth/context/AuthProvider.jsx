@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { AuthContext } from './AuthContext';
 import { login as loginApi, verifyToken } from '../services/authApi';
+import { requestFcmToken, registerFcmToken } from '../../videocall/services/fcmService';
 
 const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
@@ -62,6 +63,18 @@ const AuthProvider = ({ children }) => {
         localStorage.setItem('token', token);
         localStorage.setItem('user', JSON.stringify(userData));
         setUser(userData);
+
+        // FCM 토큰 등록
+        try {
+            const fcmToken = await requestFcmToken();
+            if (fcmToken) {
+                const petId = userData.petId || petNo;
+                await registerFcmToken(fcmToken, petId);
+            }
+        } catch (error) {
+            console.error('FCM 토큰 등록 실패:', error);
+        }
+
         return userData;
     }, []);
 

@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './features/auth';
 import { FallAlertProvider, FallAlertOverlay } from './features/fall';
+import { VideoCallProvider, VideoCallOverlay, IncomingCallOverlay } from './features/videocall';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import DisplayPage from './pages/DisplayPage';
 import LoginPage from './pages/LoginPage';
@@ -11,19 +12,23 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <FallAlertProvider>
-          <FallAlertOverlay />
-          <Routes>
-            <Route path="/login" element={<LoginPage />} />
-            <Route
-              path="/"
-              element={
-                <ProtectedRoute>
-                  <DisplayPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
+          <VideoCallProvider>
+            <FallAlertOverlay />
+            <VideoCallOverlay />
+            <IncomingCallOverlay />
+            <Routes>
+              <Route path="/login" element={<LoginPage />} />
+              <Route
+                path="/"
+                element={
+                  <ProtectedRoute>
+                    <DisplayPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </VideoCallProvider>
         </FallAlertProvider>
       </AuthProvider>
     </BrowserRouter>

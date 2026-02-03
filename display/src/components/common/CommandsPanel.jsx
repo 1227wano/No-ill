@@ -1,7 +1,20 @@
 import React, { useState } from 'react';
+import { useVideoCall } from '../../features/videocall';
+import { useAuth } from '../../features/auth';
 
 const CommandsPanel = () => {
   const [showAIHelp, setShowAIHelp] = useState(false);
+  const { startCall } = useVideoCall();
+  const { user } = useAuth();
+
+  const handleVideoCall = () => {
+    const userId = user?.userId || user?.userNo;
+    if (userId) {
+      startCall(userId);
+    } else {
+      alert('보호자 정보를 찾을 수 없습니다.');
+    }
+  };
 
   const features = [
     {
@@ -16,7 +29,7 @@ const CommandsPanel = () => {
       icon: '📞',
       title: '영상 통화',
       color: 'bg-green-500',
-      onClick: () => alert('영상 통화 기능은 준비 중입니다.')
+      onClick: handleVideoCall
     },
     {
       id: 'hospital',
