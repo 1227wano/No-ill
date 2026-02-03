@@ -13,4 +13,5 @@ public class PetLoginRequest {
     @Size(min = 4, message = "로봇펫 번호는 4자 이상이어야 합니다.")
     private String petId;
 
+    private String fcmToken;
 }

@@ -45,3 +45,6 @@ coolsms:
     secret: "test-secret"
     sender: "01000000000"
 
+openvidu:
+  url: https://localhost:4443/
+  secret: MY_SECRET

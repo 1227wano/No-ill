@@ -31,4 +31,19 @@ public class RedisService {
     public boolean hasKeyBlackList(String accessToken) {
         return Boolean.TRUE.equals(redisTemplate.hasKey(accessToken));
     }
+
+    // 범용 Key-Value 저장
+    public void setValues(String key, String value, long duration) {
+        redisTemplate.opsForValue().set(key, value, duration, TimeUnit.MILLISECONDS);
+    }
+
+    // 범용 Value 조회 (FCM 토큰 조회용)
+    public String getValues(String key) {
+        return (String) redisTemplate.opsForValue().get(key);
+    }
+
+    // Key 삭제
+    public void deleteValues(String key) {
+        redisTemplate.delete(key);
+    }
 }
