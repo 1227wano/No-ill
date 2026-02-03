@@ -54,3 +54,7 @@ coolsms:
     secret: ${SOLAPI_API_SECRET:test_api_secret}
     sender: ${WANO_PHONE:01000000000}
 
+openweathermap:
+  api:
+    key: ${OPENWEATHERMAP_API_KEY:YOUR_API_KEY}
+

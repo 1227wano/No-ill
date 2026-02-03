@@ -3,7 +3,8 @@ package com.noill.domain.conversation.repository;
 import com.noill.domain.conversation.entity.Talk;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-
+import org.springframework.data.repository.query.Param;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,7 +25,8 @@ public interface TalkRepository extends JpaRepository<Talk, Long> {
             "WHERE t.status = :status " +
             "GROUP BY t " +
             "HAVING MAX(m.createdAt) <= :threshold")
-    java.util.List<Talk> findTalksWithoutRecentMessages(
-            @org.springframework.data.repository.query.Param("status") String status,
-            @org.springframework.data.repository.query.Param("threshold") java.time.LocalDateTime threshold);
+    List<Talk> findTalksWithoutRecentMessages(
+            @Param("status") String status,
+            @Param("threshold") LocalDateTime threshold);
+
 }
