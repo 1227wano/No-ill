@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import com.noill.domain.schedule.dto.ScheduleDeleteRequestDto;
 
 @RestController
 @RequestMapping("/api/schedules")
@@ -73,7 +74,7 @@ public class ScheduleController {
     public void deleteApp(
             @AuthenticationPrincipal User user,
             @PathVariable Long id,
-            @RequestBody ScheduleRequestDto requestDto) {
+            @RequestBody ScheduleDeleteRequestDto requestDto) {
         scheduleService.deleteSchedule(id, requestDto.getPetId(), user);
     }
 
