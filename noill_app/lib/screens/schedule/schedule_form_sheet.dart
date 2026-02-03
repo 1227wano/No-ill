@@ -1,46 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import '../../../models/schedule_model.dart';
-import '../../../providers/schedule_provider.dart';
-import '../../../providers/care_provider.dart'; // 어르신 정보 조회를 위한 프로바이더
+import 'package:noill_app/core/constants/color_constants.dart';
+import '../../models/schedule_model.dart';
+import '../../providers/care_provider.dart';
+import '../../providers/schedule_provider.dart'; // petId를 가져오기 위한 프로바이더
 
 class ScheduleFormSheet extends ConsumerStatefulWidget {
-  final ScheduleModel? initialSchedule; // 수정 시에는 기존 데이터를 넘겨받습니다.
+  final ScheduleModel? schedule; // 수정 모드일 경우 전달받음
 
-  const ScheduleFormSheet({super.key, this.initialSchedule});
+  const ScheduleFormSheet({super.key, this.schedule});
 
   @override
   ConsumerState<ScheduleFormSheet> createState() => _ScheduleFormSheetState();
 }
 
 class _ScheduleFormSheetState extends ConsumerState<ScheduleFormSheet> {
-  late TextEditingController _nameController;
-  late TextEditingController _memoController;
-  late DateTime _selectedTime;
+  final _nameController = TextEditingController();
+  final _memoController = TextEditingController();
+
+  late DateTime _selectedDate;
+  late TimeOfDay _selectedTime;
+
+  bool get isEditMode => widget.schedule != null;
 
   @override
   void initState() {
     super.initState();
-    // ✅ 수정 모드와 등록 모드 구분
-    _nameController = TextEditingController(
-      text: widget.initialSchedule?.schName ?? "",
+    // 초기값 설정: 수정 모드면 기존 데이터, 아니면 현재 시간 기준
+    final initialDateTime =
+        widget.schedule?.schTime ??
+        DateTime.now().add(const Duration(minutes: 10));
+    _selectedDate = DateTime(
+      initialDateTime.year,
+      initialDateTime.month,
+      initialDateTime.day,
     );
-    _memoController = TextEditingController(
-      text: widget.initialSchedule?.schMemo ?? "",
-    );
+    _selectedTime = TimeOfDay.fromDateTime(initialDateTime);
 
-    // 초기 시간 설정: 수정 시 기존 시간, 등록 시 현재 선택된 날짜의 다음 정각
-    final baseDate = ref.read(selectedDateProvider);
-    _selectedTime =
-        widget.initialSchedule?.schTime ??
-        DateTime(
-          baseDate.year,
-          baseDate.month,
-          baseDate.day,
-          DateTime.now().hour + 1,
-          0,
-        );
+    _nameController.text = widget.schedule?.schName ?? "";
+    _memoController.text = widget.schedule?.schMemo ?? "";
   }
 
   @override
@@ -50,46 +49,123 @@ class _ScheduleFormSheetState extends ConsumerState<ScheduleFormSheet> {
     super.dispose();
   }
 
-  // 💡 타임피커 호출
-  Future<void> _pickTime() async {
-    final TimeOfDay? picked = await showTimePicker(
+  // 1. 📅 날짜 선택기
+  Future<void> _pickDate() async {
+    final DateTime? picked = await showDatePicker(
       context: context,
-      initialTime: TimeOfDay.fromDateTime(_selectedTime),
+      initialDate: _selectedDate,
+      firstDate: DateTime.now(), // 오늘 이전 날짜는 선택 불가
+      lastDate: DateTime(2100),
     );
-
     if (picked != null) {
       setState(() {
-        _selectedTime = DateTime(
-          _selectedTime.year,
-          _selectedTime.month,
-          _selectedTime.day,
-          picked.hour,
-          picked.minute,
-        );
+        _selectedDate = picked;
       });
     }
   }
 
-  // 💾 저장 로직
-  void _save() async {
-    final selectedPet = ref.read(selectedPetProvider); // 어르신 전체 정보를 가진 객체
-    final int petNo = selectedPet?.petNo ?? 0;
-    final String petId = selectedPet?.petId ?? "";
+  // 2. ⏰ 시간 선택기
+  Future<void> _pickTime() async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: _selectedTime,
+    );
+    if (picked != null) {
+      setState(() {
+        _selectedTime = picked;
+      });
+    }
+  }
 
-    final schedule = ScheduleModel(
-      petNo: petNo, // 여기서 자동으로 서버용 번호가 들어갑니다.
-      schName: _nameController.text,
-      schTime: _selectedTime,
-      schMemo: _memoController.text,
+  // 🗑️ 일정 삭제 로직
+  void _onDelete() async {
+    final scheduleId = widget.schedule?.id;
+    if (scheduleId == null) return;
+
+    // 삭제 전 확인 다이얼로그
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("일정 삭제"),
+        content: const Text("이 일정을 정말 삭제하시겠습니까?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text("취소"),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text("삭제", style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
     );
 
-    if (widget.initialSchedule == null) {
-      await ref.read(scheduleNotifierProvider.notifier).addSchedule(schedule);
-    } else {
-      await ref.read(scheduleNotifierProvider.notifier).editSchedule(schedule);
+    if (confirm == true) {
+      // ✅ 요청하신 대로 petId를 함께 보낼 수 있도록 처리
+      // 단, removeSchedule이 id만 받도록 설계되어 있다면
+      // 아래와 같이 호출하고 서비스 레이어에서 petId를 추가해야 합니다.
+      final success = await ref
+          .read(scheduleNotifierProvider.notifier)
+          .removeSchedule(scheduleId);
+
+      if (mounted && success) {
+        Navigator.pop(context);
+      }
+    }
+  }
+
+  void _onSave() async {
+    // 날짜와 시간을 하나의 DateTime 객체로 결합
+    final finalDateTime = DateTime(
+      _selectedDate.year,
+      _selectedDate.month,
+      _selectedDate.day,
+      _selectedTime.hour,
+      _selectedTime.minute,
+    );
+
+    // 💡 [검증] 서버 400 에러 방지를 위한 미래 시간 체크
+    if (finalDateTime.isBefore(DateTime.now())) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("🚨 일정은 현재 시간보다 이후여야 합니다.")));
+      return;
     }
 
-    if (mounted) Navigator.pop(context); // 성공 시 바텀시트 닫기
+    if (_nameController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("일정 제목을 입력해주세요.")));
+      return;
+    }
+
+    final petId = ref.read(selectedPetIdProvider); // 현재 선택된 어르신 ID
+    if (petId == null) return;
+
+    final schedule = ScheduleModel(
+      id: widget.schedule?.id,
+      petNo: widget.schedule?.petNo ?? 0,
+      schName: _nameController.text.trim(),
+      schTime: finalDateTime,
+      schMemo: _memoController.text.trim(),
+      schStatus: widget.schedule?.schStatus ?? "PENDING",
+    );
+
+    bool success = false;
+    if (isEditMode) {
+      success = await ref
+          .read(scheduleNotifierProvider.notifier)
+          .editSchedule(schedule, petId);
+    } else {
+      success = await ref
+          .read(scheduleNotifierProvider.notifier)
+          .addSchedule(schedule, petId);
+    }
+
+    if (mounted && success) {
+      Navigator.pop(context); // 성공 시 시트 닫기
+    }
   }
 
   @override
@@ -101,62 +177,127 @@ class _ScheduleFormSheetState extends ConsumerState<ScheduleFormSheet> {
         right: 20,
         top: 20,
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            widget.initialSchedule == null ? "새 일정 등록" : "일정 수정",
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 20),
-
-          TextField(
-            controller: _nameController,
-            decoration: const InputDecoration(
-              labelText: "일정 이름 (예: 혈압약 복용)",
-              border: OutlineInputBorder(),
-            ),
-          ),
-          const SizedBox(height: 15),
-
-          ListTile(
-            title: const Text("시간 설정"),
-            trailing: Text(
-              DateFormat('HH:mm').format(_selectedTime),
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.blue,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 20),
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
               ),
             ),
-            onTap: _pickTime,
-            shape: RoundedRectangleBorder(
-              side: const BorderSide(color: Colors.grey),
-              borderRadius: BorderRadius.circular(4),
+            Text(
+              isEditMode ? "일정 수정" : "새 일정 등록",
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-          ),
-          const SizedBox(height: 15),
+            const SizedBox(height: 20),
 
-          TextField(
-            controller: _memoController,
-            maxLines: 3,
-            decoration: const InputDecoration(
-              labelText: "메모 (선택 사항)",
-              border: OutlineInputBorder(),
+            TextField(
+              controller: _nameController,
+              decoration: const InputDecoration(
+                labelText: "어떤 일정인가요?",
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.edit_calendar),
+              ),
             ),
-          ),
-          const SizedBox(height: 20),
+            const SizedBox(height: 15),
 
-          ElevatedButton(
-            onPressed: _save,
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 15),
+            // 날짜/시간 선택 섹션
+            Row(
+              children: [
+                Expanded(
+                  child: InkWell(
+                    onTap: _pickDate,
+                    child: InputDecorator(
+                      decoration: const InputDecoration(
+                        labelText: "날짜",
+                        border: OutlineInputBorder(),
+                      ),
+                      child: Text(
+                        DateFormat('yyyy-MM-dd').format(_selectedDate),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: InkWell(
+                    onTap: _pickTime,
+                    child: InputDecorator(
+                      decoration: const InputDecoration(
+                        labelText: "시간",
+                        border: OutlineInputBorder(),
+                      ),
+                      child: Text(_selectedTime.format(context)),
+                    ),
+                  ),
+                ),
+              ],
             ),
-            child: Text(widget.initialSchedule == null ? "등록하기" : "수정 완료"),
-          ),
-        ],
+            const SizedBox(height: 15),
+
+            TextField(
+              controller: _memoController,
+              maxLines: 3,
+              decoration: const InputDecoration(
+                labelText: "상세 메모 (선택사항)",
+                border: OutlineInputBorder(),
+                alignLabelWithHint: true,
+              ),
+            ),
+            const SizedBox(height: 25),
+
+            // --- 버튼 섹션 (삭제 버튼 추가) ---
+            Row(
+              children: [
+                if (isEditMode) ...[
+                  Expanded(
+                    flex: 2,
+                    child: OutlinedButton(
+                      onPressed: _onDelete,
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: NoIllColors.danger,
+                        side: const BorderSide(color: NoIllColors.danger),
+                        padding: const EdgeInsets.symmetric(vertical: 15),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
+                      child: const Text("삭제"),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                ],
+                Expanded(
+                  flex: 2,
+                  child: OutlinedButton(
+                    onPressed: _onSave,
+                    style: OutlinedButton.styleFrom(
+                      backgroundColor: NoIllColors.primary,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                    child: Text(isEditMode ? "수정 완료" : "일정 추가하기"),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

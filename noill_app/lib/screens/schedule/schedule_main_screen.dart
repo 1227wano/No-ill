@@ -1,25 +1,55 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
+import 'package:noill_app/screens/schedule/schedule_form_sheet.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../../models/schedule_model.dart';
 import '../../providers/schedule_provider.dart';
+
+// 💡 보기 모드 관리를 위한 프로바이더 (추가)
+final calendarExpandedProvider = StateProvider<bool>((ref) => true);
 
 class ScheduleMainScreen extends ConsumerWidget {
   const ScheduleMainScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // 1. 상태 구독
     final selectedDate = ref.watch(selectedDateProvider);
     final dailySchedules = ref.watch(filteredScheduleProvider);
     final scheduleAsync = ref.watch(scheduleNotifierProvider);
+    final isExpanded = ref.watch(calendarExpandedProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text("어르신 일정 관리"), centerTitle: true),
+      appBar: AppBar(
+        title: const Text("어르신 일정 관리"),
+        centerTitle: false, // 아이콘 배치를 위해 왼쪽 정렬 권장
+        actions: [
+          // 1. 등록 아이콘
+          IconButton(
+            icon: const Icon(Icons.add_box_outlined),
+            onPressed: () => _showAddScheduleSheet(context),
+          ),
+          // 2. 월별/일별 보기 전환 (달력 접기/펴기)
+          IconButton(
+            icon: Icon(
+              isExpanded ? Icons.keyboard_arrow_up : Icons.calendar_month,
+            ),
+            onPressed: () =>
+                ref.read(calendarExpandedProvider.notifier).state = !isExpanded,
+          ),
+          // 3. 편집/삭제 관리 모드 (선택 사항)
+          IconButton(
+            icon: const Icon(Icons.settings_outlined),
+            onPressed: () => print("관리 모드 진입"),
+          ),
+          const SizedBox(width: 8),
+        ],
+      ),
       body: Column(
         children: [
-          // --- 상단: 월간 캘린더 ---
-          _buildCalendar(ref, selectedDate, scheduleAsync.value ?? []),
+          // --- 상단: 월간 캘린더 (토글 가능) ---
+          if (isExpanded)
+            _buildCalendar(ref, selectedDate, scheduleAsync.value ?? []),
 
           const Divider(thickness: 1, height: 1),
 
@@ -30,11 +60,6 @@ class ScheduleMainScreen extends ConsumerWidget {
                 : _buildTimelineList(dailySchedules, ref),
           ),
         ],
-      ),
-      // --- 일정 등록 버튼 ---
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _showAddScheduleSheet(context),
-        child: const Icon(Icons.add),
       ),
     );
   }
@@ -82,7 +107,8 @@ class ScheduleMainScreen extends ConsumerWidget {
   // 타임라인 리스트
   Widget _buildTimelineList(List<ScheduleModel> schedules, WidgetRef ref) {
     return ListView.builder(
-      padding: const EdgeInsets.symmetric(vertical: 16),
+      // 💡 하단바 높이만큼 여백을 주어 마지막 아이템이 가려지지 않게 합니다.
+      padding: const EdgeInsets.only(top: 16, bottom: 100),
       itemCount: schedules.length,
       itemBuilder: (context, index) {
         final schedule = schedules[index];
@@ -132,13 +158,27 @@ class ScheduleMainScreen extends ConsumerWidget {
     );
   }
 
-  // 💡 바텀시트 호출용 Placeholder
+  // 등록 아이콘 눌렀을 때
   void _showAddScheduleSheet(BuildContext context) {
-    // 여기에 곧 만들 ScheduleFormSheet를 띄울 예정입니다.
-    print("일정 등록 창 열기");
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true, // 키보드 대응을 위해 필수
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => const ScheduleFormSheet(),
+    );
   }
 
+  // 리스트 아이템의 수정 버튼 눌렀을 때
   void _showEditScheduleSheet(BuildContext context, ScheduleModel schedule) {
-    print("${schedule.schName} 수정 창 열기");
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => ScheduleFormSheet(schedule: schedule), // 기존 데이터 전달
+    );
   }
 }

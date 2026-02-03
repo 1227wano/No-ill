@@ -19,6 +19,7 @@ class ScheduleNotifier extends AsyncNotifier<List<ScheduleModel>> {
   Future<List<ScheduleModel>> build() async {
     // ✅ [수정] 객체가 아닌 String ID만 반환하는 프로바이더를 구독(watch)합니다.
     final petId = ref.watch(selectedPetIdProvider);
+    // final petNo = ref.watch(selectedPetNoProvider);
 
     // 어르신이 선택되지 않았다면 빈 목록 반환
     if (petId == null) return [];
@@ -28,26 +29,21 @@ class ScheduleNotifier extends AsyncNotifier<List<ScheduleModel>> {
   }
 
   /// 일정 등록 후 상태 갱신
-  Future<void> addSchedule(ScheduleModel schedule) async {
+  Future<bool> addSchedule(ScheduleModel schedule, String petId) async {
     // ✅ [수정] String ID를 읽어옵니다.
-    final petId = ref.read(selectedPetIdProvider);
-    if (petId == null) return;
-
     final success = await ref
         .read(scheduleServiceProvider)
         .createSchedule(schedule, petId);
 
     if (success) {
-      ref.invalidateSelf();
+      ref.invalidateSelf(); // 성공 시 목록 갱신
     }
+    return success;
   }
 
   /// 일정 수정 후 상태 갱신
-  Future<void> editSchedule(ScheduleModel schedule) async {
+  Future<bool> editSchedule(ScheduleModel schedule, String petId) async {
     // ✅ [수정] 일관성을 위해 selectedPetIdProvider 사용
-    final petId = ref.read(selectedPetIdProvider);
-    if (petId == null) return;
-
     final success = await ref
         .read(scheduleServiceProvider)
         .updateSchedule(schedule, petId);
@@ -55,14 +51,30 @@ class ScheduleNotifier extends AsyncNotifier<List<ScheduleModel>> {
     if (success) {
       ref.invalidateSelf();
     }
+    return success; // 💡 결과 반환 필수!
   }
 
   /// 일정 삭제 후 상태 갱신
-  Future<void> removeSchedule(int id) async {
-    final success = await ref.read(scheduleServiceProvider).deleteSchedule(id);
-    if (success) {
-      ref.invalidateSelf();
+  // providers/schedule_provider.dart 내의 ScheduleNotifier 클래스
+
+  /// ✅ 일정 삭제 후 상태 갱신 (petId 포함 버전)
+  Future<bool> removeSchedule(int id) async {
+    // 1. 현재 선택된 어르신 ID를 읽어옵니다. (낚아채기)
+    final petId = ref.read(selectedPetIdProvider);
+
+    if (petId == null) {
+      print("🚨 [Notifier] petId가 없어 삭제를 중단합니다.");
+      return false;
     }
+
+    // 2. 서비스에 id와 petId를 함께 넘깁니다.
+    final success = await ref
+        .read(scheduleServiceProvider)
+        .deleteSchedule(id, petId);
+    if (success) {
+      ref.invalidateSelf(); // 삭제 성공 시 목록 새로고침
+    }
+    return success;
   }
 }
 
