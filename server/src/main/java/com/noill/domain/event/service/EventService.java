@@ -59,7 +59,7 @@ public class EventService {
 
         // 2. 서버 디스크에 파일 저장
         String savedFileName = UUID.randomUUID() + ext; // 파일명 중복 방지 (uuid.jpg)
-        String fullPath = fileDir + savedFileName;      // /app/images/uuid.jpg
+        String fullPath = fileDir + savedFileName; // /app/images/uuid.jpg
 
         try {
             // 실제 파일 저장 실행

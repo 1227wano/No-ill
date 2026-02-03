@@ -53,3 +53,4 @@ coolsms:
     key: ${SOLAPI_API_KEY:test_api_key}
     secret: ${SOLAPI_API_SECRET:test_api_secret}
     sender: ${WANO_PHONE:01000000000}
+

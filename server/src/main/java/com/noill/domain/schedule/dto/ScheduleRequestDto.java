@@ -26,7 +26,6 @@ public class ScheduleRequestDto {
     private LocalDateTime schTime;
 
     private String petId; // 디스플레이 식별자 (필수)
-    private Long petNo; // 내부용 (선택)
 
     private String schMemo;
 

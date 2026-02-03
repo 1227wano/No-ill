@@ -82,10 +82,10 @@ docker:
     - docker buildx create --use --name multiarch --driver docker-container --bootstrap
   script:
     - docker buildx build
-        --platform linux/amd64
-        --tag $IMAGE_TAG
-        --push
-        ./server
+      --platform linux/amd64
+      --tag $IMAGE_TAG
+      --push
+      ./server
 
 
 deploy:
