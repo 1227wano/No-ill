@@ -19,6 +19,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -96,6 +97,15 @@ public class PetService {
         // 2-4. Refresh Token을 Redis에 저장
         long refreshTokenExpiration = jwtTokenProvider.getRefreshTokenValidityInMilliseconds();
         redisService.setRefreshToken(pet.getPetId(), refreshToken, refreshTokenExpiration);
+
+        // FCM 토큰이 요청에 포함되어 있다면 Redis에 저장
+        // Key: "FCM:PET:{petId}" / Value: {fcmToken} / 기간: 30일
+        if (request.getFcmToken() != null && !request.getFcmToken().isBlank()) {
+            String fcmKey = "FCM:PET:" + pet.getPetId();
+            long duration = Duration.ofDays(30).toMillis(); // 30일 동안 유지
+
+            redisService.setValues(fcmKey, request.getFcmToken(), duration);
+        }
 
         // 2-5. 응답 반환
         return PetLoginResponse.builder()

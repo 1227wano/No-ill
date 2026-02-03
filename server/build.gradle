@@ -64,6 +64,9 @@ dependencies {
     // [Solapi(문자 전송 API)] SDK
     implementation 'net.nurigo:sdk:4.3.0'
 
+    // OpenVidu Java Client
+    implementation 'io.openvidu:openvidu-java-client:2.30.0'
+
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     runtimeOnly 'com.mysql:mysql-connector-j'

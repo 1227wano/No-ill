@@ -1,5 +1,6 @@
 package com.noill.domain.notification.service;
 
+import com.google.firebase.messaging.AndroidConfig;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
@@ -31,11 +32,34 @@ public class FcmService {
             String tokenSuffix = (token != null && token.length() > 10)
                     ? token.substring(token.length() - 10)
                     : token;
-            log.info("FCM 전송 성공: 토큰 끝자리={}, 응답ID={}", tokenSuffix, response);
 
         } catch (Exception e) {
             // 실패하더라도 다른 로직에 영향을 주지 않도록 로그만 남김
             log.warn("FCM 전송 실패: 토큰={}, 에러={}", token, e.getMessage());
+        }
+    }
+
+    // 화상통화 알림 메시지
+    public void sendVideoCallWakeUp(String token, String sessionId) {
+        // 조용히 데이터를 받아서 -> 앱이 스스로 화면을 켜고 -> 화상통화 수신 화면을 띄운다.
+        try {
+            // 우선순위를 높여서(Priority.HIGH) 절전모드여도 즉시 깨움
+            AndroidConfig androidConfig = AndroidConfig.builder()
+                    .setPriority(AndroidConfig.Priority.HIGH)
+                    .build();
+
+            // setNotification() 없이 putData()만 사용
+            Message message = Message.builder()
+                    .setToken(token)
+                    .setAndroidConfig(androidConfig)
+                    .putData("type", "VIDEO_CALL")
+                    .putData("sessionId", sessionId)
+                    .build();
+
+            String response = FirebaseMessaging.getInstance().send(message);
+
+        } catch (Exception e) {
+            log.warn("화상통화 WakeUp 전송 실패: 토큰={}, 에러={}", token, e.getMessage());
         }
     }
 }
