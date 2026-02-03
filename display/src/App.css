@@ -1,4 +1,11 @@
 /* App.css */
+
+/* 뷰포트 기반 동적 폰트 스케일링 */
+/* 1920px에서 16px, 작은 화면에서 비례 축소, 최소 10px */
+html {
+    font-size: clamp(10px, 0.833vw, 16px);
+  }
+
 #root {
     width: 100vw;       /* 화면 전체 너비 사용 */
     min-height: 100vh;   /* 화면 전체 높이 사용 */
@@ -7,7 +14,7 @@
     display: flex;      /* 사이드바와 메인 컨텐츠를 나란히 배치 */
     text-align: left;    /* 중앙 정렬 해제 */
   }
-  
+
   body {
     margin: 0;
     padding: 0;
