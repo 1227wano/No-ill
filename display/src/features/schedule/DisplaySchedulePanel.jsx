@@ -46,7 +46,7 @@ const SchedulePanel = () => {
     };
 
     return (
-        <div className="bg-surface rounded-card p-8 shadow-card h-full flex flex-col">
+        <div className="bg-surface rounded-card p-8 shadow-card h-full flex flex-col min-h-0">
             <div className="flex justify-between items-center mb-8">
                 <h2 className="text-5xl font-bold text-text-main">오늘의 일정</h2>
                 <button onClick={openModal}
@@ -55,7 +55,7 @@ const SchedulePanel = () => {
                 </button>
             </div>
 
-            <div className="flex flex-col gap-5 overflow-y-auto pr-1 flex-1">
+            <div className="flex flex-col gap-5 overflow-y-auto pr-1 flex-1 min-h-0" style={{ WebkitOverflowScrolling: 'touch', touchAction: 'pan-y' }}>
                 {sortedItems.length > 0 ? (
                     sortedItems.map((item) => {
                         const past = isPastTime(item.schTime);
@@ -66,30 +66,30 @@ const SchedulePanel = () => {
                                          ? 'bg-border/30 border-text-body opacity-60'
                                          : 'bg-background border-primary hover:shadow-card'
                                  }`}>
-                                <div className="text-5xl min-w-[72px] flex items-center justify-center">
+                                <div className="text-6xl min-w-[88px] flex items-center justify-center">
                                     {past ? '✔️' : '🗓️'}
                                 </div>
                                 <div className="flex-1 flex flex-col gap-3">
                                     <div className="flex justify-between items-center">
-                                        <h3 className={`text-2xl font-bold ${past ? 'text-text-body line-through' : 'text-text-main'}`}>
+                                        <h3 className={`text-4xl font-bold ${past ? 'text-text-body line-through' : 'text-text-main'}`}>
                                             {item.schName}
                                         </h3>
                                         <div className="flex items-center gap-4">
                                             <button onClick={() => handleEdit(item)}
                                                     className="text-text-body hover:text-primary p-2">
-                                                <Edit size={28}/>
+                                                <Edit size={36}/>
                                             </button>
                                             <button onClick={() => {
                                                 if (window.confirm('정말로 이 일정을 삭제하시겠습니까?')) handleDelete(item.id)
                                             }}
                                                     className="text-text-body hover:text-danger p-2">
-                                                <Trash2 size={28}/>
+                                                <Trash2 size={36}/>
                                             </button>
                                         </div>
                                     </div>
-                                    <p className="text-xl text-text-body">{item.schMemo}</p>
+                                    <p className="text-3xl text-text-body">{item.schMemo}</p>
                                     <span
-                                        className={`text-2xl font-bold mt-1 ${past ? 'text-text-body' : 'text-primary'}`}>
+                                        className={`text-3xl font-bold mt-1 ${past ? 'text-text-body' : 'text-primary'}`}>
                                         {item.schTime ? item.schTime.split('T')[1].substring(0, 5) : ''}
                                     </span>
                                 </div>

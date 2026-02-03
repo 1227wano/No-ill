@@ -100,7 +100,7 @@ const IdleScreen = ({ onWakeUp }) => {
             </div>
 
             {/* 안내 문구 */}
-            <p className="text-4xl text-text-body mt-10 animate-pulse">
+            <p className="text-5xl text-text-body mt-10 animate-pulse">
                 화면을 터치하면 돌아갑니다
             </p>
         </div>

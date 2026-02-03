@@ -24,8 +24,12 @@ const useSchedule = () => {
 
         loadData();
 
+        // 30초마다 일정 갱신
+        const interval = setInterval(loadData, 30 * 1000);
+
         return () => {
             ignore = true;
+            clearInterval(interval);
         };
     }, []);
 
