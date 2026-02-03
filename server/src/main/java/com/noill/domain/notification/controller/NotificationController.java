@@ -22,7 +22,7 @@ public class NotificationController {
     @Operation(summary = "FCM 토큰 등록", description = "로그인 후 호출되어 FCM 토큰 등록")
     @PostMapping("/token")
     public ResponseEntity<Void> registerToken(@AuthenticationPrincipal User user,
-                                              @RequestBody @Valid FcmTokenRequest request) {
+            @RequestBody @Valid FcmTokenRequest request) {
         notificationService.saveToken(user.getUserNo(), request);
         return ResponseEntity.ok().build();
     }

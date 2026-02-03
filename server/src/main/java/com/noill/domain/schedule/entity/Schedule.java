@@ -23,7 +23,7 @@ public class Schedule {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "SCH_NO") // ERD의 '일정번호' 컬럼명 반영
+    @Column(name = "SCH_NO")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -44,11 +44,8 @@ public class Schedule {
     @Column(name = "SCH_STATUS", length = 1, nullable = false)
     private String schStatus = "Y";
 
-    // --- 비즈니스 로직 메서드 ---
-
     /**
      * 일정 수정 (Dirty Checking 용)
-     * Setter를 직접 호출하는 것보다, 의미 있는 메서드를 만들어 사용하는 것이 좋습니다.
      */
     public void update(String schName, String schMemo, LocalDateTime schTime) {
         this.schName = schName;

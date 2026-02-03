@@ -44,3 +44,4 @@ coolsms:
     key: "test-key"
     secret: "test-secret"
     sender: "01000000000"
+

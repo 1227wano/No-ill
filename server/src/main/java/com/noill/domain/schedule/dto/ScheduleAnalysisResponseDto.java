@@ -18,7 +18,7 @@ import lombok.ToString;
 @JsonIgnoreProperties(ignoreUnknown = true) // LLM이 불필요한 필드를 줄 경우 무시
 public class ScheduleAnalysisResponseDto {
 
-    private Command cmd; // 명령어 객체 (중첩 구조)
+    private Command cmd; // 명령어 객체
     private String message; // 사용자에게 응답할 메시지
 
     @Getter

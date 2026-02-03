@@ -25,7 +25,7 @@ public class PetController {
     @Operation(summary = "로봇펫 등록", description = "보호자의 로봇펫 정보 등록")
     @PostMapping("/api/users/pets")
     public ResponseEntity<Void> registerPet(@AuthenticationPrincipal User user,
-                                            @RequestBody PetRegisterRequest request) {
+            @RequestBody PetRegisterRequest request) {
         petService.registerPet(user.getUserNo(), request);
         return ResponseEntity.ok().build();
     }
