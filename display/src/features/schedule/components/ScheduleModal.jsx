@@ -72,33 +72,33 @@ const ScheduleModal = ({ isOpen, onClose, onSave, editingItem }) => {
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
-      <div className="bg-surface rounded-card shadow-card w-full max-w-lg overflow-hidden">
+      <div className="bg-surface rounded-card shadow-card w-full max-w-4xl overflow-hidden animate-pop">
         {/* 헤더 */}
-        <div className="bg-primary p-6 flex justify-between items-center text-white">
-          <span className="font-bold text-2xl flex items-center gap-3">
-            <Calendar size={28} /> {editingItem ? '일정 수정하기' : '새 일정 등록하기'}
+        <div className="bg-primary p-8 flex justify-between items-center text-white">
+          <span className="font-bold text-4xl flex items-center gap-4">
+            <Calendar size={40} /> {editingItem ? '일정 수정하기' : '새 일정 등록하기'}
           </span>
-          <button onClick={onClose} className="hover:bg-white/20 rounded-full p-2 transition-colors"><X size={28} /></button>
+          <button onClick={onClose} className="hover:bg-white/20 rounded-full p-3 transition-colors"><X size={36} /></button>
         </div>
 
         {/* 폼 내용 (스크롤 가능 영역) */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-6 max-h-[80vh] overflow-y-auto">
+        <form onSubmit={handleSubmit} className="p-8 space-y-8 max-h-[80vh] overflow-y-auto">
 
           {/* 1. 템플릿 선택 */}
           <section>
-            <label className="text-body font-bold text-text-body mb-4 block flex items-center gap-2">
-              <FileText size={20} /> 추천 템플릿
+            <label className="text-2xl font-bold text-text-body mb-5 flex items-center gap-3">
+              <FileText size={28} /> 추천 템플릿
             </label>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-4">
               {templates.map((t) => (
                 <button
                   key={t.title}
                   type="button"
                   onClick={() => handleTemplateClick(t)}
-                  className={`text-left p-4 rounded-card border-2 transition-all hover:scale-[1.02] active:scale-95 ${t.colorClass} ${formData.content === t.title ? 'ring-2 ring-primary border-transparent' : 'border-transparent'}`}
+                  className={`text-left p-5 rounded-card border-2 transition-all hover:scale-[1.02] active:scale-95 ${t.colorClass} ${formData.content === t.title ? 'ring-3 ring-primary border-transparent' : 'border-transparent'}`}
                 >
-                  <div className="font-bold text-lg">{t.title}</div>
-                  <div className="text-caption opacity-70">{t.description}</div>
+                  <div className="font-bold text-2xl">{t.title}</div>
+                  <div className="text-lg opacity-70 mt-1">{t.description}</div>
                 </button>
               ))}
             </div>
@@ -111,22 +111,22 @@ const ScheduleModal = ({ isOpen, onClose, onSave, editingItem }) => {
               placeholder="일정 이름을 입력하거나 선택하세요"
               value={formData.content}
               onChange={(e) => setFormData({...formData, content: e.target.value})}
-              className="w-full p-4 bg-background border-2 border-border focus:border-primary rounded-input outline-none transition-all text-xl font-medium"
+              className="w-full p-5 bg-background border-2 border-border focus:border-primary rounded-input outline-none transition-all text-3xl font-medium"
               required
             />
           </section>
 
           {/* 3. 시간 선택 (분리형 스크롤 피커) */}
           <section>
-            <label className="text-body font-bold text-text-body mb-4 block flex items-center gap-2">
-              <Clock size={20} /> 시간 설정 (30분 단위)
+            <label className="text-2xl font-bold text-text-body mb-5 flex items-center gap-3">
+              <Clock size={28} /> 시간 설정 (30분 단위)
             </label>
-            <div className="flex items-center justify-center gap-6 bg-background rounded-card p-4 border border-border">
+            <div className="flex items-center justify-center gap-8 bg-background rounded-card p-6 border border-border">
               {/* 시(Hour) 스크롤 */}
               <div className="flex flex-col items-center">
-                <span className="text-caption text-text-body font-bold mb-2">시</span>
-                <div className="h-36 overflow-y-auto snap-y snap-mandatory px-4 scrollbar-hide">
-                  <div className="h-12" /> {/* 여백용 */}
+                <span className="text-xl text-text-body font-bold mb-3">시</span>
+                <div className="h-48 overflow-y-auto snap-y snap-mandatory px-4 scrollbar-hide">
+                  <div className="h-16" /> {/* 여백용 */}
                   {hours.map(h => {
                     const isPast = !editingItem && parseInt(h) < currentHour;
                     return (
@@ -135,7 +135,7 @@ const ScheduleModal = ({ isOpen, onClose, onSave, editingItem }) => {
                         type="button"
                         disabled={isPast}
                         onClick={() => setFormData({...formData, hour: h})}
-                        className={`h-12 w-16 flex items-center justify-center snap-center text-2xl font-bold transition-all ${
+                        className={`h-16 w-20 flex items-center justify-center snap-center text-3xl font-bold transition-all ${
                           formData.hour === h ? 'text-primary scale-125' : isPast ? 'text-border' : 'text-text-body'
                         }`}
                       >
@@ -143,17 +143,17 @@ const ScheduleModal = ({ isOpen, onClose, onSave, editingItem }) => {
                       </button>
                     );
                   })}
-                  <div className="h-12" /> {/* 여백용 */}
+                  <div className="h-16" /> {/* 여백용 */}
                 </div>
               </div>
 
-              <div className="text-3xl font-light text-border self-center mt-6">:</div>
+              <div className="text-5xl font-light text-border self-center mt-8">:</div>
 
               {/* 분(Minute) 스크롤 */}
               <div className="flex flex-col items-center">
-                <span className="text-caption text-text-body font-bold mb-2">분</span>
-                <div className="h-36 overflow-y-auto snap-y snap-mandatory px-4 scrollbar-hide">
-                  <div className="h-12" />
+                <span className="text-xl text-text-body font-bold mb-3">분</span>
+                <div className="h-48 overflow-y-auto snap-y snap-mandatory px-4 scrollbar-hide">
+                  <div className="h-16" />
                   {minutes.map(m => {
                     const isPast = !editingItem && parseInt(formData.hour) === currentHour && parseInt(m) <= currentMinute;
                     return (
@@ -162,7 +162,7 @@ const ScheduleModal = ({ isOpen, onClose, onSave, editingItem }) => {
                         type="button"
                         disabled={isPast}
                         onClick={() => setFormData({...formData, minute: m})}
-                        className={`h-12 w-16 flex items-center justify-center snap-center text-2xl font-bold transition-all ${
+                        className={`h-16 w-20 flex items-center justify-center snap-center text-3xl font-bold transition-all ${
                           formData.minute === m ? 'text-primary scale-125' : isPast ? 'text-border' : 'text-text-body'
                         }`}
                       >
@@ -170,7 +170,7 @@ const ScheduleModal = ({ isOpen, onClose, onSave, editingItem }) => {
                       </button>
                     );
                   })}
-                  <div className="h-12" />
+                  <div className="h-16" />
                 </div>
               </div>
             </div>
@@ -182,14 +182,14 @@ const ScheduleModal = ({ isOpen, onClose, onSave, editingItem }) => {
               placeholder="메모를 입력하세요 (선택)"
               value={formData.description}
               onChange={(e) => setFormData({...formData, description: e.target.value})}
-              className="w-full p-4 bg-background border border-border rounded-input outline-none h-24 resize-none text-body focus:border-primary transition-all"
+              className="w-full p-5 bg-background border border-border rounded-input outline-none h-32 resize-none text-2xl focus:border-primary transition-all"
             />
           </div>
 
           {/* 제출 버튼 */}
           <button
             type="submit"
-            className="w-full h-[52px] bg-primary text-white rounded-button text-xl font-bold hover:bg-primary/90 shadow-card transition-all active:scale-[0.98]"
+            className="w-full h-[72px] bg-primary text-white rounded-button text-3xl font-bold hover:bg-primary/90 shadow-card transition-all active:scale-[0.98]"
           >
             {editingItem ? '수정 내용 저장하기' : '일정 등록 완료'}
           </button>
