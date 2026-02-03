@@ -1,7 +1,9 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { fetchSchedules, saveSchedule, updateSchedule, deleteSchedule } from '../services/scheduleApi';
+import useAuth from '../../auth/hooks/useAuth';
 
 const useSchedule = () => {
+    const { user } = useAuth();
     const [scheduleItems, setScheduleItems] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingItem, setEditingItem] = useState(null);
@@ -68,13 +70,11 @@ const useSchedule = () => {
         const formattedTime = `${today}T${formData.time}:00`;
 
         const postData = {
-            userNo: 1,
             schName: formData.content,
             schTime: formattedTime,
+            petId: user?.petId || user?.petNo || '',
             schMemo: formData.description || ""
         };
-
-        console.log("전송 데이터 확인:", postData);
 
         try {
             if (editingItem) {
