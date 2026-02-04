@@ -1,6 +1,7 @@
 package com.noill.domain.schedule.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,22 +16,29 @@ import lombok.ToString;
 @Setter
 @NoArgsConstructor
 @ToString
-@JsonIgnoreProperties(ignoreUnknown = true) // LLM이 불필요한 필드를 줄 경우 무시
+@JsonIgnoreProperties(ignoreUnknown = true)
+@Schema(description = "LLM 일정 분석 결과")
 public class ScheduleAnalysisResponseDto {
 
-    private Command cmd; // 명령어 객체
-    private String message; // 사용자에게 응답할 메시지
+    @Schema(description = "명령어 객체")
+    private Command cmd;
+    @Schema(description = "사용자에게 응답할 메시지", example = "내일 오후 2시에 병원 방문 일정을 등록했습니다.")
+    private String message;
 
     @Getter
     @Setter
     @NoArgsConstructor
     @ToString
     @JsonIgnoreProperties(ignoreUnknown = true)
+    @Schema(description = "LLM 분석 명령어")
     public static class Command {
-        private String cmdType; // 명령어 타입 (add_schedule, sleep_start 등)
-        private String title; // 일정 제목 (add_schedule 시)
-        private String datetime; // 일정 시간 (add_schedule 시)
-        private String memo; // 일정 메모 (선택사항)
-
+        @Schema(description = "명령어 타입", example = "add_schedule")
+        private String cmdType;
+        @Schema(description = "일정 제목", example = "병원 방문")
+        private String title;
+        @Schema(description = "일정 시간", example = "2025-02-05T14:00:00")
+        private String datetime;
+        @Schema(description = "일정 메모", example = "내과 정기 검진")
+        private String memo;
     }
 }

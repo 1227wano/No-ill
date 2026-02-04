@@ -9,6 +9,9 @@ import com.noill.domain.user.entity.User;
 import com.noill.domain.user.repository.UserRepository;
 import com.noill.global.redis.RedisService;
 import io.openvidu.java.client.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,10 +23,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+@Tag(name = "OpenVidu API", description = "영상통화(WebRTC) 관련 API")
 @RestController
 @RequestMapping("/api/openvidu")
 @RequiredArgsConstructor
 @Slf4j
+@SecurityRequirement(name = "jwtToken")
 public class OpenViduController {
 
     @Value("${openvidu.url}")
@@ -50,6 +55,7 @@ public class OpenViduController {
      * 보호자가 "전화 걸기"를 누르면 호출됩니다.
      * @return 생성된 세션 ID
      */
+    @Operation(summary = "세션(방) 생성", description = "보호자가 '전화 걸기'를 누르면 호출되어 OpenVidu 세션을 생성합니다.")
     @PostMapping("/sessions")
     public ResponseEntity<String> initializeSession(@RequestBody(required = false) Map<String, Object> params)
             throws OpenViduJavaClientException, OpenViduHttpException {
@@ -69,6 +75,7 @@ public class OpenViduController {
      * 보호자도 호출하고, 로봇펫도 호출합니다.
      * @return 입장 토큰
      */
+    @Operation(summary = "토큰(입장권) 발급", description = "세션 ID로 해당 방에 입장할 수 있는 암호화된 토큰을 발급합니다.")
     @PostMapping("/sessions/{sessionId}/connections")
     public ResponseEntity<String> createConnection(@PathVariable("sessionId") String sessionId,
                                                    @RequestBody(required = false) Map<String, Object> params)
@@ -89,6 +96,7 @@ public class OpenViduController {
         return new ResponseEntity<>(connection.getToken(), HttpStatus.OK);
     }
 
+    @Operation(summary = "로봇펫에게 영상통화 호출", description = "보호자가 로봇펫에게 FCM을 통해 영상통화 호출 신호를 보냅니다.")
     @PostMapping("/call/pet")
     public ResponseEntity<String> callPet(@RequestBody Map<String, String> request) {
         String petId = request.get("petId");         // 누구한테 걸지
@@ -108,6 +116,7 @@ public class OpenViduController {
         return ResponseEntity.ok("호출 신호를 보냈습니다.");
     }
 
+    @Operation(summary = "보호자에게 영상통화 호출", description = "로봇펫이 보호자의 모든 기기에 FCM을 통해 영상통화 호출 신호를 보냅니다.")
     @PostMapping("/call/user")
     public ResponseEntity<String> callUser(@RequestBody Map<String, String> request) {
         String userId = request.get("userId");

@@ -8,6 +8,8 @@ import com.noill.domain.user.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,8 +45,11 @@ public class AuthController {
     }
 
     @Operation(summary = "로그아웃", description = "토큰 형식 로그아웃")
+    @SecurityRequirement(name = "jwtToken")
     @PostMapping("/logout")
-    public ResponseEntity<ApiResponse<Void>> logout(@RequestHeader("Authorization") String accessToken) {
+    public ResponseEntity<ApiResponse<Void>> logout(
+            @Parameter(description = "Bearer 토큰", example = "Bearer eyJhbGci...")
+            @RequestHeader("Authorization") String accessToken) {
         String token = accessToken.substring(7);
 
         authService.logout(token);

@@ -4,6 +4,7 @@ import com.noill.domain.notification.dto.FcmTokenRequest;
 import com.noill.domain.notification.service.NotificationService;
 import com.noill.domain.user.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/notifications")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "jwtToken")
 public class NotificationController {
 
     private final NotificationService notificationService;
