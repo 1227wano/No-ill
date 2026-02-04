@@ -3,6 +3,7 @@ package com.noill.domain.event.controller;
 import com.noill.domain.event.dto.EventResponse;
 import com.noill.domain.event.service.EventService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +18,7 @@ import java.util.List;
 @RequestMapping("/api/events")
 @RequiredArgsConstructor
 @Slf4j
+@SecurityRequirement(name = "jwtToken")
 public class EventController {
 
     private final EventService eventService;

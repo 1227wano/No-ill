@@ -4,16 +4,18 @@ import com.noill.domain.weather.dto.WeatherResponseDto;
 import com.noill.domain.weather.service.WeatherService;
 import lombok.RequiredArgsConstructor;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "날씨 API", description = "오늘의 날씨 정보를 제공하는 API")
+@Tag(name = "Weather API", description = "오늘의 날씨 정보를 제공하는 API")
 @RestController
 @RequestMapping("/api/weather")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "jwtToken")
 public class WeatherController {
 
     private final WeatherService weatherService;
