@@ -1,29 +1,27 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { AuthContext } from './AuthContext';
 import { login as loginApi } from '../services/authApi';
 import { requestFcmToken, registerFcmToken } from '../../videocall/services/fcmService';
 
+const getInitialUser = () => {
+    const token = localStorage.getItem('token');
+    const savedUser = localStorage.getItem('user');
+    if (token && savedUser) {
+        try {
+            return JSON.parse(savedUser);
+        } catch {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+        }
+    }
+    return null;
+};
+
 const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
+    const [user, setUser] = useState(getInitialUser);
+    const [isLoading] = useState(false);
 
     const isAuthenticated = !!user;
-
-    // 앱 시작 시 localStorage에서 사용자 정보 복원
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        const savedUser = localStorage.getItem('user');
-
-        if (token && savedUser) {
-            try {
-                setUser(JSON.parse(savedUser));
-            } catch {
-                localStorage.removeItem('token');
-                localStorage.removeItem('user');
-            }
-        }
-        setIsLoading(false);
-    }, []);
 
     const login = useCallback(async (petNo) => {
         const { token, user: userData } = await loginApi(petNo);
