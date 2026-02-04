@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:noill_app/models/pet_model.dart';
+import 'package:noill_app/models/call_state.dart';
 import 'package:noill_app/providers/call_privoder.dart';
 import 'package:noill_app/providers/care_provider.dart';
 import 'package:noill_app/screens/accident/event_detail_screen.dart';
@@ -64,54 +65,50 @@ void main() async {
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     print("📩 신호가 도착하긴 했습니다!");
 
-    // 1. 우선 Data 주머니 확인, 없으면 Notification 주머니에서 제목/내용이라도 가져옴
-    String? title = message.data['title'] ?? message.notification?.title;
-    String? body = message.data['body'] ?? message.notification?.body;
+    // 화상 통화 FCM (data-only 메시지)
+    if (message.data['type'] == 'VIDEO_CALL') {
+      final sessionId = message.data['sessionId'] ?? '';
+      final petId = message.data['petId'] ?? '';
+
+      // Provider에서 현재 로드된 PetModel 리스트를 가져옵니다.
+      final List<PetModel> pets =
+          container.read(careListProvider).value ?? [];
+
+      // 리스트에서 petId가 일치하는 모델을 찾습니다.
+      final matchedPet = pets.firstWhere(
+        (p) => p.petId == petId,
+        orElse: () => PetModel(petId: petId, careName: "어르신"),
+      );
+
+      // 통화 프로바이더에 수신 정보 전달 (이름 포함)
+      container
+          .read(callProvider.notifier)
+          .setIncomingCall(
+            sessionId,
+            petId,
+            matchedPet.careName,
+          );
+
+      // 화상 통화 화면으로 이동
+      navigatorKey.currentState?.push(
+        MaterialPageRoute(
+          builder: (context) => VideoCallScreen(
+            initialState: CallStatus.incoming,
+            petId: petId,
+            careName: matchedPet.careName,
+          ),
+        ),
+      );
+      return;
+    }
+
+    // 사고 알림 FCM (이미지 포함)
     String? imageUrl =
         message.data['imageUrl'] ?? message.notification?.android?.imageUrl;
 
     if (imageUrl != null) {
-      // 🎯 배너가 보고 있는 프로바이더와 이름을 똑같이 맞춰줍니다!
       container.read(latestAccidentImageProvider.notifier).state = imageUrl;
-
       print("🚀 [성공] 화면을 긴급 모드로 전환합니다: $imageUrl");
-
-      // 화상 통화 로직
-      if (message.data['type'] == 'VIDEO_CALL') {
-        final sessionId = message.data['sessionId'] ?? '';
-        final petId = message.data['petId'] ?? '';
-
-        // 🎯 1. Provider에서 현재 로드된 PetModel 리스트를 가져옵니다.
-        // careListProvider가 반환하는 타입이 List<PetModel>이라고 가정합니다.
-        final List<PetModel> pets =
-            container.read(careListProvider).value ?? [];
-
-        // 🎯 2. 리스트에서 petId가 일치하는 모델을 찾습니다.
-        final PetModel matchedPet = pets.firstWhere(
-          (p) => p.petId == petId,
-          orElse: () => PetModel(petId: petId, careName: "어르신"), // 못 찾을 경우 기본값
-        );
-
-        // 🎯 3. 통화 프로바이더에 수신 정보 전달 (이름 포함)
-        container
-            .read(callProvider.notifier)
-            .setIncomingCall(
-              sessionId,
-              petId,
-              matchedPet.careName, // PetModel에서 가져온 성함
-            );
-
-        // 4. 화상 통화 화면으로 이동
-        navigatorKey.currentState?.push(
-          MaterialPageRoute(
-            builder: (context) => VideoCallScreen(
-              initialState: CallStatus.incoming,
-              petId: petId,
-              careName: matchedPet.careName,
-            ),
-          ),
-        );
-      }
     }
   });
 

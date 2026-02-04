@@ -3,10 +3,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:noill_app/models/call_state.dart';
-import 'package:noill_app/services/call_service.dart';
+import 'package:noill_app/services/openvidu_service.dart';
+import 'package:noill_app/core/network/dio_provider.dart';
 
 import 'package:permission_handler/permission_handler.dart';
-import 'package:flutter_webrtc/flutter_webrtc.dart';
+
+// OpenViduService를 dioProvider로 주입
+final openViduServiceProvider = Provider<OpenViduService>((ref) {
+  final dio = ref.read(dioProvider);
+  return OpenViduService(dio);
+});
 
 final callProvider = StateNotifierProvider<CallNotifier, CallState>((ref) {
   return CallNotifier(ref);
@@ -14,15 +20,17 @@ final callProvider = StateNotifierProvider<CallNotifier, CallState>((ref) {
 
 class CallNotifier extends StateNotifier<CallState> {
   final Ref ref;
-  final _service = OpenViduService();
+  late final OpenViduService _service;
 
-  CallNotifier(this.ref) : super(CallState());
+  CallNotifier(this.ref) : super(CallState()) {
+    _service = ref.read(openViduServiceProvider);
+  }
 
-  // 🎯 1. 렌더러 초기화 (내 화면이 바로 보이도록)
+  // 렌더러 초기화 (내 화면이 바로 보이도록)
   Future<void> initRenderers() async {
     if (state.localRenderer != null) return;
 
-    // 🎯 1. 카메라 및 마이크 권한 요청
+    // 카메라 및 마이크 권한 요청
     Map<Permission, PermissionStatus> statuses = await [
       Permission.camera,
       Permission.microphone,
@@ -35,7 +43,7 @@ class CallNotifier extends StateNotifier<CallState> {
       await local.initialize();
       await remote.initialize();
 
-      // 🎯 2. 실제 내 카메라 스트림 가져오기
+      // 실제 내 카메라 스트림 가져오기
       final Map<String, dynamic> mediaConstraints = {
         'audio': true,
         'video': {
@@ -47,7 +55,7 @@ class CallNotifier extends StateNotifier<CallState> {
         MediaStream stream = await navigator.mediaDevices.getUserMedia(
           mediaConstraints,
         );
-        local.srcObject = stream; // 👈 내 렌더러에 스트림 주입!
+        local.srcObject = stream;
 
         state = state.copyWith(localRenderer: local, remoteRenderer: remote);
         print("✅ 로컬 카메라 스트림 획득 성공");
@@ -59,9 +67,8 @@ class CallNotifier extends StateNotifier<CallState> {
     }
   }
 
-  // 📱 A. 보호자가 전화를 걸 때 (Caller)
+  // 보호자가 전화를 걸 때 (Caller)
   Future<void> startCall(String petId, String careName) async {
-    // 🎯 2. 전화를 걸기 시작하자마자 내 카메라부터 켭니다 (UX 향상)
     await initRenderers();
 
     state = state.copyWith(
@@ -76,9 +83,6 @@ class CallNotifier extends StateNotifier<CallState> {
         final token = await _service.getConnectionToken(sessionId);
         if (token != null) {
           await _service.notifyCall(petId, sessionId);
-
-          // 🎯 3. 실제 WebRTC 연결 로직이 여기에 들어와야 합니다.
-          // _service.connectToSession(token, state.localRenderer);
 
           state = state.copyWith(
             status: CallStatus.connected,
@@ -106,8 +110,7 @@ class CallNotifier extends StateNotifier<CallState> {
     initRenderers();
   }
 
-  // 🎯 4. 자원 해제 (매우 중요!)
-  // 통화가 종료되거나 앱이 꺼질 때 카메라/마이크를 확실히 끕니다.
+  // 자원 해제
   @override
   void dispose() {
     state.localRenderer?.dispose();
@@ -115,7 +118,7 @@ class CallNotifier extends StateNotifier<CallState> {
     super.dispose();
   }
 
-  // 🎯 5. 통화 종료 로직 추가
+  // 통화 종료
   void endCall() {
     state.localRenderer?.srcObject = null;
     state.remoteRenderer?.srcObject = null;

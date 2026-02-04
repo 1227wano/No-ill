@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
-import 'package:noill_app/providers/call_privoder.dart'; // 경로 확인 필요
-
-enum CallStatus { none, calling, incoming, connected, ended }
+import 'package:noill_app/models/call_state.dart';
+import 'package:noill_app/providers/call_privoder.dart';
 
 class VideoCallScreen extends StatefulWidget {
   final CallStatus initialState;
@@ -139,7 +138,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
   }
 
   Widget _buildCenterUI() {
-    if (_currentState == CallStatus.none) return _buildNoneUI();
+    if (_currentState == CallStatus.idle) return _buildIdleUI();
     if (_currentState == CallStatus.calling) return _buildCallingUI();
     if (_currentState == CallStatus.incoming) return _buildIncomingUI();
     return const SizedBox.shrink();
@@ -210,7 +209,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
     );
   }
 
-  Widget _buildNoneUI() {
+  Widget _buildIdleUI() {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -253,7 +252,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
   }
 
   Widget _buildControlBar(WidgetRef ref) {
-    if (_currentState == CallStatus.none) return const SizedBox.shrink();
+    if (_currentState == CallStatus.idle) return const SizedBox.shrink();
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
