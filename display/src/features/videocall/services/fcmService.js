@@ -15,6 +15,7 @@ let messaging = null;
 
 const initFirebase = async () => {
     if (app) return;
+
     if (getApps().length > 0) {
         app = getApps()[0];
     } else {
@@ -22,47 +23,58 @@ const initFirebase = async () => {
     }
     messaging = getMessaging(app);
 
-    // Service Worker 등록 후 Firebase config을 postMessage로 전달
+    // Service Worker 등록
     if ('serviceWorker' in navigator) {
-        const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
-        await navigator.serviceWorker.ready;
-        registration.active.postMessage({
-            type: 'FIREBASE_CONFIG',
-            config: firebaseConfig,
-        });
+        try {
+            const registration = await navigator.serviceWorker.register(
+                '/firebase-messaging-sw.js',
+                { scope: '/' }
+            );
+
+            console.log('✅ Service Worker 등록 완료');
+
+            // 등록 완료 후 설정 전달
+            await navigator.serviceWorker.ready;
+
+            if (registration.active) {
+                registration.active.postMessage({
+                    type: 'FIREBASE_CONFIG',
+                    config: firebaseConfig,
+                });
+            }
+        } catch (error) {
+            console.error('❌ Service Worker 등록 실패:', error);
+        }
     }
 };
 
+
 export const requestFcmToken = async () => {
     try {
-        // 1. 알림 권한 확인
-        const permission = await Notification.requestPermission();
+        // 현재 권한 상태 확인
+        let permission = Notification.permission;
+        console.log('현재 알림 권한:', permission);
+
+        // 권한이 없으면 요청
+        if (permission === 'default') {
+            permission = await Notification.requestPermission();
+        }
 
         if (permission !== 'granted') {
             console.warn('⚠️ 알림 권한이 거부되었습니다');
+            alert('화상통화 알림을 받으려면 알림 권한이 필요합니다.\n브라우저 설정에서 알림을 허용해주세요.');
             return null;
         }
 
-        console.log('✅ 알림 권한 허용됨');
-
-        // 2. Firebase 초기화
         await initFirebase();
-
-        // 3. FCM 토큰 발급
         const vapidKey = import.meta.env.VITE_FIREBASE_VAPID_KEY;
         const token = await getToken(messaging, { vapidKey });
 
-        console.log('✅ FCM token:', token);
+        console.log('✅ FCM token 발급 완료');
         return token;
 
     } catch (error) {
         console.error('❌ FCM 토큰 발급 실패:', error);
-
-        // 권한이 막혀있는 경우 사용자에게 안내
-        if (error.code === 'messaging/permission-blocked') {
-            alert('알림이 차단되었습니다. 브라우저 설정에서 알림을 허용해주세요.');
-        }
-
         return null;
     }
 };
