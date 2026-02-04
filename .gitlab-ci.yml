@@ -100,6 +100,7 @@ docker:
       --build-arg VITE_FIREBASE_MESSAGING_SENDER_ID=$VITE_FIREBASE_MESSAGING_SENDER_ID
       --build-arg VITE_FIREBASE_APP_ID=$VITE_FIREBASE_APP_ID
       --build-arg VITE_FIREBASE_VAPID_KEY=$VITE_FIREBASE_VAPID_KEY
+      --build-arg VITE_WS_URL=$VITE_WS_URL
       -t $IMAGE_TAG ./display
     - docker push $IMAGE_TAG
 
