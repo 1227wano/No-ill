@@ -51,21 +51,36 @@ const initFirebase = async () => {
 
 export const requestFcmToken = async () => {
     try {
-        // 현재 권한 상태 확인
-        let permission = Notification.permission;
-        console.log('현재 알림 권한:', permission);
+        const permission = Notification.permission;
+        console.log('현재 알림 권한 상태:', permission);
 
-        // 권한이 없으면 요청
-        if (permission === 'default') {
-            permission = await Notification.requestPermission();
-        }
+        // 이미 차단된 경우
+        if (permission === 'denied') {
+            const message = `
+알림이 차단되어 있습니다. 다음 방법으로 허용해주세요:
 
-        if (permission !== 'granted') {
-            console.warn('⚠️ 알림 권한이 거부되었습니다');
-            alert('화상통화 알림을 받으려면 알림 권한이 필요합니다.\n브라우저 설정에서 알림을 허용해주세요.');
+1. 주소창 왼쪽의 자물쇠 아이콘 클릭
+2. "알림" 항목 찾기
+3. "허용"으로 변경
+4. 페이지 새로고침
+            `;
+            alert(message);
+
+            // 설정 페이지로 이동하는 UI 표시
             return null;
         }
 
+        // 권한 요청 (사용자 제스처 필요)
+        if (permission === 'default') {
+            const newPermission = await Notification.requestPermission();
+
+            if (newPermission !== 'granted') {
+                alert('알림 권한이 필요합니다. 브라우저 설정에서 허용해주세요.');
+                return null;
+            }
+        }
+
+        // 권한 허용된 경우 토큰 발급
         await initFirebase();
         const vapidKey = import.meta.env.VITE_FIREBASE_VAPID_KEY;
         const token = await getToken(messaging, { vapidKey });
@@ -78,6 +93,7 @@ export const requestFcmToken = async () => {
         return null;
     }
 };
+
 
 export const registerFcmToken = async (fcmToken, petId) => {
     try {
