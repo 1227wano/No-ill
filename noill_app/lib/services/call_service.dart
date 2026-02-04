@@ -2,7 +2,7 @@
 import 'package:dio/dio.dart';
 
 class OpenViduService {
-  final Dio _dio = Dio(BaseOptions(baseUrl: "http://i14a301.p.ssafy.io/api"));
+  final Dio _dio = Dio(BaseOptions(baseUrl: "https://i14a301.p.ssafy.io/api"));
 
   // [Step 2-1] 세션 생성 (보호자용)
   Future<String?> createSession() async {

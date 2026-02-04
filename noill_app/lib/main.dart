@@ -5,9 +5,13 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:noill_app/models/event_model.dart';
+import 'package:noill_app/models/pet_model.dart';
 import 'package:noill_app/providers/call_privoder.dart';
+import 'package:noill_app/providers/care_provider.dart';
 import 'package:noill_app/providers/event_provider.dart';
 import 'package:noill_app/screens/auth/welcome_screen.dart';
+import 'package:noill_app/screens/call/call_screen.dart';
+import 'package:noill_app/services/fcm_service.dart';
 
 import 'firebase_options.dart';
 import 'package:noill_app/core/theme/app_theme.dart';
@@ -70,25 +74,46 @@ void main() async {
         message.data['imageUrl'] ?? message.notification?.android?.imageUrl;
 
     if (imageUrl != null) {
-      container.read(recentEventProvider.notifier).state = EventModel(
-        eventNo: 0,
-        eventTime: DateTime.now(),
-        title: title ?? "낙상 사고 발생",
-        body: body ?? "어르신 상태를 확인하세요.",
-        imageUrl: imageUrl,
-        petId: message.data['petId'] ?? "N0111",
-      );
+      // 🎯 배너가 보고 있는 프로바이더와 이름을 똑같이 맞춰줍니다!
+      container.read(latestAccidentImageProvider.notifier).state = imageUrl;
 
       print("🚀 [성공] 화면을 긴급 모드로 전환합니다: $imageUrl");
 
       // 화상 통화 로직
       if (message.data['type'] == 'VIDEO_CALL') {
-        final sessionId = message.data['sessionId'];
-        // 통화 프로바이더에 수신 상태 알림
-        container.read(callProvider.notifier).setIncomingCall(sessionId);
+        final sessionId = message.data['sessionId'] ?? '';
+        final petId = message.data['petId'] ?? '';
 
-        // 수신 화면(RecentEventScreen과는 다른 통화 전용 화면)으로 이동
-        navigatorKey.currentState?.pushNamed('/call_screen');
+        // 🎯 1. Provider에서 현재 로드된 PetModel 리스트를 가져옵니다.
+        // careListProvider가 반환하는 타입이 List<PetModel>이라고 가정합니다.
+        final List<PetModel> pets =
+            container.read(careListProvider).value ?? [];
+
+        // 🎯 2. 리스트에서 petId가 일치하는 모델을 찾습니다.
+        final matchedPet = pets.firstWhere(
+          (p) => p.petId == petId,
+          orElse: () => PetModel(petId: petId, careName: "어르신"), // 못 찾을 경우 기본값
+        );
+
+        // 🎯 3. 통화 프로바이더에 수신 정보 전달 (이름 포함)
+        container
+            .read(callProvider.notifier)
+            .setIncomingCall(
+              sessionId,
+              petId,
+              matchedPet.careName, // PetModel에서 가져온 성함
+            );
+
+        // 4. 화상 통화 화면으로 이동
+        navigatorKey.currentState?.push(
+          MaterialPageRoute(
+            builder: (context) => VideoCallScreen(
+              initialState: CallStatus.incoming,
+              petId: petId,
+              careName: matchedPet.careName,
+            ),
+          ),
+        );
       }
     }
   });

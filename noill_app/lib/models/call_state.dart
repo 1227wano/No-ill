@@ -1,14 +1,20 @@
 // 통화 상태 정의
-// lib/features/call/models/call_state.dart
+import 'package:flutter_webrtc/flutter_webrtc.dart'; // 추가
+
 enum CallStatus { idle, calling, connected, incoming, ended }
 
 class CallState {
   final CallStatus status;
   final String? sessionId;
-  final String? token; // 오픈비두 세션 토큰
+  final String? token;
   final bool isMicOn;
   final bool isCameraOn;
-  final String? callerName; // 💡 전화를 건 사람 이름을 띄우기 위해 추가하면 좋습니다.
+
+  // 🎯 추가된 필드: 누구와 통화 중인지 식별하기 위함
+  final String? petId;
+  final String? careName;
+  final RTCVideoRenderer? localRenderer; // 내 화면
+  final RTCVideoRenderer? remoteRenderer; // 상대방(어르신) 화면
 
   CallState({
     this.status = CallStatus.idle,
@@ -16,7 +22,10 @@ class CallState {
     this.token,
     this.isMicOn = true,
     this.isCameraOn = true,
-    this.callerName,
+    this.petId, // 🎯 추가
+    this.careName, // 🎯 추가
+    this.localRenderer,
+    this.remoteRenderer,
   });
 
   // 상태 변경을 위한 copyWith
@@ -26,7 +35,10 @@ class CallState {
     String? token,
     bool? isMicOn,
     bool? isCameraOn,
-    String? callerName,
+    String? petId, // 🎯 추가
+    String? careName, // 🎯 추가
+    RTCVideoRenderer? localRenderer,
+    RTCVideoRenderer? remoteRenderer,
   }) {
     return CallState(
       status: status ?? this.status,
@@ -34,7 +46,10 @@ class CallState {
       token: token ?? this.token,
       isMicOn: isMicOn ?? this.isMicOn,
       isCameraOn: isCameraOn ?? this.isCameraOn,
-      callerName: callerName ?? this.callerName,
+      petId: petId ?? this.petId, // 🎯 추가
+      careName: careName ?? this.careName, // 🎯 추가
+      localRenderer: localRenderer ?? this.localRenderer,
+      remoteRenderer: remoteRenderer ?? this.remoteRenderer,
     );
   }
 }

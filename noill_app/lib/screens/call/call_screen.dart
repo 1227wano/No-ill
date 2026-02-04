@@ -1,213 +1,279 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_webrtc/flutter_webrtc.dart';
+import 'package:noill_app/providers/call_privoder.dart'; // 경로 확인 필요
 
-enum CallState { none, calling, incoming, connected } // 통화 상태 정의
+enum CallStatus { none, calling, incoming, connected, ended }
 
 class VideoCallScreen extends StatefulWidget {
-  final CallState initialState;
-  const VideoCallScreen({super.key, this.initialState = CallState.none});
+  final CallStatus initialState;
+  final String petId;
+  final String careName;
+
+  const VideoCallScreen({
+    super.key,
+    required this.initialState,
+    required this.petId,
+    required this.careName,
+  });
 
   @override
   State<VideoCallScreen> createState() => _VideoCallScreenState();
 }
 
 class _VideoCallScreenState extends State<VideoCallScreen> {
-  late CallState _currentState;
+  late CallStatus _currentState;
 
   @override
   void initState() {
     super.initState();
     _currentState = widget.initialState;
 
-    /// [수정] 발신 중(calling)일 때만 자동으로 연결되게 하고,
-    // 수신 중(incoming)일 때는 사용자가 누를 때까지 기다립니다.
-    if (_currentState == CallState.calling) {
-      Future.delayed(const Duration(seconds: 3), () {
-        // 시간을 3초로 늘려 확인하기 편하게 변경
-        if (mounted) setState(() => _currentState = CallState.connected);
+    // 발신 중(calling)일 때만 자동으로 렌더러 초기화 및 타이머 작동
+    if (_currentState == CallStatus.calling) {
+      // 🎯 화면이 그려진 후 바로 카메라 권한 요청 및 렌더러 초기화
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ProviderScope.containerOf(
+          context,
+        ).read(callProvider.notifier).initRenderers();
       });
+      _startAutoConnectTimer();
     }
   }
 
-  // ... 배경화면 이미지 에러 방지 처리
-  Widget _buildBackground() {
-    if (_currentState == CallState.connected) {
-      return Positioned.fill(
-        child: Image.asset(
-          'assets/images/elderly_face.png',
-          fit: BoxFit.cover,
-          // 이미지가 없을 때 에러 대신 회색 배경을 보여줌
-          errorBuilder: (context, error, stackTrace) =>
-              Container(color: Colors.grey[900]),
-        ),
-      );
-    }
-    return Positioned.fill(child: Container(color: const Color(0xFF2C3E50)));
+  void _startAutoConnectTimer() {
+    Future.delayed(const Duration(seconds: 3), () {
+      if (mounted && _currentState == CallStatus.calling) {
+        setState(() => _currentState = CallStatus.connected);
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
-        children: [
-          // 1. 배경 (연결 전에는 프로필, 연결 후에는 카메라 화면)
-          _buildBackground(),
+    return Consumer(
+      builder: (context, ref, child) {
+        // 🎯 여기서 callProvider를 구독합니다.
+        final callState = ref.watch(callProvider);
 
-          // 2. 중앙 정보 (발신 중일 때 노출)
-          if (_currentState == CallState.calling)
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const CircleAvatar(
-                    radius: 60,
-                    backgroundImage: AssetImage(
-                      'assets/images/user_profile.png',
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  const Text(
-                    "Mary Jane",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    "연결 중...",
-                    style: TextStyle(color: Colors.white70, fontSize: 18),
-                  ),
-                ],
-              ),
-            ),
+        return Scaffold(
+          backgroundColor: Colors.black,
+          body: Stack(
+            children: [
+              // 1. 배경 (연결 전에는 어두운 배경, 연결 후에는 어르신 영상)
+              _buildBackground(callState),
 
-          // 2.5. 초기 상태일 때 발신/수신 버튼
-          if (_currentState == CallState.none)
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    "화상통화",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 40),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _buildActionBtn(
-                        Icons.call,
-                        Colors.green,
-                        "발신",
-                        onTap: () =>
-                            setState(() => _currentState = CallState.calling),
-                      ),
-                      const SizedBox(width: 40),
-                      _buildActionBtn(
-                        Icons.call_received,
-                        Colors.blue,
-                        "수신",
-                        onTap: () =>
-                            setState(() => _currentState = CallState.incoming),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-
-          // 2.6. 수신 중일 때 중앙 정보
-          if (_currentState == CallState.incoming)
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // 수신 중일 때 프로필 테두리에 강조 효과
-                  Container(
-                    padding: const EdgeInsets.all(5),
+              // 2. 내 화면 (오른쪽 상단 PIP) - 카메라 권한 허용 및 스트림 획득 시 노출
+              if (callState.localRenderer != null &&
+                  callState.localRenderer!.srcObject != null)
+                Positioned(
+                  top: 50,
+                  right: 20,
+                  child: Container(
+                    width: 120.w,
+                    height: 160.h,
                     decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.greenAccent.withOpacity(0.5),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Colors.white24, width: 2),
+                      boxShadow: const [
+                        BoxShadow(color: Colors.black26, blurRadius: 10),
+                      ],
                     ),
-                    child: const CircleAvatar(
-                      radius: 60,
-                      backgroundImage: AssetImage(
-                        'assets/images/user_profile.png',
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(14),
+                      child: RTCVideoView(
+                        callState.localRenderer!,
+                        mirror: true, // 내 화면은 거울 모드
+                        objectFit:
+                            RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 24),
-                  const Text(
-                    "Mary Jane",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    "화상통화 요청 중",
-                    style: TextStyle(color: Colors.white70, fontSize: 18),
-                  ),
-                ],
-              ),
-            ),
+                ),
 
-          // 3. 하단 컨트롤 바 (상태별 버튼 구성 변경)
-          Positioned(bottom: 60, left: 0, right: 0, child: _buildControlBar()),
+              // 3. 중앙 텍스트 및 프로필 UI
+              _buildCenterUI(),
+
+              // 4. 하단 컨트롤 바
+              Positioned(
+                bottom: 60,
+                left: 0,
+                right: 0,
+                child: _buildControlBar(ref), // ref를 넘겨서 notifier 호출 가능하게 함
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  // --- UI 구성 요소 메서드들 ---
+
+  Widget _buildBackground(dynamic callState) {
+    // 🎯 연결된 상태이고 원격 스트림이 있다면 영상을 보여줍니다.
+    if (_currentState == CallStatus.connected &&
+        callState.remoteRenderer != null) {
+      return Positioned.fill(
+        child: RTCVideoView(
+          callState.remoteRenderer!,
+          objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
+        ),
+      );
+    }
+
+    // 연결 전에는 기존 배경색과 이미지를 보여줍니다.
+    return Positioned.fill(
+      child: Container(
+        color: const Color(0xFF2C3E50),
+        child: _currentState == CallStatus.connected
+            ? Image.asset(
+                'assets/images/elderly_face.png',
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) => Container(),
+              )
+            : null,
+      ),
+    );
+  }
+
+  Widget _buildCenterUI() {
+    if (_currentState == CallStatus.none) return _buildNoneUI();
+    if (_currentState == CallStatus.calling) return _buildCallingUI();
+    if (_currentState == CallStatus.incoming) return _buildIncomingUI();
+    return const SizedBox.shrink();
+  }
+
+  Widget _buildCallingUI() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const CircleAvatar(
+            radius: 60,
+            backgroundColor: Colors.white24,
+            child: Icon(Icons.person, size: 60, color: Colors.white),
+          ),
+          const SizedBox(height: 24),
+          Text(
+            widget.careName,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            "연결 중...",
+            style: TextStyle(color: Colors.white70, fontSize: 18),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildControlBar() {
-    if (_currentState == CallState.none) {
-      return const SizedBox.shrink(); // 초기 상태에서는 컨트롤 바 없음
-    }
-    if (_currentState == CallState.incoming) {
-      // 수신 중: 거절(Red) / 수락(Green) 버튼
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          _buildActionBtn(
-            Icons.call_end,
-            Colors.red,
-            "거절",
-            onTap: () => Navigator.pop(context), // 통화 거절 시 뒤로 가기
-          ),
-          _buildActionBtn(
-            Icons.videocam,
-            Colors.green,
-            "수락",
-            onTap: () => setState(() => _currentState = CallState.connected),
-          ),
-        ],
-      );
-    } else {
-      // 통화 중/발신 중: 음소거, 종료, 스피커
-      return Row(
+  Widget _buildIncomingUI() {
+    return Center(
+      child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _buildActionBtn(Icons.mic_off, Colors.white.withOpacity(0.2), ""),
-          const SizedBox(width: 30),
-          _buildActionBtn(
-            Icons.call_end,
-            Colors.red,
-            "",
-            onTap: () => Navigator.pop(context),
+          Container(
+            padding: const EdgeInsets.all(5),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.greenAccent.withOpacity(0.5),
+            ),
+            child: const CircleAvatar(
+              radius: 60,
+              backgroundColor: Colors.white24,
+              child: Icon(Icons.person, size: 60, color: Colors.white),
+            ),
           ),
-          const SizedBox(width: 30),
-          _buildActionBtn(Icons.volume_up, Colors.white.withOpacity(0.2), ""),
+          const SizedBox(height: 24),
+          Text(
+            widget.careName,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            "화상통화 요청 중",
+            style: TextStyle(color: Colors.white70, fontSize: 18),
+          ),
         ],
-      );
-    }
+      ),
+    );
+  }
+
+  Widget _buildNoneUI() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+            "화상통화",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 32,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 40),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildActionBtn(
+                Icons.call,
+                Colors.green,
+                "발신",
+                onTap: () {
+                  setState(() => _currentState = CallStatus.calling);
+                  _startAutoConnectTimer();
+                },
+              ),
+              const SizedBox(width: 40),
+              _buildActionBtn(
+                Icons.call_received,
+                Colors.blue,
+                "수신",
+                onTap: () {
+                  setState(() => _currentState = CallStatus.incoming);
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildControlBar(WidgetRef ref) {
+    if (_currentState == CallStatus.none) return const SizedBox.shrink();
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        _buildActionBtn(Icons.mic_off, Colors.white.withOpacity(0.2), ""),
+        const SizedBox(width: 30),
+        _buildActionBtn(
+          Icons.call_end,
+          Colors.red,
+          "",
+          onTap: () {
+            // 🎯 종료 시 렌더러 리소스 해제 호출
+            ref.read(callProvider.notifier).endCall();
+            Navigator.pop(context);
+          },
+        ),
+        const SizedBox(width: 30),
+        _buildActionBtn(Icons.volume_up, Colors.white.withOpacity(0.2), ""),
+      ],
+    );
   }
 
   Widget _buildActionBtn(
@@ -221,9 +287,9 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
         GestureDetector(
           onTap: onTap,
           child: Container(
-            padding: const EdgeInsets.all(20),
+            padding: EdgeInsets.all(20.w),
             decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-            child: Icon(icon, color: Colors.white, size: 32),
+            child: Icon(icon, color: Colors.white, size: 32.sp),
           ),
         ),
         if (label.isNotEmpty) ...[

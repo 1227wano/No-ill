@@ -19,42 +19,6 @@ class RobotSection extends ConsumerWidget {
       children: [
         _buildSectionHeader("$robotName 상태", "로봇의 현재 모드와 상태를 알려드려요"),
         SizedBox(height: 8.h),
-        CustomCard(
-          padding: EdgeInsets.all(16.w),
-          child: Row(
-            children: [
-              _buildRobotIcon(),
-              SizedBox(width: 12.w),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "$robotName 상태",
-                      style: TextStyle(
-                        fontSize: 15.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 4.h),
-                    Row(
-                      children: [
-                        _buildStatusTag(
-                          Icons.battery_charging_full,
-                          "85%",
-                          Colors.green,
-                        ),
-                        SizedBox(width: 8.w),
-                        _buildStatusTag(Icons.wifi, "연결됨", Colors.blue),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-        SizedBox(height: 12.h),
         _buildModeButton(context, "순찰모드"),
       ],
     );

@@ -10,6 +10,8 @@ class LatestAccidentBanner extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // 최신 이미지 URL 상태 감시
     final imageUrl = ref.watch(latestAccidentImageProvider);
+    // 🔍 이 로그가 찍히는지 확인하세요!
+    print("📸 배너가 보고 있는 상태: $imageUrl");
 
     // 사고 데이터가 없으면 표시 안 함
     if (imageUrl == null) return const SizedBox.shrink();

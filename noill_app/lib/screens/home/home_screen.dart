@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:noill_app/models/call_state.dart' hide CallStatus;
+import 'package:noill_app/providers/call_privoder.dart';
+import 'package:noill_app/providers/care_provider.dart';
+import 'package:noill_app/screens/call/call_screen.dart';
 
 // 분리된 위젯들 임포트
 import '../../widgets/atoms/light_diffusion_background.dart';
@@ -26,22 +30,70 @@ class HomeScreen extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 16.h),
-
-                const LatestAccidentBanner(), // 1. 실시간 사고 알림 (FCM 이미지)
+                const LatestAccidentBanner(),
 
                 _buildSectionHeader("어르신 선택", "보호 중인 어르신 목록이에요"),
-                const CareDropdown(), // 2. 어르신 드롭다운 (데이터 자가 매핑)
+
+                // 🎯 드롭다운과 통화 버튼 가로 배치
+                Row(
+                  children: [
+                    const Expanded(child: CareDropdown()),
+                    SizedBox(width: 8.w),
+                    SizedBox(
+                      width: 60.w,
+                      height: 52.h,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF6A85B6),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          elevation: 0,
+                        ),
+                        // home_screen.dart 내 onPressed 부분
+                        onPressed: () async {
+                          // 현재 드롭다운에서 선택된 어르신 (Provider가 이미 petId와 careName을 담고 있음)
+                          final selectedPet = ref.read(selectedPetProvider);
+
+                          if (selectedPet == null) return;
+
+                          // 발신 화면으로 실제 데이터 전달
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => VideoCallScreen(
+                                initialState: CallStatus.calling,
+                                petId: selectedPet.petId,
+                                careName: selectedPet.careName,
+                              ),
+                            ),
+                          );
+
+                          // 서버(AWS) API를 통한 실시간 통화 신호 발송
+                          await ref
+                              .read(callProvider.notifier)
+                              .startCall(
+                                selectedPet.petId,
+                                selectedPet.careName,
+                              );
+                        },
+                        child: const Icon(Icons.videocam_rounded, size: 28),
+                      ),
+                    ),
+                  ],
+                ),
 
                 SizedBox(height: 32.h),
                 _buildSectionHeader("실시간 상태", "어르신이 안전하게 계신지 확인하세요"),
-                const StatusCard(), // 3. 상태 카드 (isWarning 자가 판단)
+                const StatusCard(),
 
                 SizedBox(height: 32.h),
-                const RobotSection(), // 4. 로봇 상태 및 모드 (데이터 자가 매핑)
+                const RobotSection(),
 
                 SizedBox(height: 32.h),
                 _buildSectionHeader("오늘의 일정", "예정된 주요 일과들이에요"),
-                const DailyScheduleSection(), // 5. 일정 목록
+                const DailyScheduleSection(), // 🎯 하단 매핑 로직 확인
               ],
             ),
           ),
