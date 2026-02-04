@@ -20,11 +20,14 @@ final callProvider = StateNotifierProvider<CallNotifier, CallState>((ref) {
 
 class CallNotifier extends StateNotifier<CallState> {
   final Ref ref;
-  late final OpenViduService _service;
+  OpenViduService? _serviceInstance;
 
-  CallNotifier(this.ref) : super(CallState()) {
-    _service = ref.read(openViduServiceProvider);
+  OpenViduService get _service {
+    _serviceInstance ??= ref.read(openViduServiceProvider);
+    return _serviceInstance!;
   }
+
+  CallNotifier(this.ref) : super(CallState());
 
   // 렌더러 초기화 (내 화면이 바로 보이도록)
   Future<void> initRenderers() async {
