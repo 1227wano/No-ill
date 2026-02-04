@@ -2,12 +2,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:noill_app/screens/accident/event_screen.dart';
 import '../../core/constants/color_constants.dart';
 import '../../providers/auth_provider.dart';
 import '../auth/welcome_screen.dart';
 import '../onboarding/device_pairing_screen.dart';
 import '../mypage/mypage_screen.dart';
-import '../accident/alarm_screen.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -77,7 +77,9 @@ class SettingsScreen extends ConsumerWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const AlarmScreen()),
+                  MaterialPageRoute(
+                    builder: (context) => const RecentEventScreen(),
+                  ),
                 );
               },
             ),

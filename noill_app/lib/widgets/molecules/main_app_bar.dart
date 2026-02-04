@@ -2,8 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:noill_app/screens/accident/event_screen.dart';
 import '../../core/constants/color_constants.dart';
-import '../../screens/accident/alarm_screen.dart';
 
 class MainAppBar extends ConsumerWidget implements PreferredSizeWidget {
   // 이제 앱바에서는 드롭다운을 쓰지 않으므로 옵션이 필요 없습니다.
@@ -37,7 +37,9 @@ class MainAppBar extends ConsumerWidget implements PreferredSizeWidget {
           child: InkWell(
             onTap: () => Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const AlarmScreen()),
+              MaterialPageRoute(
+                builder: (context) => const RecentEventScreen(),
+              ),
             ),
             child: Container(
               padding: const EdgeInsets.all(8),

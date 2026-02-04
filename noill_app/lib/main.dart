@@ -4,11 +4,10 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:noill_app/models/event_model.dart';
 import 'package:noill_app/models/pet_model.dart';
 import 'package:noill_app/providers/call_privoder.dart';
 import 'package:noill_app/providers/care_provider.dart';
-import 'package:noill_app/providers/event_provider.dart';
+import 'package:noill_app/screens/accident/event_detail_screen.dart';
 import 'package:noill_app/screens/auth/welcome_screen.dart';
 import 'package:noill_app/screens/call/call_screen.dart';
 import 'package:noill_app/services/fcm_service.dart';
@@ -18,7 +17,6 @@ import 'package:noill_app/core/theme/app_theme.dart';
 
 // ✅ 화면 및 서비스 임포트
 import 'screens/main_screen.dart';
-import 'screens/accident/alarm_screen.dart';
 import 'screens/accident/event_screen.dart';
 import 'providers/fcm_provider.dart';
 
@@ -61,7 +59,6 @@ void main() async {
   // Riverpod 컨테이너 생성
   final container = ProviderContainer();
 
-  // TEST
   // main.dart의 onMessage 리스너 부분
   // main.dart의 리스너 부분
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
@@ -90,7 +87,7 @@ void main() async {
             container.read(careListProvider).value ?? [];
 
         // 🎯 2. 리스트에서 petId가 일치하는 모델을 찾습니다.
-        final matchedPet = pets.firstWhere(
+        final PetModel matchedPet = pets.firstWhere(
           (p) => p.petId == petId,
           orElse: () => PetModel(petId: petId, careName: "어르신"), // 못 찾을 경우 기본값
         );
@@ -115,6 +112,20 @@ void main() async {
           ),
         );
       }
+    }
+  });
+
+  FirebaseMessaging.onMessageOpenedApp.listen(
+    (msg) => _handleNotificationClick(msg, container),
+  );
+
+  // 🎯 3. [Terminated] 앱이 완전히 꺼져 있을 때 알림을 눌러 앱을 켠 경우 (추가 필요!)
+  FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message) {
+    if (message != null) {
+      // 앱이 완전히 켜질 때까지 약간의 지연을 주어 내비게이터가 준비되길 기다립니다.
+      Future.delayed(const Duration(milliseconds: 500), () {
+        _handleNotificationClick(message, container);
+      });
     }
   });
 
@@ -148,6 +159,48 @@ Future<void> initializeNotification(ProviderContainer container) async {
   }
 }
 
+// push 알람 눌러서 event 화면으로 이동하는 로직
+
+// 1. 클릭 핸들러 (Background/Terminated 공통)
+void _handleNotificationClick(
+  RemoteMessage message,
+  ProviderContainer container,
+) {
+  final data = message.data;
+
+  // 1. 데이터 추출 (null 방지 처리)
+  final String petId = data['petId'] ?? '';
+  final String title =
+      data['title'] ?? message.notification?.title ?? '낙상 감지 알림';
+  final String body =
+      data['body'] ?? message.notification?.body ?? '어르신의 상태를 확인해주세요.';
+  final String? imageUrl = data['imageUrl'];
+
+  // 2. 어르신 리스트에서 해당 어르신 찾기
+  final List<PetModel> pets = container.read(careListProvider).value ?? [];
+
+  // 타입을 PetModel로 명시하여 빨간 줄 방지
+  final PetModel matchedPet = pets.firstWhere(
+    (p) => p.petId == petId,
+    orElse: () => PetModel(petId: petId, careName: "어르신"),
+  );
+
+  // 3. 화면 이동 (이 부분이 질문하신 구간!)
+  navigatorKey.currentState?.push(
+    MaterialPageRoute(
+      builder: (context) => EventDetailScreen(
+        title: title, // 👈 '변수이름: 값' 형태로 작성
+        body: body, // 👈 '변수이름: 값' 형태로 작성
+        pet: matchedPet, // 👈 위에서 찾은 PetModel 객체 전달
+        imageUrl: imageUrl, // 👈 이미지 URL 전달 (null 가능)
+      ),
+    ),
+  );
+}
+
+// 2. main() 함수 내 리스너 등록
+// FirebaseMessaging.onMessageOpenedApp.listen((msg) => _handleNotificationClick(msg, container));
+
 // 5. 앱 클래스
 class NoIllApp extends StatelessWidget {
   const NoIllApp({super.key});
@@ -168,7 +221,6 @@ class NoIllApp extends StatelessWidget {
           routes: {
             '/': (context) => const SplashScreen(),
             '/main': (context) => const MainScreen(),
-            '/alarm': (context) => const AlarmScreen(),
             '/event_screen': (context) => const RecentEventScreen(),
           },
         );
