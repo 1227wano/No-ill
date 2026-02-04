@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/legacy.dart';
 import 'package:path_provider/path_provider.dart';
 import '../core/network/dio_provider.dart';
 import '../core/network/api_constants.dart';
+import '../core/storage/storage_provider.dart';
 import 'package:noill_app/main.dart';
 
 // ✅ 최신 사고 이미지를 관리하는 상태 (홈 화면에서 구독)
@@ -159,6 +160,14 @@ class FcmService {
 
   Future<bool> sendTokenToServer(String token) async {
     try {
+      // accessToken이 없으면 서버 등록 스킵 (로그인 전 403 방지)
+      final storage = _ref.read(storageProvider);
+      final accessToken = await storage.read(key: 'accessToken');
+      if (accessToken == null || accessToken.isEmpty) {
+        print('⏭️ [FCM] accessToken 없음 - 서버 토큰 등록 스킵');
+        return false;
+      }
+
       await _dio.post(
         ApiConstants.registerNotification,
         data: {'token': token},

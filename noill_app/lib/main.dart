@@ -146,7 +146,6 @@ Future<void> initializeNotification(ProviderContainer container) async {
       print('🚀 [FCM TOKEN]: $token');
       final fcmLogic = container.read(fcmProvider);
 
-      // 서비스 인스턴스를 통한 초기화
       await fcmLogic.service.sendTokenToServer(token);
       await fcmLogic.service.initialize();
       print('✅ [FCM] 초기화 및 토큰 저장 완료');
