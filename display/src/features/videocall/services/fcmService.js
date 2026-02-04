@@ -95,14 +95,25 @@ export const requestFcmToken = async () => {
 };
 
 
-export const registerFcmToken = async (fcmToken, petId) => {
+export const registerFcmToken = async (fcmToken) => {
     try {
-        await client.post('/api/notifications/token', { token: fcmToken, petId });
-        console.log('FCM 토큰 서버 등록 완료');
+        console.log('📤 FCM 토큰 등록 요청');
+
+        const response = await client.post('/api/notifications/token', {
+            token: fcmToken
+            // petId 제거 - 서버에서 User로부터 가져옴
+        });
+
+        console.log('✅ FCM 토큰 서버 등록 완료');
+        return response.data;
+
     } catch (error) {
-        console.error('FCM 토큰 서버 등록 실패:', error);
+        console.error('❌ FCM 토큰 서버 등록 실패:', error.response?.data || error.message);
+        // 에러를 던지지 않고 로그만 남김 (앱 계속 작동)
+        return null;
     }
 };
+
 
 export const onForegroundMessage = async (callback) => {
     await initFirebase();

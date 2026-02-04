@@ -26,21 +26,24 @@ function AppContent() {
 
                     if (userConfirm) {
                         const token = await requestFcmToken();
-                        if (token && user?.petId) {
-                            await registerFcmToken(token, user.petId);
+                        if (token) {
+                            // petId 제거 - 서버가 알아서 처리
+                            await registerFcmToken(token);
                         }
                     }
                 } else if (permission === 'granted') {
                     const token = await requestFcmToken();
-                    if (token && user?.petId) {
-                        await registerFcmToken(token, user.petId);
+                    if (token) {
+                        // petId 제거
+                        await registerFcmToken(token);
                     }
                 }
             }, 1000);
 
             return () => clearTimeout(timer);
         }
-    }, [isAuthenticated, user]);
+    }, [isAuthenticated, user]);  // user 의존성은 유지
+
 
     return (
         <>
