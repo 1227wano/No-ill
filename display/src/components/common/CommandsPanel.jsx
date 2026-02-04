@@ -54,7 +54,7 @@ const CommandsPanel = () => {
             try {
                 console.log('📞 영상통화 요청 전송 중...');
 
-                const response = await client.post('/api/openvidu/call/user');
+                const response = await client.post('/api/openvidu/call/user', {});
 
                 console.log('✅ 영상통화 요청 성공:', response.data);
 
