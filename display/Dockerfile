@@ -1,5 +1,5 @@
-# Build stage
-FROM node:20-alpine AS builder
+# Build stage (Debian 기반 - 네이티브 모듈 빌드 호환성)
+FROM node:20 AS builder
 
 WORKDIR /app
 
