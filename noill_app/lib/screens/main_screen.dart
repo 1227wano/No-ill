@@ -13,6 +13,7 @@ import '../widgets/molecules/main_app_bar.dart';
 import 'home/home_screen.dart';
 import 'schedule/schedule_main_screen.dart';
 import 'settings/settings_screen.dart';
+import 'package:noill_app/models/call_state.dart';
 import 'call/call_screen.dart'; // 화상 통화 화면 가져오기
 import 'auth/welcome_screen.dart';
 

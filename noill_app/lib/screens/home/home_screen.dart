@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:noill_app/models/call_state.dart' hide CallStatus;
+import 'package:noill_app/models/call_state.dart';
 import 'package:noill_app/providers/call_privoder.dart';
 import 'package:noill_app/providers/care_provider.dart';
 import 'package:noill_app/screens/call/call_screen.dart';
