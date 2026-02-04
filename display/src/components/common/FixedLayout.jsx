@@ -1,7 +1,7 @@
 import React, { useSyncExternalStore, useCallback } from 'react';
 
 const DESIGN_WIDTH = 1920;
-const DESIGN_HEIGHT = 1200;
+const DESIGN_HEIGHT = 1080;
 
 const getScale = () => {
     const scaleX = window.innerWidth / DESIGN_WIDTH;
