@@ -1,6 +1,8 @@
 package com.noill.domain.notification.service;
 
 import com.google.firebase.messaging.AndroidConfig;
+import com.google.firebase.messaging.ApnsConfig;
+import com.google.firebase.messaging.Aps;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
@@ -43,15 +45,25 @@ public class FcmService {
     public void sendVideoCallWakeUp(String token, String sessionId) {
         // 조용히 데이터를 받아서 -> 앱이 스스로 화면을 켜고 -> 화상통화 수신 화면을 띄운다.
         try {
-            // 우선순위를 높여서(Priority.HIGH) 절전모드여도 즉시 깨움
+            // Android: 우선순위를 높여서(Priority.HIGH) 절전모드여도 즉시 깨움
             AndroidConfig androidConfig = AndroidConfig.builder()
                     .setPriority(AndroidConfig.Priority.HIGH)
+                    .build();
+
+            // iOS(APNs): content-available=1로 백그라운드 깨움, critical interruption-level
+            ApnsConfig apnsConfig = ApnsConfig.builder()
+                    .putHeader("apns-priority", "10")
+                    .setAps(Aps.builder()
+                            .setContentAvailable(true)
+                            .putCustomData("interruption-level", "critical")
+                            .build())
                     .build();
 
             // setNotification() 없이 putData()만 사용
             Message message = Message.builder()
                     .setToken(token)
                     .setAndroidConfig(androidConfig)
+                    .setApnsConfig(apnsConfig)
                     .putData("type", "VIDEO_CALL")
                     .putData("sessionId", sessionId)
                     .build();

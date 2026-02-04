@@ -102,13 +102,25 @@ public class OpenViduController {
         String petId = request.get("petId");         // 누구한테 걸지
         String sessionId = request.get("sessionId"); // 어느 방으로 오라 할지
 
+        // 입력값 검증
+        if (petId == null || petId.isBlank()) {
+            return ResponseEntity.badRequest().body("petId는 필수 값입니다.");
+        }
+        if (sessionId == null || sessionId.isBlank()) {
+            return ResponseEntity.badRequest().body("sessionId는 필수 값입니다.");
+        }
+
         // 1. 펫 조회
         Pet pet = petRepository.findByPetId(petId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 펫입니다."));
 
         // 2. 펫의 FCM 토큰 조회
-        // Pet 엔티티에 fcmToken 필드가 있거나, FcmTokenRepository에서 조회
         String petFcmToken = redisService.getValues("FCM:PET:" + petId);
+
+        if (petFcmToken == null || petFcmToken.isBlank()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("펫의 FCM 토큰이 등록되어 있지 않습니다.");
+        }
 
         // 3. FCM 전송
         fcmService.sendVideoCallWakeUp(petFcmToken, sessionId);
@@ -121,6 +133,14 @@ public class OpenViduController {
     public ResponseEntity<String> callUser(@RequestBody Map<String, String> request) {
         String userId = request.get("userId");
         String sessionId = request.get("sessionId");
+
+        // 입력값 검증
+        if (userId == null || userId.isBlank()) {
+            return ResponseEntity.badRequest().body("userId는 필수 값입니다.");
+        }
+        if (sessionId == null || sessionId.isBlank()) {
+            return ResponseEntity.badRequest().body("sessionId는 필수 값입니다.");
+        }
 
         // 1. User 검증
         User user = userRepository.findByUserId(userId)
