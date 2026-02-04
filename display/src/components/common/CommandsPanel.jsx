@@ -46,14 +46,51 @@ const CommandsPanel = () => {
 
   const todayQuote = DAILY_QUOTES[new Date().getDate() % DAILY_QUOTES.length];
 
-  const handleVideoCall = () => {
-    const userId = user?.userId || user?.userNo;
-    if (userId) {
-      startCall(userId);
-    } else {
-      alert('보호자 정보를 찾을 수 없습니다.');
-    }
-  };
+    const handleVideoCall = async () => {
+        // Pet 로그인 확인
+        if (user?.isPet || user?.petId) {
+            // Pet 로그인: OpenVidu API 호출
+            try {
+                console.log('📞 영상통화 요청 전송 중...');
+
+                const response = await client.post('/api/openvidu/call/user');
+
+                console.log('✅ 영상통화 요청 성공:', response.data);
+
+                // 성공 메시지 (선택)
+                // alert('보호자에게 영상통화 요청을 보냈습니다.');
+
+            } catch (error) {
+                console.error('❌ 영상통화 요청 실패:', error);
+
+                // 에러 메시지
+                if (error.response) {
+                    const status = error.response.status;
+                    const message = error.response.data?.message;
+
+                    if (status === 401) {
+                        alert('인증이 필요합니다. 다시 로그인해주세요.');
+                    } else if (status === 404) {
+                        alert('보호자 정보를 찾을 수 없습니다.');
+                    } else {
+                        alert(message || '영상통화 요청에 실패했습니다.');
+                    }
+                } else {
+                    alert('네트워크 오류가 발생했습니다.');
+                }
+            }
+
+        } else {
+            // User 로그인: 기존 로직
+            const userId = user?.userId || user?.userNo;
+            if (userId) {
+                startCall(userId);
+            } else {
+                alert('사용자 정보를 찾을 수 없습니다.');
+            }
+        }
+    };
+
 
   const features = [
     {
