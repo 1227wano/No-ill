@@ -1,17 +1,20 @@
 package com.noill.domain.notification.controller;
 
+import com.noill.domain.care.repository.CareRepository;
 import com.noill.domain.notification.dto.FcmTokenRequest;
 import com.noill.domain.notification.service.NotificationService;
+import com.noill.domain.pet.entity.Pet;
+import com.noill.domain.pet.repository.PetRepository;
 import com.noill.domain.user.entity.User;
-import com.noill.domain.user.repository.UserRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -20,7 +23,8 @@ import org.springframework.web.bind.annotation.*;
 public class NotificationController {
 
     private final NotificationService notificationService;
-    private final UserRepository userRepository;
+    private final PetRepository petRepository;
+    private final CareRepository careRepository;
 
     @Operation(summary = "FCM 토큰 등록", description = "로그인 후 호출되어 FCM 토큰 등록")
     @PostMapping("/token")
@@ -33,29 +37,61 @@ public class NotificationController {
             return ResponseEntity.status(401).build();
         }
 
-        Long userNo = null;
         Object principal = authentication.getPrincipal();
+        log.info("=== FCM 토큰 등록 ===");
+        log.info("Principal 타입: {}", principal.getClass().getName());
+        log.info("Principal 값: {}", principal);
 
-        // UserDetails(User 엔티티) 또는 String(userId) 처리
-        if (principal instanceof User) {
-            userNo = ((User) principal).getUserNo();
-            log.info("✅ User 객체로 인증됨: userNo={}", userNo);
-        } else if (principal instanceof String) {
-            String userId = (String) principal;
-            log.info("⚠️ String으로 인증됨: userId={}", userId);
+        List<Long> userNos = extractUserNos(principal);
 
-            User user = userRepository.findByUserId(userId)
-                    .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다: " + userId));
-            userNo = user.getUserNo();
-        } else {
-            log.error("❌ 알 수 없는 Principal 타입: {}", principal.getClass().getName());
-            return ResponseEntity.status(401).build();
+        if (userNos == null || userNos.isEmpty()) {
+            log.error("❌ userNo 추출 실패");
+            return ResponseEntity.status(400).build();
         }
 
-        log.info("FCM 토큰 등록: userNo={}", userNo);
-        notificationService.saveToken(userNo, request);
+        // Pet의 경우 여러 보호자가 있을 수 있으므로 모두 등록
+        for (Long userNo : userNos) {
+            log.info("FCM 토큰 등록: userNo={}", userNo);
+            notificationService.saveToken(userNo, request);
+        }
+
+        log.info("✅ FCM 토큰 등록 완료: {} 명의 보호자", userNos.size());
 
         return ResponseEntity.ok().build();
+    }
+
+    /**
+     * Principal에서 UserNo 목록 추출
+     * - User 로그인: 본인의 userNo 1개
+     * - Pet 로그인: 모든 보호자의 userNo 리스트
+     */
+    private List<Long> extractUserNos(Object principal) {
+        if (principal instanceof User) {
+            // User 직접 로그인
+            User user = (User) principal;
+            log.info("✅ User 로그인: userNo={}", user.getUserNo());
+            return List.of(user.getUserNo());
+
+        } else if (principal instanceof String) {
+            // Pet 로그인 (petId가 String으로 저장됨)
+            String petId = (String) principal;
+            log.info("⚠️ Pet 로그인: petId={}", petId);
+
+            // Pet 조회
+            Pet pet = petRepository.findByPetId(petId)
+                    .orElseThrow(() -> new IllegalArgumentException("반려동물을 찾을 수 없습니다: " + petId));
+
+            // Pet의 모든 보호자(User) 조회
+            List<Long> userNos = careRepository.findByPet(pet).stream()
+                    .map(care -> care.getUser().getUserNo())
+                    .toList();
+
+            log.info("✅ Pet 조회 완료: petId={}, 보호자 수={}", petId, userNos.size());
+            return userNos;
+        }
+
+        log.error("❌ 알 수 없는 Principal 타입: {}", principal.getClass().getName());
+        return List.of();
     }
 
     @Operation(summary = "FCM 토큰 삭제", description = "FCM 토큰 삭제")
