@@ -13,7 +13,7 @@ const firebaseConfig = {
 let app = null;
 let messaging = null;
 
-const initFirebase = () => {
+const initFirebase = async () => {
     if (app) return;
     if (getApps().length > 0) {
         app = getApps()[0];
@@ -21,11 +21,21 @@ const initFirebase = () => {
         app = initializeApp(firebaseConfig);
     }
     messaging = getMessaging(app);
+
+    // Service Worker 등록 후 Firebase config을 postMessage로 전달
+    if ('serviceWorker' in navigator) {
+        const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+        await navigator.serviceWorker.ready;
+        registration.active.postMessage({
+            type: 'FIREBASE_CONFIG',
+            config: firebaseConfig,
+        });
+    }
 };
 
 export const requestFcmToken = async () => {
     try {
-        initFirebase();
+        await initFirebase();
         const vapidKey = import.meta.env.VITE_FIREBASE_VAPID_KEY;
         const token = await getToken(messaging, { vapidKey });
         console.log('FCM token:', token);
@@ -38,15 +48,15 @@ export const requestFcmToken = async () => {
 
 export const registerFcmToken = async (fcmToken, petId) => {
     try {
-        await client.post('/api/fcm/token', { token: fcmToken, petId });
+        await client.post('/api/notifications/token', { token: fcmToken, petId });
         console.log('FCM 토큰 서버 등록 완료');
     } catch (error) {
         console.error('FCM 토큰 서버 등록 실패:', error);
     }
 };
 
-export const onForegroundMessage = (callback) => {
-    initFirebase();
+export const onForegroundMessage = async (callback) => {
+    await initFirebase();
     return onMessage(messaging, (payload) => {
         console.log('FCM foreground message:', payload);
         callback(payload);
