@@ -35,13 +35,34 @@ const initFirebase = async () => {
 
 export const requestFcmToken = async () => {
     try {
+        // 1. 알림 권한 확인
+        const permission = await Notification.requestPermission();
+
+        if (permission !== 'granted') {
+            console.warn('⚠️ 알림 권한이 거부되었습니다');
+            return null;
+        }
+
+        console.log('✅ 알림 권한 허용됨');
+
+        // 2. Firebase 초기화
         await initFirebase();
+
+        // 3. FCM 토큰 발급
         const vapidKey = import.meta.env.VITE_FIREBASE_VAPID_KEY;
         const token = await getToken(messaging, { vapidKey });
-        console.log('FCM token:', token);
+
+        console.log('✅ FCM token:', token);
         return token;
+
     } catch (error) {
-        console.error('FCM 토큰 발급 실패:', error);
+        console.error('❌ FCM 토큰 발급 실패:', error);
+
+        // 권한이 막혀있는 경우 사용자에게 안내
+        if (error.code === 'messaging/permission-blocked') {
+            alert('알림이 차단되었습니다. 브라우저 설정에서 알림을 허용해주세요.');
+        }
+
         return null;
     }
 };
