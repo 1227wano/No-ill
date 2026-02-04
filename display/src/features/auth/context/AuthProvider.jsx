@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { AuthContext } from './AuthContext';
-import { login as loginApi, verifyToken } from '../services/authApi';
+import { login as loginApi } from '../services/authApi';
 import { requestFcmToken, registerFcmToken } from '../../videocall/services/fcmService';
 
 const AuthProvider = ({ children }) => {
@@ -9,53 +9,20 @@ const AuthProvider = ({ children }) => {
 
     const isAuthenticated = !!user;
 
-    // 앱 시작 시 토큰 검증
+    // 앱 시작 시 localStorage에서 사용자 정보 복원
     useEffect(() => {
-        let ignore = false;
+        const token = localStorage.getItem('token');
+        const savedUser = localStorage.getItem('user');
 
-        const checkAuth = async () => {
-            const token = localStorage.getItem('token');
-            const savedUser = localStorage.getItem('user');
-
-            if (!token) {
-                setIsLoading(false);
-                return;
-            }
-
+        if (token && savedUser) {
             try {
-                const userData = await verifyToken();
-                if (!ignore) {
-                    setUser(userData);
-                    localStorage.setItem('user', JSON.stringify(userData));
-                }
-            } catch (error) {
-                console.error('Token verification failed:', error);
-                // verify 실패해도 저장된 user 정보가 있으면 사용
-                if (savedUser) {
-                    try {
-                        const parsedUser = JSON.parse(savedUser);
-                        if (!ignore) {
-                            setUser(parsedUser);
-                        }
-                    } catch {
-                        localStorage.removeItem('token');
-                        localStorage.removeItem('user');
-                    }
-                } else {
-                    localStorage.removeItem('token');
-                }
-            } finally {
-                if (!ignore) {
-                    setIsLoading(false);
-                }
+                setUser(JSON.parse(savedUser));
+            } catch {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
             }
-        };
-
-        checkAuth();
-
-        return () => {
-            ignore = true;
-        };
+        }
+        setIsLoading(false);
     }, []);
 
     const login = useCallback(async (petNo) => {

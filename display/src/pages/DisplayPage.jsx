@@ -17,14 +17,14 @@ const DisplayPage = () => {
     return (
         <div className="h-screen bg-background flex flex-col overflow-hidden">
             <DisplayHeader />
-            <main className="flex-1 grid grid-cols-3 gap-6 py-6 px-10 w-full box-border min-h-0">
-                <div className="flex flex-col gap-6 min-h-0">
+            <main className="flex-1 grid grid-cols-3 grid-rows-[1fr] gap-6 py-6 px-10 w-full box-border min-h-0">
+                <div className="flex flex-col gap-6 min-h-0 overflow-hidden">
                     <GreetingCard />
                 </div>
-                <div className="flex flex-col gap-6 min-h-0">
+                <div className="flex flex-col gap-6 min-h-0 overflow-hidden">
                     <SchedulePanel />
                 </div>
-                <div className="flex flex-col gap-6 min-h-0">
+                <div className="flex flex-col gap-6 min-h-0 overflow-hidden">
                     <CommandsPanel />
                 </div>
             </main>

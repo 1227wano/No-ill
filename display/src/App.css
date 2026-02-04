@@ -4,19 +4,20 @@
 /* 1920px에서 16px, 작은 화면에서 비례 축소, 최소 10px */
 html {
     font-size: clamp(10px, 0.833vw, 16px);
-  }
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+    background: #FDFBF7;
+}
 
 #root {
-    width: 100vw;       /* 화면 전체 너비 사용 */
-    min-height: 100vh;   /* 화면 전체 높이 사용 */
-    margin: 0;
-    padding: 0;
-    display: flex;      /* 사이드바와 메인 컨텐츠를 나란히 배치 */
-    text-align: left;    /* 중앙 정렬 해제 */
-  }
-
-  body {
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden; /* 가로 스크롤 방지 */
-  }
+    width: 100vw;
+    height: 100vh;
+    text-align: left;
+    overflow: hidden;
+}

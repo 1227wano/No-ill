@@ -88,11 +88,11 @@ const realLogin = async (petId) => {
     };
 };
 
-const realVerifyToken = async () => {
-    const response = await client.get('/api/auth/pet/verify');
-    return response.data.data;
-};
+// Tolelom: 백엔드 토큰 검증 미구현으로 인한 주석 처리
+// const realVerifyToken = async () => {
+//     const response = await client.get('/api/auth/pet/verify');
+//     return response.data.data;
+// };
 
 // Export - 환경변수에 따라 Mock/Real 전환
 export const login = USE_MOCK ? mockLogin : realLogin;
-export const verifyToken = USE_MOCK ? mockVerifyToken : realVerifyToken;

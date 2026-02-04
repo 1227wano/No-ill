@@ -32,7 +32,7 @@ const LoginPage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-background flex flex-col items-center justify-center p-10">
+        <div className="h-full w-full bg-background flex flex-col items-center justify-center p-10">
             <div className="bg-surface rounded-card shadow-card p-16 w-full max-w-2xl">
                 {/* 로고 영역 */}
                 <div className="flex flex-col items-center mb-12">
