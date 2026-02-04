@@ -82,20 +82,31 @@ const VideoCallProvider = ({ children }) => {
     // 발신: 디스플레이 → 보호자
     const startCall = useCallback(async (userId) => {
         try {
+            console.log('📞 [Step 1] 전화 걸기 시작, userId:', userId);
             setCallState('calling');
 
+            console.log('📞 [Step 2] 세션 생성 요청...');
             const sessionData = await createSession();
             const sessionId = sessionData.sessionId || sessionData;
+            console.log('✅ [Step 2] 세션 생성 완료:', sessionId);
 
+            console.log('📞 [Step 3] 토큰 발급 요청...');
             const connectionData = await createConnection(sessionId);
             const token = connectionData.token || connectionData;
+            console.log('✅ [Step 3] 토큰 발급 완료:', token?.substring(0, 20) + '...');
 
+            console.log('📞 [Step 4] 상대방 호출...');
             await callUser(userId, sessionId);
+            console.log('✅ [Step 4] 상대방 호출 완료');
+
+            console.log('📞 [Step 5] OpenVidu 연결...');
             await connectToSession(token);
+            console.log('✅ [Step 5] OpenVidu 연결 완료');
 
             setCallState('ringing');
         } catch (error) {
-            console.error('영상 통화 발신 실패:', error);
+            console.error('❌ 영상 통화 발신 실패:', error);
+            console.error('❌ Error stack:', error.stack);
             cleanup();
             setCallState('idle');
         }
