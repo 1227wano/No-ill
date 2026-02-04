@@ -6,7 +6,7 @@ import { onForegroundMessage } from '../services/fcmService';
 import { useAuth } from '../../auth';
 
 const VideoCallProvider = ({ children }) => {
-    const { user, isAuthenticated } = useAuth();
+    const { isAuthenticated } = useAuth();
     const [callState, setCallState] = useState('idle');
     const [incomingCall, setIncomingCall] = useState(null);
     const [localStream, setLocalStream] = useState(null);

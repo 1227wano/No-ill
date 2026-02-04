@@ -20,18 +20,6 @@ const generateMockToken = (user) => {
     return btoa(encodeURIComponent(JSON.stringify(payload)));
 };
 
-const parseMockToken = (token) => {
-    try {
-        const payload = JSON.parse(decodeURIComponent(atob(token)));
-        if (payload.exp < Date.now()) {
-            return null; // 만료됨
-        }
-        return payload;
-    } catch {
-        return null;
-    }
-};
-
 // Mock API 함수들
 const mockLogin = async (petNo) => {
     // 네트워크 지연 시뮬레이션
@@ -51,26 +39,6 @@ const mockLogin = async (petNo) => {
 
     const token = generateMockToken(user);
     return { token, user };
-};
-
-const mockVerifyToken = async () => {
-    await new Promise((resolve) => setTimeout(resolve, 200));
-
-    const token = localStorage.getItem('token');
-    if (!token) {
-        throw new Error('토큰이 없습니다.');
-    }
-
-    const payload = parseMockToken(token);
-    if (!payload) {
-        throw new Error('유효하지 않은 토큰입니다.');
-    }
-
-    return {
-        userNo: payload.userNo,
-        userName: payload.userName,
-        petNo: payload.petNo,
-    };
 };
 
 // 실제 API 함수들

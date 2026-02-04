@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 
 const EMOJI_POOL = ['🐶', '🐱', '🐰', '🦊', '🐻', '🐼', '🐨', '🦁', '🐸', '🌸', '🌻', '⭐', '🍎', '🍊', '🎵', '❤️'];
 
@@ -28,9 +28,9 @@ const MemoryGameOverlay = ({ onClose }) => {
     const [moves, setMoves] = useState(0);
     const [matchedCount, setMatchedCount] = useState(0);
     const [isChecking, setIsChecking] = useState(false);
-    const [gameComplete, setGameComplete] = useState(false);
-
     const totalPairs = 6;
+
+    const gameComplete = matchedCount === totalPairs;
 
     const handleCardClick = useCallback((id) => {
         if (isChecking) return;
@@ -83,19 +83,12 @@ const MemoryGameOverlay = ({ onClose }) => {
         }
     }, [cards, selected, isChecking]);
 
-    useEffect(() => {
-        if (matchedCount === totalPairs) {
-            setGameComplete(true);
-        }
-    }, [matchedCount]);
-
     const resetGame = () => {
         setCards(generateCards(6));
         setSelected([]);
         setMoves(0);
         setMatchedCount(0);
         setIsChecking(false);
-        setGameComplete(false);
     };
 
     return (

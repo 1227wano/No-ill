@@ -47,7 +47,7 @@ const getGreeting = (timeOfDay, userName) => {
   return greetings[timeOfDay] || greetings.morning;
 };
 
-const getPetMessage = (mood, weather) => {
+const getPetMessage = (mood) => {
   const messages = {
     worried: '오늘은 미세먼지가 많아요. 외출을 자제해주세요!',
     hot: '오늘 많이 덥네요! 물 자주 드세요 💧',
@@ -74,7 +74,7 @@ const GreetingCard = () => {
 
   const petMood = getPetMood(timeOfDay, weather, airQuality);
   const greeting = getGreeting(timeOfDay, user?.userName);
-  const petMessage = getPetMessage(petMood.mood, weather);
+  const petMessage = getPetMessage(petMood.mood);
 
   return (
     <div className="bg-surface rounded-card p-8 flex flex-col items-center shadow-card h-full">

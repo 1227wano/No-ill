@@ -1,22 +1,21 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useSyncExternalStore, useCallback } from 'react';
 
 const DESIGN_WIDTH = 1920;
 const DESIGN_HEIGHT = 1200;
 
-const FixedLayout = ({ children }) => {
-    const [scale, setScale] = useState(1);
+const getScale = () => {
+    const scaleX = window.innerWidth / DESIGN_WIDTH;
+    const scaleY = window.innerHeight / DESIGN_HEIGHT;
+    return Math.min(scaleX, scaleY);
+};
 
-    const updateScale = useCallback(() => {
-        const scaleX = window.innerWidth / DESIGN_WIDTH;
-        const scaleY = window.innerHeight / DESIGN_HEIGHT;
-        setScale(Math.min(scaleX, scaleY));
+const FixedLayout = ({ children }) => {
+    const subscribe = useCallback((callback) => {
+        window.addEventListener('resize', callback);
+        return () => window.removeEventListener('resize', callback);
     }, []);
 
-    useEffect(() => {
-        updateScale();
-        window.addEventListener('resize', updateScale);
-        return () => window.removeEventListener('resize', updateScale);
-    }, [updateScale]);
+    const scale = useSyncExternalStore(subscribe, getScale);
 
     return (
         <div
