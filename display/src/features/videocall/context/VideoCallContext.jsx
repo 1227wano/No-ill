@@ -8,6 +8,7 @@ export const VideoCallContext = createContext({
     isMicOn: true,
     isCameraOn: true,
     startCall: () => {},
+    startPetCall: () => {},
     acceptCall: () => {},
     rejectCall: () => {},
     endCall: () => {},

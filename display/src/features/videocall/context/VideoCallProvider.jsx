@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { OpenVidu } from 'openvidu-browser';
 import { VideoCallContext } from './VideoCallContext';
-import { createSession, createConnection, callUser } from '../services/openviduApi';
+import { createSession, createConnection, callUser, callUsersByPet } from '../services/openviduApi';
 import { onForegroundMessage } from '../services/fcmService';
 import { useAuth } from '../../auth';
 
@@ -266,6 +266,39 @@ const VideoCallProvider = ({ children }) => {
         };
     }, []);
 
+
+    // 발신: 디스플레이(Pet) → 연결된 보호자 전원
+    const startPetCall = useCallback(async () => {
+        try {
+            console.log('📞 [PetCall] 전화 걸기 시작');
+            setCallState('calling');
+
+            console.log('📞 [PetCall] 세션 생성 요청...');
+            const sessionData = await createSession();
+            const sessionId = sessionData.sessionId || sessionData;
+            console.log('✅ [PetCall] 세션 생성 완료:', sessionId);
+
+            console.log('📞 [PetCall] 토큰 발급 요청...');
+            const connectionData = await createConnection(sessionId);
+            const token = connectionData.token || connectionData;
+            console.log('✅ [PetCall] 토큰 발급 완료');
+
+            console.log('📞 [PetCall] 보호자 전원 호출...');
+            await callUsersByPet(sessionId);
+            console.log('✅ [PetCall] 보호자 호출 완료');
+
+            console.log('📞 [PetCall] OpenVidu 연결...');
+            await connectToSession(token);
+            console.log('✅ [PetCall] OpenVidu 연결 완료');
+
+            setCallState('ringing');
+        } catch (error) {
+            console.error('❌ [PetCall] 영상 통화 발신 실패:', error);
+            cleanup();
+            setCallState('idle');
+        }
+    }, [connectToSession, cleanup]);
+
     const value = {
         callState,
         incomingCall,
@@ -274,6 +307,7 @@ const VideoCallProvider = ({ children }) => {
         isMicOn,
         isCameraOn,
         startCall,
+        startPetCall,
         acceptCall,
         rejectCall,
         endCall,

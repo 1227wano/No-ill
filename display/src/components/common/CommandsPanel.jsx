@@ -8,7 +8,7 @@ const CommandsPanel = () => {
     const [showAIHelp, setShowAIHelp] = useState(false);
     const [showGame, setShowGame] = useState(false);
     const [showQuote, setShowQuote] = useState(false);
-    const {startCall} = useVideoCall();
+    const {startCall, startPetCall} = useVideoCall();
     const {user} = useAuth();
 
     const DAILY_QUOTES = [
@@ -48,19 +48,12 @@ const CommandsPanel = () => {
     const todayQuote = DAILY_QUOTES[new Date().getDate() % DAILY_QUOTES.length];
 
     const handleVideoCall = async () => {
+        // Pet 로그인 확인
         if (user?.isPet || user?.petId) {
-            // ✅ Pet도 startCall 흐름을 타도록 변경 (세션 생성/토큰/호출/연결까지 일관 처리)
-            const targetUserId =
-                user?.ownerUserId || user?.careUserId || user?.linkedUserId || user?.userId;
-
-            if (!targetUserId) {
-                alert('보호자 userId 정보를 찾을 수 없습니다. (Pet 계정에 연결된 보호자 ID가 필요합니다)');
-                return;
-            }
-
-            startCall(targetUserId);
+            startPetCall();
             return;
         }
+
         // User 로그인: 기존 로직
         const userId = user?.userId || user?.userNo;
         if (userId) {
@@ -69,7 +62,6 @@ const CommandsPanel = () => {
             alert('사용자 정보를 찾을 수 없습니다.');
         }
     };
-
 
     const features = [
         {

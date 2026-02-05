@@ -84,3 +84,16 @@ export const callPet = async (petId, sessionId) => {
         throw error;
     }
 };
+
+export const callUsersByPet = async (sessionId) => {
+    try {
+        const response = await client.post('/api/openvidu/call/users-by-pet', {
+            sessionId
+        });
+        console.log('📥 callUsersByPet response:', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('❌ callUsersByPet error:', error.response?.data || error.message);
+        throw error;
+    }
+};
