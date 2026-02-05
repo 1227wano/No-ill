@@ -123,6 +123,7 @@ public class OpenViduController {
         }
 
         // 3. FCM 전송
+
         fcmService.sendVideoCallWakeUp(petFcmToken, sessionId);
 
         return ResponseEntity.ok("호출 신호를 보냈습니다.");
@@ -162,6 +163,7 @@ public class OpenViduController {
             successCount++;
         }
 
+        log.info(userId ": 요청, " + successCount + "대의 보호자 기기에 호출 신호를 보냈습니다.");
         return ResponseEntity.ok(successCount + "대의 보호자 기기에 호출 신호를 보냈습니다.");
     }
 }
