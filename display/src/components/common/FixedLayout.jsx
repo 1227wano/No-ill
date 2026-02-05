@@ -1,38 +1,60 @@
-import React, { useSyncExternalStore, useCallback } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 const DESIGN_WIDTH = 1920;
 const DESIGN_HEIGHT = 1080;
 
-const getScale = () => {
-    const scaleX = window.innerWidth / DESIGN_WIDTH;
-    const scaleY = window.innerHeight / DESIGN_HEIGHT;
-    return Math.min(scaleX, scaleY);
-};
+const Fixed1920x1080 = ({ children, background = '#000' }) => {
+    const [viewport, setViewport] = useState({ w: window.innerWidth, h: window.innerHeight });
 
-const FixedLayout = ({ children }) => {
-    const subscribe = useCallback((callback) => {
-        window.addEventListener('resize', callback);
-        return () => window.removeEventListener('resize', callback);
+    useEffect(() => {
+        const onResize = () => setViewport({ w: window.innerWidth, h: window.innerHeight });
+        window.addEventListener('resize', onResize);
+        return () => window.removeEventListener('resize', onResize);
     }, []);
 
-    const scale = useSyncExternalStore(subscribe, getScale);
+    const scale = useMemo(() => {
+        return Math.min(viewport.w / DESIGN_WIDTH, viewport.h / DESIGN_HEIGHT);
+    }, [viewport]);
+
+    const scaledW = Math.round(DESIGN_WIDTH * scale);
+    const scaledH = Math.round(DESIGN_HEIGHT * scale);
 
     return (
         <div
             style={{
-                position: 'fixed',
-                top: '50%',
-                left: '50%',
-                width: `${DESIGN_WIDTH}px`,
-                height: `${DESIGN_HEIGHT}px`,
-                transform: `translate(-50%, -50%) scale(${scale})`,
-                transformOrigin: 'center center',
+                width: '100vw',
+                height: '100vh',
+                background,
                 overflow: 'hidden',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
             }}
         >
-            {children}
+            {/* 가운데 정렬 + scale */}
+            <div
+                style={{
+                    width: DESIGN_WIDTH,
+                    height: DESIGN_HEIGHT,
+                    transform: `scale(${scale})`,
+                    transformOrigin: 'center center',
+                    willChange: 'transform',
+                }}
+            >
+                {children}
+            </div>
+
+            {/* (선택) 디버그용: 실제 스케일된 영역 확인하고 싶으면 아래 주석 해제 */}
+            {/*
+      <div style={{
+        position:'fixed', left: 12, bottom: 12, color:'#fff', fontSize: 12, opacity: 0.7
+      }}>
+        viewport={viewport.w}x{viewport.h} scale={scale.toFixed(3)} scaled={scaledW}x{scaledH}
+      </div>
+      */}
         </div>
     );
 };
+
 
 export default FixedLayout;
