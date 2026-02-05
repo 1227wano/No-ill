@@ -5,7 +5,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:noill_app/models/pet_model.dart';
-import 'package:noill_app/models/call_state.dart';
 import 'package:noill_app/providers/call_privoder.dart';
 import 'package:noill_app/providers/care_provider.dart';
 import 'package:noill_app/screens/accident/event_detail_screen.dart';
@@ -93,7 +92,7 @@ void main() async {
       navigatorKey.currentState?.push(
         MaterialPageRoute(
           builder: (context) => VideoCallScreen(
-            initialState: CallStatus.incoming,
+            isIncoming: true,
             petId: petId,
             careName: matchedPet.careName,
           ),
@@ -129,10 +128,9 @@ void main() async {
   // 알림 초기화 실행
   await initializeNotification(container);
 
-  // runApp(
-  //   UncontrolledProviderScope(container: container, child: const NoIllApp()),
-  // );
-  runApp(const ProviderScope(child: NoIllApp()));
+  runApp(
+    UncontrolledProviderScope(container: container, child: const NoIllApp()),
+  );
 }
 
 // 4. 알림 초기화 로직

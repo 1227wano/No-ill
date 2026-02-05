@@ -1,12 +1,14 @@
-// lib/features/call/providers/call_provider.dart
+import 'dart:io';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:noill_app/models/call_state.dart';
 import 'package:noill_app/services/openvidu_service.dart';
 import 'package:noill_app/core/network/dio_provider.dart';
 
-import 'package:permission_handler/permission_handler.dart';
+import 'package:openvidu_flutter/utils/session.dart';
+import 'package:openvidu_flutter/participant/local_participant.dart';
+import 'package:openvidu_flutter/utils/custom_websocket.dart';
 
 // OpenViduService를 dioProvider로 주입
 final openViduServiceProvider = Provider<OpenViduService>((ref) {
@@ -29,51 +31,67 @@ class CallNotifier extends StateNotifier<CallState> {
 
   CallNotifier(this.ref) : super(CallState());
 
-  // 렌더러 초기화 (내 화면이 바로 보이도록)
-  Future<void> initRenderers() async {
-    if (state.localRenderer != null) return;
+  /// OpenVidu 서버에 WebRTC 연결을 수립합니다.
+  Future<void> _connectToOpenVidu(String sessionId, String token) async {
+    try {
+      // 1. Session 객체 생성
+      final session = Session(sessionId, token);
 
-    // 카메라 및 마이크 권한 요청
-    Map<Permission, PermissionStatus> statuses = await [
-      Permission.camera,
-      Permission.microphone,
-    ].request();
-
-    if (statuses[Permission.camera]!.isGranted &&
-        statuses[Permission.microphone]!.isGranted) {
-      final local = RTCVideoRenderer();
-      final remote = RTCVideoRenderer();
-      await local.initialize();
-      await remote.initialize();
-
-      // 실제 내 카메라 스트림 가져오기
-      final Map<String, dynamic> mediaConstraints = {
-        'audio': true,
-        'video': {
-          'facingMode': 'user', // 전면 카메라
-        },
+      // 2. 이벤트 핸들러 등록 (원격 참가자 입장/퇴장/스트림 변경 시 UI 갱신)
+      session.onNotifySetRemoteMediaStream = (String connectionId) {
+        print('📹 [OpenVidu] 원격 스트림 수신: $connectionId');
+        _refreshState();
+      };
+      session.onAddRemoteParticipant = (String connectionId) {
+        print('👤 [OpenVidu] 원격 참가자 입장: $connectionId');
+        _refreshState();
+      };
+      session.onRemoveRemoteParticipant = (String connectionId) {
+        print('👋 [OpenVidu] 원격 참가자 퇴장: $connectionId');
+        _refreshState();
       };
 
-      try {
-        MediaStream stream = await navigator.mediaDevices.getUserMedia(
-          mediaConstraints,
-        );
-        local.srcObject = stream;
+      // 3. 메시지 스트림 구독
+      session.messageStream.listen((_) => _refreshState());
 
-        state = state.copyWith(localRenderer: local, remoteRenderer: remote);
-        print("✅ 로컬 카메라 스트림 획득 성공");
-      } catch (e) {
-        print("❌ 카메라 스트림 획득 실패: $e");
-      }
-    } else {
-      print("🚫 카메라/마이크 권한이 거부되었습니다.");
+      // 4. 로컬 참가자 생성 및 카메라 시작
+      final localParticipant = LocalParticipant('user', session);
+      await localParticipant.renderer.initialize();
+      await localParticipant.startLocalCamera();
+      print('✅ [OpenVidu] 로컬 카메라 시작 완료');
+
+      // 5. WebSocket 연결 (OpenVidu 시그널링 서버)
+      final webSocket = CustomWebSocket(
+        session,
+        customClient: HttpClient()
+          ..badCertificateCallback = (X509Certificate cert, String host, int port) => true,
+      );
+      webSocket.onErrorEvent = (error) {
+        print('❌ [OpenVidu] WebSocket 에러: $error');
+      };
+      webSocket.connect();
+      session.setWebSocket(webSocket);
+      print('✅ [OpenVidu] WebSocket 연결 완료');
+
+      // 6. 상태 업데이트
+      state = state.copyWith(
+        session: session,
+        status: CallStatus.connected,
+      );
+    } catch (e) {
+      print('❌ [OpenVidu] 연결 실패: $e');
+      state = state.copyWith(status: CallStatus.ended);
     }
   }
 
-  // 보호자가 전화를 걸 때 (Caller)
-  Future<void> startCall(String petId, String careName) async {
-    await initRenderers();
+  /// state를 다시 emit하여 UI를 갱신합니다.
+  void _refreshState() {
+    if (!mounted) return;
+    state = state.copyWith();
+  }
 
+  /// 보호자가 전화를 걸 때 (Caller)
+  Future<void> startCall(String petId, String careName) async {
     state = state.copyWith(
       status: CallStatus.calling,
       petId: petId,
@@ -81,26 +99,67 @@ class CallNotifier extends StateNotifier<CallState> {
     );
 
     try {
+      // 1. 세션 생성
       final sessionId = await _service.createSession();
-      if (sessionId != null) {
-        final token = await _service.getConnectionToken(sessionId);
-        if (token != null) {
-          await _service.notifyCall(petId, sessionId);
-
-          state = state.copyWith(
-            status: CallStatus.connected,
-            sessionId: sessionId,
-            token: token,
-          );
-        }
+      if (sessionId == null) {
+        print('❌ [Call] 세션 생성 실패');
+        state = state.copyWith(status: CallStatus.ended);
+        return;
       }
+      print('✅ [Call] 세션 생성: $sessionId');
+
+      // 2. 토큰 발급
+      final token = await _service.getConnectionToken(sessionId);
+      if (token == null) {
+        print('❌ [Call] 토큰 발급 실패');
+        state = state.copyWith(status: CallStatus.ended);
+        return;
+      }
+      print('✅ [Call] 토큰 발급 완료');
+
+      state = state.copyWith(sessionId: sessionId, token: token);
+
+      // 3. 상대방에게 FCM 알림
+      await _service.notifyCall(petId, sessionId);
+      print('✅ [Call] 상대방 호출 완료');
+
+      // 4. OpenVidu WebRTC 연결
+      await _connectToOpenVidu(sessionId, token);
     } catch (e) {
-      print("❌ 통화 시작 오류: $e");
-      state = state.copyWith(status: CallStatus.idle);
+      print('❌ [Call] 통화 시작 오류: $e');
+      state = state.copyWith(status: CallStatus.ended);
     }
   }
 
-  // 전화 수신
+  /// 수신 측에서 전화를 받을 때 (Callee - FCM 수신 후)
+  Future<void> acceptIncomingCall() async {
+    final sessionId = state.sessionId;
+    if (sessionId == null) {
+      print('❌ [Call] sessionId 없음 - 수락 불가');
+      return;
+    }
+
+    try {
+      // 토큰 발급
+      final token = await _service.getConnectionToken(sessionId);
+      if (token == null) {
+        print('❌ [Call] 수신 토큰 발급 실패');
+        state = state.copyWith(status: CallStatus.ended);
+        return;
+      }
+      print('✅ [Call] 수신 토큰 발급 완료');
+
+      state = state.copyWith(token: token);
+
+      // OpenVidu WebRTC 연결
+      await _connectToOpenVidu(sessionId, token);
+    } catch (e) {
+      print('❌ [Call] 수신 연결 오류: $e');
+      state = state.copyWith(status: CallStatus.ended);
+    }
+  }
+
+  /// FCM으로 수신 전화 정보 설정
   void setIncomingCall(String sessionId, String petId, String careName) {
     state = state.copyWith(
       status: CallStatus.incoming,
@@ -108,23 +167,34 @@ class CallNotifier extends StateNotifier<CallState> {
       petId: petId,
       careName: careName,
     );
-
-    // 통화 화면 진입 전 렌더러(카메라/마이크 뷰어) 초기화
-    initRenderers();
   }
 
-  // 자원 해제
-  @override
-  void dispose() {
-    state.localRenderer?.dispose();
-    state.remoteRenderer?.dispose();
-    super.dispose();
-  }
-
-  // 통화 종료
+  /// 통화 종료 및 자원 해제
   void endCall() {
-    state.localRenderer?.srcObject = null;
-    state.remoteRenderer?.srcObject = null;
-    state = CallState(); // 상태 초기화
+    try {
+      state.session?.leaveSession();
+      print('✅ [Call] 세션 종료');
+    } catch (e) {
+      print('⚠️ [Call] 세션 종료 중 오류: $e');
+    }
+    state = CallState();
+  }
+
+  /// 마이크 토글
+  void toggleAudio() {
+    state.session?.localToggleAudio();
+    _refreshState();
+  }
+
+  /// 카메라 토글
+  void toggleVideo() {
+    state.session?.localToggleVideo();
+    _refreshState();
+  }
+
+  /// 카메라 전환 (전면/후면)
+  void switchCamera() {
+    state.session?.localParticipant?.switchCamera();
+    _refreshState();
   }
 }

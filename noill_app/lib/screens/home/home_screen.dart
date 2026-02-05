@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:noill_app/models/call_state.dart';
-import 'package:noill_app/providers/call_privoder.dart';
 import 'package:noill_app/providers/care_provider.dart';
 import 'package:noill_app/screens/call/call_screen.dart';
 
@@ -51,32 +49,20 @@ class HomeScreen extends ConsumerWidget {
                           ),
                           elevation: 0,
                         ),
-                        // home_screen.dart 내 onPressed 부분
-                        onPressed: () async {
-                          // 현재 드롭다운에서 선택된 어르신 (Provider가 이미 petId와 careName을 담고 있음)
+                        onPressed: () {
                           final selectedPet = ref.read(selectedPetProvider);
-
                           if (selectedPet == null) return;
 
-                          // 발신 화면으로 실제 데이터 전달
+                          // 발신 화면으로 이동 (startCall은 화면 내부에서 호출됨)
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => VideoCallScreen(
-                                initialState: CallStatus.calling,
                                 petId: selectedPet.petId,
                                 careName: selectedPet.careName,
                               ),
                             ),
                           );
-
-                          // 서버(AWS) API를 통한 실시간 통화 신호 발송
-                          await ref
-                              .read(callProvider.notifier)
-                              .startCall(
-                                selectedPet.petId,
-                                selectedPet.careName,
-                              );
                         },
                         child: const Icon(Icons.videocam_rounded, size: 28),
                       ),
