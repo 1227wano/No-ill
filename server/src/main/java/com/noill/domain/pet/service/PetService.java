@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@lombok.extern.slf4j.Slf4j
 public class PetService {
 
     private final PetRepository petRepository;
@@ -105,6 +106,9 @@ public class PetService {
             long duration = Duration.ofDays(30).toMillis(); // 30일 동안 유지
 
             redisService.setValues(fcmKey, request.getFcmToken(), duration);
+            log.info("✅ [Pet 로그인] FCM 토큰 저장 완료 - petId: {}, key: {}", pet.getPetId(), fcmKey);
+        } else {
+            log.warn("⚠️ [Pet 로그인] FCM 토큰이 없음 - petId: {}", pet.getPetId());
         }
 
         // 2-5. 응답 반환

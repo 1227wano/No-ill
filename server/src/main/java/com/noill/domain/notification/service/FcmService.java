@@ -69,9 +69,10 @@ public class FcmService {
                     .build();
 
             String response = FirebaseMessaging.getInstance().send(message);
+            log.info("✅ 화상통화 WakeUp FCM 전송 성공: sessionId={}, response={}", sessionId, response);
 
         } catch (Exception e) {
-            log.warn("화상통화 WakeUp 전송 실패: 토큰={}, 에러={}", token, e.getMessage());
+            log.error("❌ 화상통화 WakeUp 전송 실패: 토큰={}, sessionId={}, 에러={}", token, sessionId, e.getMessage(), e);
         }
     }
 }

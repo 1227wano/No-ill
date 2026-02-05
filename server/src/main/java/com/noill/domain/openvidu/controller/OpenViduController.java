@@ -102,30 +102,41 @@ public class OpenViduController {
         String petId = request.get("petId");         // 누구한테 걸지
         String sessionId = request.get("sessionId"); // 어느 방으로 오라 할지
 
+        log.info("📞 [callPet] 요청 수신 - petId: {}, sessionId: {}", petId, sessionId);
+
         // 입력값 검증
         if (petId == null || petId.isBlank()) {
+            log.warn("❌ [callPet] petId 누락");
             return ResponseEntity.badRequest().body("petId는 필수 값입니다.");
         }
         if (sessionId == null || sessionId.isBlank()) {
+            log.warn("❌ [callPet] sessionId 누락");
             return ResponseEntity.badRequest().body("sessionId는 필수 값입니다.");
         }
 
         // 1. 펫 조회
         Pet pet = petRepository.findByPetId(petId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 펫입니다."));
+                .orElseThrow(() -> {
+                    log.error("❌ [callPet] 존재하지 않는 펫: {}", petId);
+                    return new IllegalArgumentException("존재하지 않는 펫입니다.");
+                });
+        log.info("✅ [callPet] 펫 조회 성공: {}", pet.getPetId());
 
         // 2. 펫의 FCM 토큰 조회
         String petFcmToken = redisService.getValues("FCM:PET:" + petId);
+        log.info("🔍 [callPet] Redis 조회 키: FCM:PET:{}, 토큰 존재: {}", petId, petFcmToken != null && !petFcmToken.isBlank());
 
         if (petFcmToken == null || petFcmToken.isBlank()) {
+            log.error("❌ [callPet] 펫 FCM 토큰 없음 - petId: {}", petId);
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("펫의 FCM 토큰이 등록되어 있지 않습니다.");
         }
 
         // 3. FCM 전송
-
+        log.info("📤 [callPet] FCM 전송 시도 - 토큰(마지막10자): ...{}", petFcmToken.substring(Math.max(0, petFcmToken.length() - 10)));
         fcmService.sendVideoCallWakeUp(petFcmToken, sessionId);
 
+        log.info("✅ [callPet] 호출 완료 - petId: {}, sessionId: {}", petId, sessionId);
         return ResponseEntity.ok("호출 신호를 보냈습니다.");
     }
 
