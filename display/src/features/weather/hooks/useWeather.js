@@ -31,25 +31,30 @@ const useWeather = (refreshInterval = 30 * 60 * 1000) => {
             });
 
             // PM10 값을 등급으로 변환
-            const pm10Value = parseInt(data.pm10);
+            const pm10Value = data.pm10 !== null && data.pm10 !== undefined ? parseInt(data.pm10) : null;
             if (isNaN(pm10Value)) {
                 console.error('PM10 데이터가 잘못되었습니다:', data.pm10);
-                throw new Error('PM10 데이터 형식 오류');
+                // PM10 데이터가 없거나 잘못된 경우, 기본값으로 설정
+                setAirQuality({
+                    pm10: null,
+                    text: '알수없음',
+                    colorClass: 'text-gray-500',
+                });
+            } else {
+                const gradeText = {
+                    '1': '좋음',
+                    '2': '보통',
+                    '3': '나쁨',
+                    '4': '매우나쁨'
+                };
+                const grade = gradeText[getGradeByPm10(pm10Value)] || '알수없음';
+
+                setAirQuality({
+                    pm10: data.pm10,
+                    text: grade,
+                    colorClass: getAirQualityColorByGrade(grade),
+                });
             }
-
-            const gradeText = {
-                '1': '좋음',
-                '2': '보통',
-                '3': '나쁨',
-                '4': '매우나쁨'
-            };
-            const grade = gradeText[getGradeByPm10(pm10Value)] || '알수없음';
-
-            setAirQuality({
-                pm10: data.pm10,
-                text: grade,
-                colorClass: getAirQualityColorByGrade(grade),
-            });
         } catch (err) {
             console.error('날씨 정보 조회 실패:', err);
             setError(err.message);
