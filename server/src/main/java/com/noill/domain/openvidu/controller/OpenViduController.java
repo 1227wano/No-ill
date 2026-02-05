@@ -54,6 +54,7 @@ public class OpenViduController {
     /**
      * 1. 세션(방) 생성
      * 보호자가 "전화 걸기"를 누르면 호출됩니다.
+     *
      * @return 생성된 세션 ID
      */
     @Operation(summary = "세션(방) 생성", description = "보호자가 '전화 걸기'를 누르면 호출되어 OpenVidu 세션을 생성합니다.")
@@ -74,6 +75,7 @@ public class OpenViduController {
      * 2. 토큰(입장권) 발급
      * 세션 ID를 가지고 이 API를 호출하면, 해당 방에 들어갈 수 있는 암호화된 토큰을 줍니다.
      * 보호자도 호출하고, 로봇펫도 호출합니다.
+     *
      * @return 입장 토큰
      */
     @Operation(summary = "토큰(입장권) 발급", description = "세션 ID로 해당 방에 입장할 수 있는 암호화된 토큰을 발급합니다.")
@@ -127,33 +129,41 @@ public class OpenViduController {
         String fcmKey = "FCM:PET:" + petId;
         Set<Object> members = redisService.getSetMembers(fcmKey);
 
-        int targetCount = 0;
-
+        int successCount = 0;
+        int invalidCount = 0;
         if (members != null && !members.isEmpty()) {
             for (Object m : members) {
                 if (!(m instanceof String token)) continue;
                 if (token.isBlank()) continue;
 
-                fcmService.sendVideoCallWakeUp(token, sessionId);
-                targetCount++;
+                FcmService.SendResult result = fcmService.sendVideoCallWakeUp(token, sessionId);
+                if (result.success()) {
+                    successCount++;
+                } else if (result.invalidToken()) {
+                    invalidCount++;
+                    redisService.removeFromSet(fcmKey, token);
+                }
             }
         } else {
-            // (호환) 혹시 과거 방식(단일 value)로 저장된 경우 fallback
             String singleToken = redisService.getValues(fcmKey);
             if (singleToken != null && !singleToken.isBlank()) {
-                fcmService.sendVideoCallWakeUp(singleToken, sessionId);
-                targetCount = 1;
+                FcmService.SendResult result = fcmService.sendVideoCallWakeUp(singleToken, sessionId);
+                if (result.success()) {
+                    successCount = 1;
+                }
             }
         }
 
-        if (targetCount == 0) {
-            log.error("❌ [callPet] 펫 FCM 토큰 없음 - petId: {}", petId);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("펫의 FCM 토큰이 등록되어 있지 않습니다.");
+        if (successCount == 0) {
+            log.warn("⚠️ [callPet] FCM 전송 성공 0건 - petId: {}, sessionId: {}, invalidRemoved: {}", petId, sessionId, invalidCount);
+            return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
+                    .body("호출 신호 전송에 실패했습니다. (invalidRemoved=" + invalidCount + ")");
         }
 
-        log.info("✅ [callPet] 호출 완료 - petId: {}, sessionId: {}, targets: {}", petId, sessionId, targetCount);
-        return ResponseEntity.ok("호출 신호를 보냈습니다. targets=" + targetCount);
+        log.info("✅ [callPet] 호출 완료 - petId: {}, sessionId: {}, success: {}, invalidRemoved: {}",
+                petId, sessionId, successCount, invalidCount);
+
+        return ResponseEntity.ok("호출 신호를 보냈습니다. success=" + successCount + ", invalidRemoved=" + invalidCount);
     }
 
     @Operation(summary = "보호자에게 영상통화 호출", description = "로봇펫이 보호자의 모든 기기에 FCM을 통해 영상통화 호출 신호를 보냅니다.")
