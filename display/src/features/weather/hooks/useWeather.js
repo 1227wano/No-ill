@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios'; // axios 추가
+import axios from 'axios';
 
 const useWeather = (refreshInterval = 30 * 60 * 1000) => {
     const [weather, setWeather] = useState(null);
@@ -15,13 +15,28 @@ const useWeather = (refreshInterval = 30 * 60 * 1000) => {
             const response = await axios.get('/api/weather/today');
             const data = response.data;
 
+            // 데이터 유효성 검사 및 변환
+            const temp = parseFloat(data.temperature);
+            const humidity = parseInt(data.humidity);
+
+            // NaN 체크
+            if (isNaN(temp) || isNaN(humidity)) {
+                console.error('기상 데이터가 잘못되었습니다:', { temperature: data.temperature, humidity: data.humidity });
+                throw new Error('기상 데이터 형식 오류');
+            }
+
             setWeather({
-                temp: Math.round(parseFloat(data.temperature)),
-                humidity: parseInt(data.humidity),
+                temp: Math.round(temp),
+                humidity: humidity,
             });
 
             // PM10 값을 등급으로 변환
             const pm10Value = parseInt(data.pm10);
+            if (isNaN(pm10Value)) {
+                console.error('PM10 데이터가 잘못되었습니다:', data.pm10);
+                throw new Error('PM10 데이터 형식 오류');
+            }
+
             const gradeText = {
                 '1': '좋음',
                 '2': '보통',
