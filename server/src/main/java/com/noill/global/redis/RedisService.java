@@ -1,5 +1,6 @@
 package com.noill.global.redis;
 
+import io.lettuce.core.RedisCommandExecutionException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -53,23 +54,52 @@ public class RedisService {
     /**
      * Redis Set에 값을 추가하고 TTL을 duration으로 갱신합니다.
      * - 중복 토큰은 자동으로 제거됨(Set 특성)
-     * - 로그인/재등록 시 TTL이 연장되는 효과
+     * - 기존에 같은 key가 String(Value)로 저장되어 있던 레거시 데이터를 만나면
+     *   "읽기(GET) -> 삭제(DEL) -> Set으로 재저장(SADD)"로 자동 마이그레이션합니다.
      */
     public void addToSetAndExpire(String key, String value, long durationMillis) {
-        redisTemplate.opsForSet().add(key, value);
-        redisTemplate.expire(key, durationMillis, TimeUnit.MILLISECONDS);
+        try {
+            redisTemplate.opsForSet().add(key, value);
+            redisTemplate.expire(key, durationMillis, TimeUnit.MILLISECONDS);
+        } catch (Exception e) {
+            if (isWrongType(e)) {
+                // 레거시(String)로 저장된 값이 있으면 백업해뒀다가 Set으로 옮김
+                String legacy = null;
+                try {
+                    legacy = (String) redisTemplate.opsForValue().get(key);
+                } catch (Exception ignore) {
+                    // 레거시 값이 Set/Hash 등 다른 타입이면 여기서도 실패할 수 있으니 무시
+                }
+
+                redisTemplate.delete(key);
+
+                if (legacy != null && !legacy.isBlank()) {
+                    redisTemplate.opsForSet().add(key, legacy);
+                }
+                redisTemplate.opsForSet().add(key, value);
+                redisTemplate.expire(key, durationMillis, TimeUnit.MILLISECONDS);
+                return;
+            }
+            throw e;
+        }
     }
 
-    /**
-     * Redis Set의 모든 멤버를 조회합니다.
-     */
+    private boolean isWrongType(Throwable t) {
+        Throwable cur = t;
+        while (cur != null) {
+            if (cur instanceof RedisCommandExecutionException ex) {
+                String msg = ex.getMessage();
+                if (msg != null && msg.contains("WRONGTYPE")) return true;
+            }
+            cur = cur.getCause();
+        }
+        return false;
+    }
+
     public Set<Object> getSetMembers(String key) {
         return redisTemplate.opsForSet().members(key);
     }
 
-    /**
-     * Redis Set에서 특정 멤버를 제거합니다.
-     */
     public void removeFromSet(String key, String value) {
         redisTemplate.opsForSet().remove(key, value);
     }
