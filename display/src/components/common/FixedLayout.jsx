@@ -16,9 +16,6 @@ const Fixed1920x1080 = ({ children, background = '#000' }) => {
         return Math.min(viewport.w / DESIGN_WIDTH, viewport.h / DESIGN_HEIGHT);
     }, [viewport]);
 
-    const scaledW = Math.round(DESIGN_WIDTH * scale);
-    const scaledH = Math.round(DESIGN_HEIGHT * scale);
-
     return (
         <div
             style={{
