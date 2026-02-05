@@ -105,7 +105,6 @@ const VideoCallProvider = ({ children }) => {
             await connectToSession(token);
             console.log('✅ [Step 5] OpenVidu 연결 완료');
 
-            setCallState('ringing');
         } catch (error) {
             console.error('❌ 영상 통화 발신 실패:', error);
             console.error('❌ Error stack:', error.stack);
@@ -291,7 +290,6 @@ const VideoCallProvider = ({ children }) => {
             await connectToSession(token);
             console.log('✅ [PetCall] OpenVidu 연결 완료');
 
-            setCallState('ringing');
         } catch (error) {
             console.error('❌ [PetCall] 영상 통화 발신 실패:', error);
             cleanup();
