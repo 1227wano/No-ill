@@ -163,7 +163,7 @@ public class OpenViduController {
             successCount++;
         }
 
-        log.info(userId ": 요청, " + successCount + "대의 보호자 기기에 호출 신호를 보냈습니다.");
+        log.info("{} 요청, {}대의 보호자 기기에 호출 신호를 보냈습니다.", userId, successCount);
         return ResponseEntity.ok(successCount + "대의 보호자 기기에 호출 신호를 보냈습니다.");
     }
 }
