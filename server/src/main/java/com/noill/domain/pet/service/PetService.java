@@ -132,4 +132,17 @@ public class PetService {
                 .map(PetResponse::from)
                 .collect(Collectors.toList());
     }
+
+    // Pet FCM 토큰 등록 (별도 API용)
+    public void registerPetFcmToken(String petId, String fcmToken) {
+        // petId 검증
+        petRepository.findByPetId(petId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 펫입니다: " + petId));
+
+        String fcmKey = "FCM:PET:" + petId;
+        long duration = Duration.ofDays(30).toMillis(); // 30일 유지
+
+        redisService.setValues(fcmKey, fcmToken, duration);
+        log.info("✅ [Pet FCM 등록] 완료 - petId: {}, key: {}", petId, fcmKey);
+    }
 }
