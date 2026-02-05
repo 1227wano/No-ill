@@ -19,34 +19,51 @@ function initializeFirebase() {
     firebase.initializeApp(firebaseConfig);
     const messaging = firebase.messaging();
 
-    // 백그라운드 메시지 핸들러 (초기 평가 시점에 등록)
+    // 백그라운드 메시지 핸들러
     messaging.onBackgroundMessage((payload) => {
         console.log('[SW] 백그라운드 메시지 수신:', payload);
 
-        const notificationTitle = payload.notification?.title || '새 알림';
+        const data = payload.data || {};
+
+        // 🔥 핵심: 알림 클릭을 기다리지 말고, 열린 페이지가 있으면 즉시 전달
+        if (data.type === 'VIDEO_CALL' && data.sessionId) {
+            notifyClientsIncomingCall(data);
+        }
+
+        const notificationTitle = payload.notification?.title || (data.type === 'VIDEO_CALL' ? '영상 통화' : '새 알림');
         const notificationOptions = {
             body: payload.notification?.body || '',
             icon: '/logo.png',
             badge: '/badge.png',
-            data: payload.data,
-            tag: payload.data?.type || 'default',
+            data,
+            tag: data?.type || 'default',
         };
 
         return self.registration.showNotification(notificationTitle, notificationOptions);
     });
 }
 
-// 알림 클릭 이벤트 (초기 평가 시점에 등록)
+async function notifyClientsIncomingCall(data) {
+    const clientList = await clients.matchAll({ type: 'window', includeUncontrolled: true });
+
+    for (const client of clientList) {
+        client.postMessage({
+            type: 'VIDEO_CALL_INCOMING',
+            sessionId: data.sessionId,
+            callerName: data.callerName || '보호자',
+        });
+    }
+}
+
+// 알림 클릭 이벤트
 self.addEventListener('notificationclick', (event) => {
     console.log('[SW] 알림 클릭:', event.notification.data);
     event.notification.close();
 
     const data = event.notification.data;
 
-    // 화상통화 알림인 경우
     if (data?.type === 'VIDEO_CALL' && data?.sessionId) {
         event.waitUntil(
-            // 이미 열린 창이 있으면 포커스하고 메시지 전달
             clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
                 for (const client of clientList) {
                     if (client.url.includes(self.location.origin)) {
@@ -58,7 +75,6 @@ self.addEventListener('notificationclick', (event) => {
                         return client.focus();
                     }
                 }
-                // 열린 창이 없으면 새 창 열기
                 return clients.openWindow(`/?incomingCall=${data.sessionId}`);
             })
         );
@@ -67,22 +83,28 @@ self.addEventListener('notificationclick', (event) => {
     }
 });
 
-// Push 이벤트 (초기 평가 시점에 등록)
+// Push 이벤트
 self.addEventListener('push', (event) => {
     console.log('[SW] Push 이벤트 수신:', event.data?.text());
 
     if (event.data) {
-        const data = event.data.json();
-        const title = data.notification?.title || '새 알림';
+        const raw = event.data.json();
+
+        const data = raw.data || {};
+
+        // 🔥 핵심: push 이벤트로 들어온 data-only 메시지도 즉시 페이지로 전달
+        if (data.type === 'VIDEO_CALL' && data.sessionId) {
+            event.waitUntil(notifyClientsIncomingCall(data));
+        }
+
+        const title = raw.notification?.title || (data.type === 'VIDEO_CALL' ? '영상 통화' : '새 알림');
         const options = {
-            body: data.notification?.body || '',
+            body: raw.notification?.body || '',
             icon: '/logo.png',
-            data: data.data,
+            data,
         };
 
-        event.waitUntil(
-            self.registration.showNotification(title, options)
-        );
+        event.waitUntil(self.registration.showNotification(title, options));
     }
 });
 
@@ -93,7 +115,6 @@ self.addEventListener('pushsubscriptionchange', (event) => {
         self.registration.pushManager.subscribe(event.oldSubscription.options)
             .then((subscription) => {
                 console.log('[SW] 구독 갱신 완료');
-                // 서버에 새 구독 정보 전송
                 return fetch('/api/notifications/update-subscription', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
