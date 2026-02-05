@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { OpenVidu } from 'openvidu-browser';
 import { VideoCallContext } from './VideoCallContext';
 import { createSession, createConnection, callUser } from '../services/openviduApi';
@@ -7,6 +8,7 @@ import { useAuth } from '../../auth';
 
 const VideoCallProvider = ({ children }) => {
     const { isAuthenticated } = useAuth();
+    const [searchParams, setSearchParams] = useSearchParams();
     const [callState, setCallState] = useState('idle');
     const [incomingCall, setIncomingCall] = useState(null);
     const [localStream, setLocalStream] = useState(null);
@@ -114,18 +116,27 @@ const VideoCallProvider = ({ children }) => {
 
     // 수신 수락
     const acceptCall = useCallback(async () => {
-        if (!incomingCall) return;
+        if (!incomingCall) {
+            console.log('❌ [acceptCall] incomingCall이 없음');
+            return;
+        }
 
         try {
+            console.log('📞 [acceptCall] 수신 수락 시작, sessionId:', incomingCall.sessionId);
             setCallState('calling');
 
+            console.log('📞 [acceptCall] 토큰 발급 요청...');
             const connectionData = await createConnection(incomingCall.sessionId);
             const token = connectionData.token || connectionData;
+            console.log('✅ [acceptCall] 토큰 발급 완료');
 
+            console.log('📞 [acceptCall] OpenVidu 연결 시작...');
             await connectToSession(token);
+            console.log('✅ [acceptCall] OpenVidu 연결 완료');
+
             setIncomingCall(null);
         } catch (error) {
-            console.error('영상 통화 수락 실패:', error);
+            console.error('❌ 영상 통화 수락 실패:', error);
             cleanup();
             setCallState('idle');
             setIncomingCall(null);
@@ -168,22 +179,28 @@ const VideoCallProvider = ({ children }) => {
         if (!isAuthenticated) return;
 
         let unsubscribe;
-        try {
-            unsubscribe = onForegroundMessage((payload) => {
-                const data = payload.data || {};
-                if (data.type === 'VIDEO_CALL' && data.sessionId) {
-                    if (callState === 'idle') {
-                        setIncomingCall({
-                            sessionId: data.sessionId,
-                            callerName: data.callerName || '보호자',
-                        });
-                        setCallState('ringing');
+        const setupFcmListener = async () => {
+            try {
+                unsubscribe = await onForegroundMessage((payload) => {
+                    console.log('📞 [FCM] 포그라운드 메시지 수신:', payload);
+                    const data = payload.data || {};
+                    if (data.type === 'VIDEO_CALL' && data.sessionId) {
+                        if (callState === 'idle') {
+                            console.log('📞 [FCM] 수신 전화 설정:', data.sessionId);
+                            setIncomingCall({
+                                sessionId: data.sessionId,
+                                callerName: data.callerName || '보호자',
+                            });
+                            setCallState('ringing');
+                        }
                     }
-                }
-            });
-        } catch (error) {
-            console.error('FCM 리스너 등록 실패:', error);
-        }
+                });
+            } catch (error) {
+                console.error('FCM 리스너 등록 실패:', error);
+            }
+        };
+
+        setupFcmListener();
 
         return () => {
             if (typeof unsubscribe === 'function') {
@@ -191,6 +208,49 @@ const VideoCallProvider = ({ children }) => {
             }
         };
     }, [isAuthenticated, callState]);
+
+    // Service Worker 메시지 리스너 (백그라운드 알림 클릭 시)
+    useEffect(() => {
+        if (!isAuthenticated) return;
+
+        const handleServiceWorkerMessage = (event) => {
+            console.log('📞 [SW] 메시지 수신:', event.data);
+            if (event.data?.type === 'VIDEO_CALL_INCOMING' && event.data?.sessionId) {
+                if (callState === 'idle') {
+                    console.log('📞 [SW] 수신 전화 설정:', event.data.sessionId);
+                    setIncomingCall({
+                        sessionId: event.data.sessionId,
+                        callerName: event.data.callerName || '보호자',
+                    });
+                    setCallState('ringing');
+                }
+            }
+        };
+
+        navigator.serviceWorker?.addEventListener('message', handleServiceWorkerMessage);
+
+        return () => {
+            navigator.serviceWorker?.removeEventListener('message', handleServiceWorkerMessage);
+        };
+    }, [isAuthenticated, callState]);
+
+    // URL 파라미터로 수신 전화 처리 (새 창으로 열릴 때)
+    useEffect(() => {
+        if (!isAuthenticated) return;
+
+        const incomingSessionId = searchParams.get('incomingCall');
+        if (incomingSessionId && callState === 'idle') {
+            console.log('📞 [URL] 수신 전화 파라미터 감지:', incomingSessionId);
+            setIncomingCall({
+                sessionId: incomingSessionId,
+                callerName: '보호자',
+            });
+            setCallState('ringing');
+            // URL 파라미터 제거
+            searchParams.delete('incomingCall');
+            setSearchParams(searchParams, { replace: true });
+        }
+    }, [isAuthenticated, searchParams, setSearchParams, callState]);
 
     // 컴포넌트 언마운트 시 세션 정리
     useEffect(() => {

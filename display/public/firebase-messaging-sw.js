@@ -44,9 +44,23 @@ self.addEventListener('notificationclick', (event) => {
     const data = event.notification.data;
 
     // 화상통화 알림인 경우
-    if (data?.type === 'VIDEO_CALL') {
+    if (data?.type === 'VIDEO_CALL' && data?.sessionId) {
         event.waitUntil(
-            clients.openWindow(`/call?sessionId=${data.sessionId}`)
+            // 이미 열린 창이 있으면 포커스하고 메시지 전달
+            clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+                for (const client of clientList) {
+                    if (client.url.includes(self.location.origin)) {
+                        client.postMessage({
+                            type: 'VIDEO_CALL_INCOMING',
+                            sessionId: data.sessionId,
+                            callerName: data.callerName || '보호자'
+                        });
+                        return client.focus();
+                    }
+                }
+                // 열린 창이 없으면 새 창 열기
+                return clients.openWindow(`/?incomingCall=${data.sessionId}`);
+            })
         );
     } else {
         event.waitUntil(clients.openWindow('/'));
