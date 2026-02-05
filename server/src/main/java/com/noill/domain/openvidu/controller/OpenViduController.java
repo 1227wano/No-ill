@@ -1,5 +1,7 @@
 package com.noill.domain.openvidu.controller;
 
+import com.noill.domain.care.entity.Care;
+import com.noill.domain.care.repository.CareRepository;
 import com.noill.domain.notification.entity.FcmToken;
 import com.noill.domain.notification.repository.FcmTokenRepository;
 import com.noill.domain.notification.service.FcmService;
@@ -18,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,13 +42,16 @@ public class OpenViduController {
     private String openviduSecret;
 
     private OpenVidu openVidu;
+
     private final FcmService fcmService;
     private final PetRepository petRepository;
     private final RedisService redisService;
-    private final UserRepository userRepository;         // User 존재 확인용
+
+    private final UserRepository userRepository;
     private final FcmTokenRepository fcmTokenRepository;
 
-    // 서버가 켜질 때 OpenVidu 객체 초기화
+    private final CareRepository careRepository;
+
     @PostConstruct
     public void init() {
         this.openVidu = new OpenVidu(openviduUrl, openviduSecret);
@@ -202,5 +208,63 @@ public class OpenViduController {
 
         log.info("{} 요청, {}대의 보호자 기기에 호출 신호를 보냈습니다.", userId, successCount);
         return ResponseEntity.ok(successCount + "대의 보호자 기기에 호출 신호를 보냈습니다.");
+    }
+
+
+    @Operation(
+            summary = "보호자에게 영상통화 호출(펫 기준, 전원)",
+            description = "로봇펫이 자신의 Care 관계를 기반으로 연결된 보호자 전원의 모든 기기에 FCM 호출 신호를 보냅니다."
+    )
+    @PostMapping("/call/users-by-pet")
+    public ResponseEntity<String> callUsersByPet(@RequestBody Map<String, String> request,
+                                                 Authentication authentication) {
+        String sessionId = request.get("sessionId");
+
+        if (sessionId == null || sessionId.isBlank()) {
+            return ResponseEntity.badRequest().body("sessionId는 필수 값입니다.");
+        }
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증이 필요합니다.");
+        }
+
+        Object principal = authentication.getPrincipal();
+        if (!(principal instanceof String petId) || petId.isBlank()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Pet 전용 API입니다.");
+        }
+
+        Pet pet = petRepository.findByPetId(petId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 펫입니다. petId=" + petId));
+
+        List<Care> cares = careRepository.findByPet(pet);
+        if (cares.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("연결된 보호자가 없습니다.");
+        }
+
+        int deviceSuccess = 0;
+        int userCount = 0;
+
+        for (Care care : cares) {
+            User user = care.getUser();
+            userCount++;
+
+            List<FcmToken> tokens = fcmTokenRepository.findByUser(user);
+            for (FcmToken tokenEntity : tokens) {
+                FcmService.SendResult result = fcmService.sendVideoCallWakeUp(tokenEntity.getToken(), sessionId);
+                if (result.success()) {
+                    deviceSuccess++;
+                }
+                // invalidToken 정리(DB 삭제)는 원하면 추가로 넣을 수 있음
+            }
+        }
+
+        if (deviceSuccess == 0) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("보호자의 등록된 기기(토큰)가 없습니다.");
+        }
+
+        log.info("✅ [callUsersByPet] petId={}, sessionId={}, users={}, successDevices={}",
+                petId, sessionId, userCount, deviceSuccess);
+
+        return ResponseEntity.ok("보호자 호출 신호를 보냈습니다. users=" + userCount + ", devices=" + deviceSuccess);
     }
 }
