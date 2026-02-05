@@ -2,7 +2,6 @@ import React, {useState} from 'react';
 import {useVideoCall} from '../../features/videocall';
 import {useAuth} from '../../features/auth';
 import {MemoryGameOverlay} from '../../features/minigame';
-import client from '../../api/client';
 
 const CommandsPanel = () => {
     const [showAIHelp, setShowAIHelp] = useState(false);
