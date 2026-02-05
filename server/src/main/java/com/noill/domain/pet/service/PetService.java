@@ -100,13 +100,13 @@ public class PetService {
         redisService.setRefreshToken(pet.getPetId(), refreshToken, refreshTokenExpiration);
 
         // FCM 토큰이 요청에 포함되어 있다면 Redis에 저장
-        // Key: "FCM:PET:{petId}" / Value: {fcmToken} / 기간: 30일
+        // Key: "FCM:PET:{petId}" / Members: {fcmToken1, fcmToken2, ...} / 기간: 30일
         if (request.getFcmToken() != null && !request.getFcmToken().isBlank()) {
             String fcmKey = "FCM:PET:" + pet.getPetId();
             long duration = Duration.ofDays(30).toMillis(); // 30일 동안 유지
 
-            redisService.setValues(fcmKey, request.getFcmToken(), duration);
-            log.info("✅ [Pet 로그인] FCM 토큰 저장 완료 - petId: {}, key: {}", pet.getPetId(), fcmKey);
+            redisService.addToSetAndExpire(fcmKey, request.getFcmToken(), duration);
+            log.info("✅ [Pet 로그인] FCM 토큰(Set) 저장 완료 - petId: {}, key: {}", pet.getPetId(), fcmKey);
         } else {
             log.warn("⚠️ [Pet 로그인] FCM 토큰이 없음 - petId: {}", pet.getPetId());
         }
