@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 const DESIGN_WIDTH = 1920;
 const DESIGN_HEIGHT = 1080;
 
-const FixedLayout = ({ children, background = '#000' }) => {
+const FixedLayout = ({ children, background = '#FFF' }) => {
     const [viewport, setViewport] = useState({ w: window.innerWidth, h: window.innerHeight });
 
     useEffect(() => {

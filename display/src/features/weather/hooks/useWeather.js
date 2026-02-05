@@ -1,9 +1,5 @@
 import { useState, useEffect } from 'react';
-import {
-    fetchCurrentWeather,
-    fetchAirPollution,
-    getAirQualityColorByGrade
-} from '../services/weatherApi';
+import axios from 'axios'; // axios 추가
 
 const useWeather = (refreshInterval = 30 * 60 * 1000) => {
     const [weather, setWeather] = useState(null);
@@ -15,51 +11,53 @@ const useWeather = (refreshInterval = 30 * 60 * 1000) => {
         try {
             setError(null);
 
-            // 기상청 API 호출
-            try {
-                const weatherData = await fetchCurrentWeather();
-                const items = weatherData?.response?.body?.items?.item || [];
-                const weatherMap = {};
-                items.forEach(item => {
-                    weatherMap[item.category] = item.obsrValue;
-                });
+            // 백엔드 API 호출
+            const response = await axios.get('/api/weather/today');
+            const data = response.data;
 
-                setWeather({
-                    temp: Math.round(parseFloat(weatherMap.T1H || 0)),
-                    humidity: parseInt(weatherMap.REH || 0),
-                });
-            } catch (err) {
-                console.error('기상청 API 조회 실패:', err);
-            }
+            setWeather({
+                temp: Math.round(parseFloat(data.temperature)),
+                humidity: parseInt(data.humidity),
+            });
 
-            // 에어코리아 API 호출 (실패해도 기온/습도는 표시)
-            try {
-                const airData = await fetchAirPollution();
-                const airItems = airData?.response?.body?.items || [];
-                const latestData = airItems[0];
-                const pm10Grade = latestData?.pm10Grade;
+            // PM10 값을 등급으로 변환
+            const pm10Value = parseInt(data.pm10);
+            const gradeText = {
+                '1': '좋음',
+                '2': '보통',
+                '3': '나쁨',
+                '4': '매우나쁨'
+            };
+            const grade = gradeText[getGradeByPm10(pm10Value)] || '알수없음';
 
-                const gradeText = { '1': '좋음', '2': '보통', '3': '나쁨', '4': '매우나쁨' };
-                const grade = gradeText[pm10Grade] || '알수없음';
-
-                setAirQuality({
-                    pm10: latestData?.pm10Value,
-                    text: grade,
-                    colorClass: getAirQualityColorByGrade(grade),
-                });
-            } catch (err) {
-                console.error('에어코리아 API 조회 실패:', err);
-                setAirQuality({
-                    text: '알수없음',
-                    colorClass: 'text-gray-500',
-                });
-            }
+            setAirQuality({
+                pm10: data.pm10,
+                text: grade,
+                colorClass: getAirQualityColorByGrade(grade),
+            });
         } catch (err) {
             console.error('날씨 정보 조회 실패:', err);
             setError(err.message);
         } finally {
             setLoading(false);
         }
+    };
+
+    // PM10 수치를 등급으로 변환하는 함수 추가
+    const getGradeByPm10 = (pm10Value) => {
+        if (pm10Value <= 30) return '1';
+        if (pm10Value <= 80) return '2';
+        if (pm10Value <= 150) return '3';
+        return '4';
+    };
+
+    // 기존의 등급 텍스트에 따른 색상 클래스 함수는 그대로 유지
+    const getAirQualityColorByGrade = (grade) => {
+        if (grade === '좋음') return 'text-green-500';
+        if (grade === '보통') return 'text-yellow-500';
+        if (grade === '나쁨') return 'text-orange-500';
+        if (grade === '매우나쁨') return 'text-red-500';
+        return 'text-gray-500';
     };
 
     useEffect(() => {
