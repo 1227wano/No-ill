@@ -142,7 +142,7 @@ public class PetService {
         String fcmKey = "FCM:PET:" + petId;
         long duration = Duration.ofDays(30).toMillis(); // 30일 유지
 
-        redisService.setValues(fcmKey, fcmToken, duration);
+        redisService.addToSetAndExpire(fcmKey, fcmToken, duration);
         log.info("✅ [Pet FCM 등록] 완료 - petId: {}, key: {}", petId, fcmKey);
     }
 }
