@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import client from '../../../api/client';
 
 const useWeather = (refreshInterval = 30 * 60 * 1000) => {
     const [weather, setWeather] = useState(null);
@@ -12,7 +13,7 @@ const useWeather = (refreshInterval = 30 * 60 * 1000) => {
             setError(null);
 
             // 백엔드 API 호출
-            const response = await axios.get('/api/weather/today');
+            const response = await client.get('/api/weather/today');
             const data = response.data;
 
             // 데이터 유효성 검사 및 변환
