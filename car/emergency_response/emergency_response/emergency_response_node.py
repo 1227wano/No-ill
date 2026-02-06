@@ -20,6 +20,8 @@ class EmergencyResponseNode(Node):
         self.pub_capture = self.create_publisher(Bool, 'capture_command', 10)
         self.pub_check_accident = self.create_publisher(Bool, 'check_accident', 10)
         self.pub_force_listen = self.create_publisher(Bool, 'force_listen', 10)
+        self.pub_is_chatting = self.create_publisher(Bool, 'is_chatting', 10)
+        self.pub_fall_arrived = self.create_publisher(Bool, 'fall_arrived', 10)
         
         # 상태 변수
         self.is_emergency_active = False
@@ -39,6 +41,15 @@ class EmergencyResponseNode(Node):
             self.get_logger().warn('=== EMERGENCY PROCESS STARTED ===')
             self.is_emergency_active = True
             self.attempt_count = 0
+
+            # tts_node가 fall_arrived를 먼저 처리하도록 대기
+            time.sleep(0.1)
+
+            # 주행 정지 (chat_stop_gate 활성화)
+            chatting_msg = Bool()
+            chatting_msg.data = True
+            self.pub_is_chatting.publish(chatting_msg)
+
             self.ask_patient()
     
     def ask_patient(self):
@@ -66,10 +77,12 @@ class EmergencyResponseNode(Node):
         if msg.data and self.is_emergency_active:
             self.get_logger().info('Emergency TTS done. Activating listen mode.')
 
-            # STT 강제 청취 모드 활성화
+            # STT 강제 청취 모드 활성화 (테스트용 비활성화)
+            ##########################################################
             listen_msg = Bool()
             listen_msg.data = True
             self.pub_force_listen.publish(listen_msg)
+            ##########################################################
 
             self.waiting_for_response = True
 
@@ -154,10 +167,20 @@ class EmergencyResponseNode(Node):
         listen_msg.data = False
         self.pub_force_listen.publish(listen_msg)
 
+        # 주행 재개 (chat_stop_gate 비활성화)
+        chatting_msg = Bool()
+        chatting_msg.data = False
+        self.pub_is_chatting.publish(chatting_msg)
+
         # check_accident False로 변경
         accident_msg = Bool()
         accident_msg.data = False
         self.pub_check_accident.publish(accident_msg)
+
+        # tts_node의 is_emergency_mode 리셋
+        fall_msg = Bool()
+        fall_msg.data = False
+        self.pub_fall_arrived.publish(fall_msg)
 
         # COOLDOWN (1시간)
         if self.cooldown_timer:

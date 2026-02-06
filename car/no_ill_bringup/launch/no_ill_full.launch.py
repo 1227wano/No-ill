@@ -99,7 +99,7 @@ def generate_launch_description():
             'kp': 1.2,
             'max_yaw': 1.0,
             'invert_yaw': True,
-            'follow_stop_distance': 0.5,
+            'follow_stop_distance': 0.8,
             'scan_angle_range': 25.0,
             'deadtime_sec': 1.0
         }]

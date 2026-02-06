@@ -10,7 +10,7 @@ twist_mux:
       chatting:
         topic: cmd_vel_is_chatting
         timeout: 0.3
-        priority: 100
+        priority: 300
       person:
         topic: cmd_vel_person
         timeout: 0.3

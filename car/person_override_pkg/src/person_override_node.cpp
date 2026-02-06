@@ -48,17 +48,13 @@ public:
     declare_parameter<double>("fall_approach_speed", 0.15);
     declare_parameter<double>("fall_approach_time", 5.0);
 
-    // 낙상 모드에서 사람을 놓치면 훨씬 빨리 stop/search로 전환
-    declare_parameter<double>("fall_deadtime_sec", 0.7);
 
-    // 탐색 회전 속도
-    declare_parameter<double>("search_yaw", 0.5);
 
     // ---- LiDAR 기반 도착 판정 ----
     declare_parameter<std::string>("scan_topic", "/scan");
     declare_parameter<double>("arrival_distance", 0.5);      // 50cm (낙상 모드)
     declare_parameter<double>("follow_stop_distance", 0.5);  // 50cm (일반 추적 모드)
-    declare_parameter<double>("scan_angle_range", 25.0);     // 전방 ±25도
+    declare_parameter<double>("scan_angle_range", 20.0);     // 전방 ±25도
 
     const auto px_topic       = get_parameter("person_x_topic").as_string();
     const auto ot_topic       = get_parameter("object_type_topic").as_string();
@@ -194,20 +190,36 @@ private:
       return;
     }
 
-    if (!tracking_enabled_) return;
-    if (!seen_once_) return;
-
     const double deadtime = get_parameter("deadtime_sec").as_double();
     const double dt = (now() - last_seen_).seconds();
-    if (dt > deadtime) {
-      // deadtime 지나면 publish 중단 -> mux가 nav2로 복귀
+    const double follow_stop_dist = get_parameter("follow_stop_distance").as_double();
+
+    // 추적 모드 정지 상태 처리
+    if (follow_stopped_) {
+      if (front_distance_ <= 1.0) {
+        // 전방 1m 이내면 계속 멈춤 (쪼그려 앉아도 유지)
+        publishStopOnce();
+        return;
+      } else {
+        // 1m 이상 벌어지면 정지 상태 해제
+        follow_stopped_ = false;
+        RCLCPP_INFO(get_logger(), "Person moved away (>1m), resuming tracking");
+      }
+    }
+
+    // 사람 본 적 있고 deadtime 이내면, tracking 끊겨도 정지 체크
+    if (seen_once_ && dt <= deadtime && front_distance_ <= follow_stop_dist) {
+      follow_stopped_ = true;
+      publishStopOnce();
       return;
     }
 
-    // 50cm 이내면 정지 (사람과 거리 유지)
-    const double follow_stop_dist = get_parameter("follow_stop_distance").as_double();
-    if (front_distance_ <= follow_stop_dist) {
-      publishStopOnce();
+    if (!tracking_enabled_) return;
+    if (!seen_once_) return;
+
+    if (dt > deadtime) {
+      // deadtime 지나면 publish 중단 -> mux가 nav2로 복귀
+      follow_stopped_ = false;  // 정지 상태도 리셋
       return;
     }
 
@@ -256,34 +268,14 @@ private:
 
     const double fall_speed = get_parameter("fall_approach_speed").as_double();
     const double fall_time  = get_parameter("fall_approach_time").as_double();
-    const double fall_deadtime = get_parameter("fall_deadtime_sec").as_double();
 
     const double kp      = get_parameter("kp").as_double();
     const double max_yaw = get_parameter("max_yaw").as_double();
     const bool invert_yaw = get_parameter("invert_yaw").as_bool();
 
-    const double search_yaw = get_parameter("search_yaw").as_double();
-
     geometry_msgs::msg::Twist cmd;
 
-    // 1) 한 번도 못 봤으면: 정지 + 탐색 회전
-    if (!seen_once_) {
-      cmd.linear.x  = 0.0;
-      cmd.angular.z = search_yaw;
-      pub_->publish(cmd);
-      RCLCPP_INFO_THROTTLE(get_logger(), *get_clock(), 2000, "Searching for fallen person (never seen)...");
-      return;
-    }
-
-    // 2) 봤던 적은 있어도, 최근에 놓치면: 정지 + 탐색 회전 (돌진 방지)
-    const double dt = (now() - last_seen_).seconds();
-    if (dt > fall_deadtime) {
-      cmd.linear.x  = 0.0;
-      cmd.angular.z = search_yaw;
-      pub_->publish(cmd);
-      RCLCPP_INFO_THROTTLE(get_logger(), *get_clock(), 2000, "Searching for fallen person (lost target, dt=%.2f)...", dt);
-      return;
-    }
+    // 낙상 감지됐으면 이미 30프레임 봤으므로 seen_once_는 항상 true
 
     // 3) 접근 시작 타임 스탬프 세팅
     if (!approach_started_) {
@@ -347,6 +339,9 @@ private:
   bool approach_started_{false};
   bool arrived_{false};
   rclcpp::Time approach_start_time_;
+
+  // 추적 모드 정지 상태
+  bool follow_stopped_{false};
 
   // LiDAR
   double front_distance_{std::numeric_limits<double>::infinity()};

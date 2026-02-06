@@ -9,6 +9,7 @@ import pycuda.driver as cuda
 import pycuda.autoinit
 from ament_index_python.packages import get_package_share_directory
 from collections import deque, defaultdict
+import time
 
 class YoloDetectorNode(Node):
     def __init__(self):
@@ -19,13 +20,24 @@ class YoloDetectorNode(Node):
         self.pub_y = self.create_publisher(Int32, 'person_y', 10)
         self.pub_type = self.create_publisher(String, 'object_type', 10)
         self.pub_cap_status = self.create_publisher(Bool, 'accident_cap', 10)
+        self.pub_test_beep = self.create_publisher(String, 'test_beep', 10)
 
-        # ROS2 Subscriber - 변경됨
+        # ROS2 Subscriber
         self.sub_capture = self.create_subscription(
-            Bool, 
-            'capture_command', 
-            self.capture_callback, 
+            Bool,
+            'capture_command',
+            self.capture_callback,
             10)
+
+        self.sub_is_chatting = self.create_subscription(
+            Bool,
+            'is_chatting',
+            self.is_chatting_callback,
+            10)
+
+        # is_chatting 상태 변수
+        self.is_chatting = False
+        self.prev_is_chatting = False
 
         # TensorRT 설정
         package_share_dir = get_package_share_directory('yolo_detector')
@@ -54,13 +66,39 @@ class YoloDetectorNode(Node):
         self.max_disappeared = 15
         self.history = defaultdict(lambda: deque(maxlen=15))
         
-        # 카메라 설정
+        # 카메라 설정 및 테스트
         self.cap = cv2.VideoCapture(0)
         self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 224)
         self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 160)
         
         self.timer = self.create_timer(0.05, self.inference_loop)
         self.get_logger().info('YOLOv11: Emergency Capture Mode Enabled.')
+        
+        # 카메라 초기화 테스트 (TTS 비프 후 실행)
+        time.sleep(1.5)  # TTS 비프 2회 끝날 때까지 대기
+        self.test_camera()
+
+    def test_camera(self):
+        """카메라 초기화 테스트"""
+        ret, test_frame = self.cap.read()
+        if ret:
+            self.get_logger().info("✓✓✓ CAMERA INITIALIZED ✓✓✓")
+            # 비프 요청
+            beep_msg = String()
+            beep_msg.data = "CAMERA_OK"
+            self.pub_test_beep.publish(beep_msg)
+        else:
+            self.get_logger().error("✗✗✗ CAMERA FAILED ✗✗✗")
+
+    def is_chatting_callback(self, msg):
+        """is_chatting 토픽 콜백"""
+        self.prev_is_chatting = self.is_chatting
+        self.is_chatting = msg.data
+
+        if self.is_chatting and not self.prev_is_chatting:
+            self.get_logger().info('is_chatting=True: Publishing 10 "others"')
+            for _ in range(10):
+                self.pub_type.publish(String(data="others"))
 
     def capture_callback(self, msg):
         """capture_command 토픽이 True이면 캡처 수행"""
@@ -69,7 +107,6 @@ class YoloDetectorNode(Node):
             cv2.imwrite(file_name, self.current_frame)
             self.get_logger().info(f'Emergency Capture Saved: {file_name}')
             
-            # 저장 후 완료 신호 발행
             cap_msg = Bool()
             cap_msg.data = True
             self.pub_cap_status.publish(cap_msg)
@@ -150,6 +187,8 @@ class YoloDetectorNode(Node):
 
             self.update_tracker(np.array(centroids))
 
+            all_centers = []
+
             for objectID, object_center in self.objects.items():
                 best_match = None
                 min_dist = 50
@@ -167,18 +206,25 @@ class YoloDetectorNode(Node):
                     obj_name = self.classes[stable_cls]
 
                     if obj_name == "desk":
-                      continue
+                        continue
+
+                    all_centers.append(best_match['center'])
 
                     bx, by, bw, bh = best_match['box']
                     
-                    self.pub_x.publish(Int32(data=int(best_match['center'][0])))
-                    self.pub_y.publish(Int32(data=int(best_match['center'][1])))
-                    self.pub_type.publish(String(data=obj_name))
+                    if not self.is_chatting:
+                        self.pub_type.publish(String(data=obj_name))
 
                     color = (0, 0, 255) if obj_name == "lying" else (0, 255, 0)
                     cv2.rectangle(input_canvas, (bx, by + pad_y), (bx+bw, by+bh+pad_y), color, 2)
                     cv2.putText(input_canvas, f"ID:{objectID} {obj_name}", (bx, by + pad_y - 10), 
                                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+
+            if all_centers:
+                avg_x = int(np.mean([c[0] for c in all_centers]))
+                avg_y = int(np.mean([c[1] for c in all_centers]))
+                self.pub_x.publish(Int32(data=avg_x))
+                self.pub_y.publish(Int32(data=avg_y))
 
         self.current_frame = input_canvas.copy()
 

@@ -66,9 +66,6 @@ class NoilSTTNode(Node):
         self.recognizer = OnlineRecognizer(recon_config)
         self.stream = self.recognizer.create_stream()
 
-        # 버퍼 클리어 타이머 (5초 주기로 단축)
-        self.buffer_clear_timer = self.create_timer(5.0, self.clear_buffer_callback)
-
         try:
             self.mic_stream = sd.InputStream(device=self.mic_device_id, channels=1, samplerate=16000,
                                             callback=self.audio_callback, dtype="float32", blocksize=1600)
@@ -141,12 +138,6 @@ class NoilSTTNode(Node):
                 self.timeout_timer.cancel()
             self.recognizer.reset(self.stream)  # 버퍼 즉시 클리어
             self.is_chatting_pub.publish(Bool(data=False))
-
-    def clear_buffer_callback(self):
-        """주기적 버퍼 클리어 (대화 중이거나 응급 모드면 스킵)"""
-        if self.is_chatting or self.is_emergency_mode:
-            return
-        self.recognizer.reset(self.stream)
 
     def audio_callback(self, indata, frames, time, status):
         if self.is_muted:
