@@ -47,10 +47,10 @@ function AppContent() {
 
     return (
         <>
+            <FixedLayout>
             <FallAlertOverlay />
             <VideoCallOverlay />
             <IncomingCallOverlay />
-            <FixedLayout>
                 <Routes>
                     <Route path="/login" element={<LoginPage />} />
                     <Route
