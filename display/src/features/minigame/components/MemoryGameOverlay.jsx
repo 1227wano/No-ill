@@ -113,7 +113,7 @@ const MemoryGameOverlay = ({ onClose }) => {
             </div>
 
             {/* 게임 영역 */}
-            <div className="flex-1 flex items-center justify-center p-8">
+            <div className="flex-1 flex items-center justify-center px-4 py-6">
                 {gameComplete ? (
                     <div className="text-center">
                         <div className="text-9xl mb-8">🎉</div>
@@ -139,17 +139,17 @@ const MemoryGameOverlay = ({ onClose }) => {
                         </div>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-4 gap-5 max-w-4xl w-full">
+                    <div className="grid grid-cols-4 gap-8 max-w-7xl w-full">
                         {cards.map((card) => (
                             <button
                                 key={card.id}
                                 onClick={() => handleCardClick(card.id)}
-                                className={`aspect-square rounded-card text-7xl flex items-center justify-center transition-all duration-300 shadow-card ${
+                                className={`aspect-square rounded-card text-9xl flex items-center justify-center transition-all duration-300 shadow-card ${
                                     card.matched
                                         ? 'bg-green-100 border-4 border-green-400 scale-95'
                                         : card.flipped
-                                        ? 'bg-white border-4 border-primary'
-                                        : 'bg-primary text-white hover:bg-primary/90 hover:scale-[1.03] cursor-pointer'
+                                            ? 'bg-white border-4 border-primary'
+                                            : 'bg-primary text-white hover:bg-primary/90 hover:scale-[1.03] cursor-pointer'
                                 }`}
                                 disabled={card.flipped || card.matched}
                             >
