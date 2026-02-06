@@ -1,3 +1,5 @@
+// src/hooks/useIdle.js
+
 import { useState, useEffect, useCallback } from 'react';
 
 const useIdle = (timeout = 60000) => {

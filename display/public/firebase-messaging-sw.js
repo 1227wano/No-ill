@@ -44,7 +44,7 @@ function initializeFirebase() {
 }
 
 async function notifyClientsIncomingCall(data) {
-    const clientList = await clients.matchAll({ type: 'window', includeUncontrolled: true });
+    const clientList = await clients.matchAll({type: 'window', includeUncontrolled: true});
 
     for (const client of clientList) {
         client.postMessage({
@@ -64,7 +64,7 @@ self.addEventListener('notificationclick', (event) => {
 
     if (data?.type === 'VIDEO_CALL' && data?.sessionId) {
         event.waitUntil(
-            clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+            clients.matchAll({type: 'window', includeUncontrolled: true}).then((clientList) => {
                 for (const client of clientList) {
                     if (client.url.includes(self.location.origin)) {
                         client.postMessage({
@@ -117,7 +117,7 @@ self.addEventListener('pushsubscriptionchange', (event) => {
                 console.log('[SW] 구독 갱신 완료');
                 return fetch('/api/notifications/update-subscription', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(subscription)
                 });
             })

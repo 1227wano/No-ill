@@ -39,9 +39,9 @@ export default {
 
             // 타이포그래피 (font-size / line-height)
             fontSize: {
-                'h1': ['20px', { lineHeight: '1.4', fontWeight: '700' }],
-                'body': ['16px', { lineHeight: '1.5', fontWeight: '500' }],
-                'caption': ['14px', { lineHeight: '1.5', fontWeight: '400' }],
+                'h1': ['20px', {lineHeight: '1.4', fontWeight: '700'}],
+                'body': ['16px', {lineHeight: '1.5', fontWeight: '500'}],
+                'caption': ['14px', {lineHeight: '1.5', fontWeight: '400'}],
             },
 
             // 간격 (8px 배수 시스템)
@@ -77,8 +77,8 @@ export default {
             // keyframes 설정
             keyframes: {
                 pop: {
-                    'from': { opacity: '0', transform: 'scale(0.9)' },
-                    'to': { opacity: '1', transform: 'scale(1)' },
+                    'from': {opacity: '0', transform: 'scale(0.9)'},
+                    'to': {opacity: '1', transform: 'scale(1)'},
                 },
             },
         },

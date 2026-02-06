@@ -1,10 +1,10 @@
 // Vitest 테스트 설정 파일
 // 이 파일은 프로젝트의 단위 테스트 환경을 설정합니다.
 
-import { defineConfig } from 'vitest/config'
+import {defineConfig} from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import path from 'path'
-import { fileURLToPath } from 'url'
+import {fileURLToPath} from 'url'
 
 // 현재 파일의 절대 경로를 구합니다.
 const __filename = fileURLToPath(import.meta.url)

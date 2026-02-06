@@ -1,10 +1,10 @@
 // Vite 빌드 설정 파일
 // 이 파일은 프로젝트의 빌드 환경과 개발 서버 설정을 정의합니다.
 
-import { defineConfig } from 'vite'
+import {defineConfig} from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
-import { fileURLToPath } from 'url' // ESM 환경에서 __dirname 사용을 위해 추가
+import {fileURLToPath} from 'url' // ESM 환경에서 __dirname 사용을 위해 추가
 
 // ESM 환경에서 __dirname 직접 정의
 // Node.js의 __dirname는 CommonJS에서만 사용 가능하므로 ESM에서는 별도로 정의해야 합니다.
