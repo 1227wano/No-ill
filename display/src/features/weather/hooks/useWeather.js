@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import client from '../../../api/client';
 
 const useWeather = (refreshInterval = 30 * 60 * 1000) => {
