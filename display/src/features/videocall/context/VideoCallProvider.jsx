@@ -1,301 +1,259 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { OpenVidu } from 'openvidu-browser';
+// src/features/videocall/context/VideoCallProvider.jsx
+
+import React, { useState, useCallback, useEffect } from 'react';
 import { VideoCallContext } from './VideoCallContext';
-import { createSession, createConnection, callUser, callUsersByPet } from '../services/openviduApi';
-import { onForegroundMessage } from '../services/fcmService';
 import { useAuth } from '../../auth';
+import useOpenVidu from '../hooks/useOpenVidu';
+import useCallNotification from '../hooks/useCallNotification';
+import { openviduApi } from '../services/openviduApi';
+import { CALL_STATE, CALL_END_DELAY } from '../constants/callConstants';
 
 const VideoCallProvider = ({ children }) => {
     const { isAuthenticated } = useAuth();
-    const [searchParams, setSearchParams] = useSearchParams();
-    const [callState, setCallState] = useState('idle');
+
+    // 상태
+    const [callState, setCallState] = useState(CALL_STATE.IDLE);
     const [incomingCall, setIncomingCall] = useState(null);
     const [localStream, setLocalStream] = useState(null);
     const [remoteStream, setRemoteStream] = useState(null);
     const [isMicOn, setIsMicOn] = useState(true);
     const [isCameraOn, setIsCameraOn] = useState(true);
+    const [error, setError] = useState(null);
 
-    const ovRef = useRef(null);
-    const sessionRef = useRef(null);
-    const publisherRef = useRef(null);
+    // OpenVidu Hook
+    const { connect, cleanup: cleanupOpenVidu, toggleAudio, toggleVideo } = useOpenVidu();
 
-    const cleanup = useCallback(() => {
-        if (sessionRef.current) {
-            sessionRef.current.disconnect();
-        }
-        sessionRef.current = null;
-        publisherRef.current = null;
-        ovRef.current = null;
+    /**
+     * 전체 상태 초기화
+     */
+    const resetState = useCallback(() => {
+        cleanupOpenVidu();
         setLocalStream(null);
         setRemoteStream(null);
         setIsMicOn(true);
         setIsCameraOn(true);
-    }, []);
+        setError(null);
+        setCallState(CALL_STATE.IDLE);
+    }, [cleanupOpenVidu]);
 
-    const connectToSession = useCallback(async (token) => {
-        const OV = new OpenVidu();
-        OV.enableProdMode();
-        ovRef.current = OV;
+    /**
+     * OpenVidu 세션 연결 (공통)
+     * @param {boolean} waitForRemote - 상대방 연결을 기다릴지 여부
+     */
+    const connectSession = useCallback(
+        async (token, waitForRemote = true) => {
+            try {
+                const publisher = await connect(token, {
+                    onStreamCreated: (subscriber) => {
+                        console.log('✅ Remote stream connected');
+                        setRemoteStream(subscriber);
+                        // ⭐ 상대방 연결 시 항상 CONNECTED
+                        if (callState !== CALL_STATE.CONNECTED) {
+                            setCallState(CALL_STATE.CONNECTED);
+                        }
+                    },
+                    onStreamDestroyed: () => {
+                        console.log('⚠️ Remote stream disconnected');
+                        setRemoteStream(null);
+                        setCallState(CALL_STATE.ENDED);
 
-        const session = OV.initSession();
-        sessionRef.current = session;
+                        // 2초 후 초기화
+                        setTimeout(resetState, CALL_END_DELAY);
+                    },
+                    onSessionDisconnected: () => {
+                        console.log('⚠️ Session disconnected');
 
-        session.on('streamCreated', (event) => {
-            const subscriber = session.subscribe(event.stream, undefined);
-            setRemoteStream(subscriber);
-            setCallState('connected');
-        });
+                        // ⭐ CALLING 상태에서는 무시 (아직 연결 중)
+                        if (callState === CALL_STATE.CALLING) {
+                            console.log('   → CALLING 상태이므로 무시');
+                            return;
+                        }
 
-        session.on('streamDestroyed', () => {
-            setRemoteStream(null);
-            setCallState('ended');
-            setTimeout(() => {
-                cleanup();
-                setCallState('idle');
-            }, 2000);
-        });
+                        setCallState(CALL_STATE.ENDED);
 
-        session.on('sessionDisconnected', () => {
-            setCallState('ended');
-            setTimeout(() => {
-                cleanup();
-                setCallState('idle');
-            }, 2000);
-        });
+                        // 2초 후 초기화
+                        setTimeout(resetState, CALL_END_DELAY);
+                    },
+                });
 
-        await session.connect(token);
+                setLocalStream(publisher);
 
-        const publisher = await OV.initPublisherAsync(undefined, {
-            audioSource: undefined,
-            videoSource: undefined,
-            publishAudio: true,
-            publishVideo: true,
-            resolution: '640x480',
-            frameRate: 30,
-            mirror: true,
-        });
+                // ⭐ 상대방을 기다리지 않으면 바로 CONNECTED
+                if (!waitForRemote) {
+                    setCallState(CALL_STATE.CONNECTED);
+                }
+            } catch (error) {
+                console.error('❌ 세션 연결 실패:', error);
+                setError('세션 연결에 실패했습니다.');
+                resetState();
+                throw error;
+            }
+        },
+        [connect, resetState, callState]
+    );
 
-        session.publish(publisher);
-        publisherRef.current = publisher;
-        setLocalStream(publisher);
-    }, [cleanup]);
+    /**
+     * 발신: 특정 사용자에게 전화
+     */
+    const startCall = useCallback(
+        async (userId) => {
+            try {
+                console.log('📞 전화 걸기 시작:', userId);
+                setCallState(CALL_STATE.CALLING);
+                setError(null);
 
-    // 발신: 디스플레이 → 보호자
-    const startCall = useCallback(async (userId) => {
+                // 1. 세션 생성
+                const sessionData = await openviduApi.createSession();
+                const sessionId = sessionData.sessionId || sessionData;
+
+                // 2. 토큰 발급
+                const connectionData = await openviduApi.createConnection(sessionId);
+                const token = connectionData.token || connectionData;
+
+                // 3. 상대방 호출
+                await openviduApi.callUser(userId, sessionId);
+
+                // 4. OpenVidu 연결 (상대방 기다림)
+                await connectSession(token, true);
+
+                console.log('✅ 전화 걸기 완료');
+            } catch (error) {
+                console.error('❌ 전화 걸기 실패:', error);
+                setError('전화 연결에 실패했습니다.');
+                resetState();
+            }
+        },
+        [connectSession, resetState]
+    );
+
+    /**
+     * 발신: 모든 보호자에게 전화 (Pet Call)
+     */
+    const startPetCall = useCallback(async () => {
         try {
-            console.log('📞 [Step 1] 전화 걸기 시작, userId:', userId);
-            setCallState('calling');
+            console.log('📞 보호자 전체 호출 시작');
+            setCallState(CALL_STATE.CALLING);
+            setError(null);
 
-            console.log('📞 [Step 2] 세션 생성 요청...');
-            const sessionData = await createSession();
+            // 1. 세션 생성
+            const sessionData = await openviduApi.createSession();
             const sessionId = sessionData.sessionId || sessionData;
-            console.log('✅ [Step 2] 세션 생성 완료:', sessionId);
+            console.log('✅ 세션 생성:', sessionId);
 
-            console.log('📞 [Step 3] 토큰 발급 요청...');
-            const connectionData = await createConnection(sessionId);
+            // 2. 토큰 발급
+            const connectionData = await openviduApi.createConnection(sessionId);
             const token = connectionData.token || connectionData;
-            console.log('✅ [Step 3] 토큰 발급 완료:', token?.substring(0, 20) + '...');
+            console.log('✅ 토큰 발급 완료');
 
-            console.log('📞 [Step 4] 상대방 호출...');
-            await callUser(userId, sessionId);
-            console.log('✅ [Step 4] 상대방 호출 완료');
+            // 3. OpenVidu 연결 (먼저 연결)
+            await connectSession(token, false);  // ⭐ 상대방 기다리지 않음
+            console.log('✅ OpenVidu 연결 완료');
 
-            console.log('📞 [Step 5] OpenVidu 연결...');
-            await connectToSession(token);
-            console.log('✅ [Step 5] OpenVidu 연결 완료');
+            // 4. 모든 보호자 호출 (FCM 전송)
+            await openviduApi.callUsersByPet(sessionId);
+            console.log('✅ 보호자 호출 신호 전송 완료');
 
+            console.log('✅ 보호자 호출 완료 - 연결 대기 중...');
         } catch (error) {
-            console.error('❌ 영상 통화 발신 실패:', error);
-            console.error('❌ Error stack:', error.stack);
-            cleanup();
-            setCallState('idle');
+            console.error('❌ 보호자 호출 실패:', error);
+            setError('보호자 호출에 실패했습니다.');
+            resetState();
         }
-    }, [connectToSession, cleanup]);
+    }, [connectSession, resetState]);
 
-    // 수신 수락
+    /**
+     * 수신: 전화 수락
+     */
     const acceptCall = useCallback(async () => {
         if (!incomingCall) {
-            console.log('❌ [acceptCall] incomingCall이 없음');
+            console.warn('⚠️ 수신 전화가 없습니다.');
             return;
         }
 
         try {
-            console.log('📞 [acceptCall] 수신 수락 시작, sessionId:', incomingCall.sessionId);
-            setCallState('calling');
+            console.log('📞 전화 수락:', incomingCall.sessionId);
+            setCallState(CALL_STATE.CALLING);
+            setError(null);
 
-            console.log('📞 [acceptCall] 토큰 발급 요청...');
-            const connectionData = await createConnection(incomingCall.sessionId);
+            // 1. 토큰 발급
+            const connectionData = await openviduApi.createConnection(incomingCall.sessionId);
             const token = connectionData.token || connectionData;
-            console.log('✅ [acceptCall] 토큰 발급 완료');
 
-            console.log('📞 [acceptCall] OpenVidu 연결 시작...');
-            await connectToSession(token);
-            console.log('✅ [acceptCall] OpenVidu 연결 완료');
+            // 2. OpenVidu 연결
+            await connectSession(token, false);  // ⭐ 바로 CONNECTED
 
             setIncomingCall(null);
+            console.log('✅ 전화 수락 완료');
         } catch (error) {
-            console.error('❌ 영상 통화 수락 실패:', error);
-            cleanup();
-            setCallState('idle');
+            console.error('❌ 전화 수락 실패:', error);
+            setError('전화 수락에 실패했습니다.');
+            resetState();
             setIncomingCall(null);
         }
-    }, [incomingCall, connectToSession, cleanup]);
+    }, [incomingCall, connectSession, resetState]);
 
-    // 수신 거절
+    /**
+     * 수신: 전화 거절
+     */
     const rejectCall = useCallback(() => {
+        console.log('📞 전화 거절');
         setIncomingCall(null);
-        setCallState('idle');
+        setCallState(CALL_STATE.IDLE);
     }, []);
 
-    // 통화 종료
+    /**
+     * 통화 종료
+     */
     const endCall = useCallback(() => {
-        cleanup();
-        setCallState('idle');
-        setIncomingCall(null);
-    }, [cleanup]);
+        console.log('📞 통화 종료 (사용자 요청)');
+        setCallState(CALL_STATE.ENDED);
 
-    // 마이크 토글
+        // 2초 후 초기화
+        setTimeout(() => {
+            resetState();
+            setIncomingCall(null);
+        }, CALL_END_DELAY);
+    }, [resetState]);
+
+    /**
+     * 마이크 토글
+     */
     const toggleMic = useCallback(() => {
-        if (publisherRef.current) {
-            const newState = !isMicOn;
-            publisherRef.current.publishAudio(newState);
-            setIsMicOn(newState);
-        }
-    }, [isMicOn]);
+        const newState = !isMicOn;
+        toggleAudio(newState);
+        setIsMicOn(newState);
+    }, [isMicOn, toggleAudio]);
 
-    // 카메라 토글
+    /**
+     * 카메라 토글
+     */
     const toggleCamera = useCallback(() => {
-        if (publisherRef.current) {
-            const newState = !isCameraOn;
-            publisherRef.current.publishVideo(newState);
-            setIsCameraOn(newState);
-        }
-    }, [isCameraOn]);
+        const newState = !isCameraOn;
+        toggleVideo(newState);
+        setIsCameraOn(newState);
+    }, [isCameraOn, toggleVideo]);
 
-    // FCM 포그라운드 메시지 리스너
-    useEffect(() => {
-        if (!isAuthenticated) return;
+    /**
+     * 수신 전화 핸들러
+     */
+    const handleIncomingCall = useCallback(
+        (callInfo) => {
+            console.log('📞 수신 전화:', callInfo);
+            setIncomingCall(callInfo);
+            setCallState(CALL_STATE.RINGING);
+        },
+        []
+    );
 
-        let unsubscribe;
-        const setupFcmListener = async () => {
-            try {
-                unsubscribe = await onForegroundMessage((payload) => {
-                    console.log('📞 [FCM] 포그라운드 메시지 수신:', payload);
-                    const data = payload.data || {};
-                    if (data.type === 'VIDEO_CALL' && data.sessionId) {
-                        if (callState === 'idle') {
-                            console.log('📞 [FCM] 수신 전화 설정:', data.sessionId);
-                            setIncomingCall({
-                                sessionId: data.sessionId,
-                                callerName: data.callerName || '보호자',
-                            });
-                            setCallState('ringing');
-                        }
-                    }
-                });
-            } catch (error) {
-                console.error('FCM 리스너 등록 실패:', error);
-            }
-        };
+    // 알림 리스너 (FCM, Service Worker, URL)
+    useCallNotification(isAuthenticated, callState, handleIncomingCall);
 
-        setupFcmListener();
-
-        return () => {
-            if (typeof unsubscribe === 'function') {
-                unsubscribe();
-            }
-        };
-    }, [isAuthenticated, callState]);
-
-    // Service Worker 메시지 리스너 (백그라운드 알림 클릭 시)
-    useEffect(() => {
-        if (!isAuthenticated) return;
-
-        const handleServiceWorkerMessage = (event) => {
-            console.log('📞 [SW] 메시지 수신:', event.data);
-            if (event.data?.type === 'VIDEO_CALL_INCOMING' && event.data?.sessionId) {
-                if (callState === 'idle') {
-                    console.log('📞 [SW] 수신 전화 설정:', event.data.sessionId);
-                    setIncomingCall({
-                        sessionId: event.data.sessionId,
-                        callerName: event.data.callerName || '보호자',
-                    });
-                    setCallState('ringing');
-                }
-            }
-        };
-
-        navigator.serviceWorker?.addEventListener('message', handleServiceWorkerMessage);
-
-        return () => {
-            navigator.serviceWorker?.removeEventListener('message', handleServiceWorkerMessage);
-        };
-    }, [isAuthenticated, callState]);
-
-    // URL 파라미터로 수신 전화 처리 (새 창으로 열릴 때)
-    useEffect(() => {
-        if (!isAuthenticated) return;
-
-        const incomingSessionId = searchParams.get('incomingCall');
-        if (incomingSessionId && callState === 'idle') {
-            // setTimeout으로 비동기 처리하여 린트 규칙 준수
-            const timer = setTimeout(() => {
-                console.log('📞 [URL] 수신 전화 파라미터 감지:', incomingSessionId);
-                setIncomingCall({
-                    sessionId: incomingSessionId,
-                    callerName: '보호자',
-                });
-                setCallState('ringing');
-            }, 0);
-            // URL 파라미터 제거
-            searchParams.delete('incomingCall');
-            setSearchParams(searchParams, { replace: true });
-
-            return () => clearTimeout(timer);
-        }
-    }, [isAuthenticated, searchParams, setSearchParams, callState]);
-
-    // 컴포넌트 언마운트 시 세션 정리
+    // Cleanup on unmount
     useEffect(() => {
         return () => {
-            if (sessionRef.current) {
-                sessionRef.current.disconnect();
-            }
+            cleanupOpenVidu();
         };
-    }, []);
-
-
-    // 발신: 디스플레이(Pet) → 연결된 보호자 전원
-    const startPetCall = useCallback(async () => {
-        try {
-            console.log('📞 [PetCall] 전화 걸기 시작');
-            setCallState('calling');
-
-            console.log('📞 [PetCall] 세션 생성 요청...');
-            const sessionData = await createSession();
-            const sessionId = sessionData.sessionId || sessionData;
-            console.log('✅ [PetCall] 세션 생성 완료:', sessionId);
-
-            console.log('📞 [PetCall] 토큰 발급 요청...');
-            const connectionData = await createConnection(sessionId);
-            const token = connectionData.token || connectionData;
-            console.log('✅ [PetCall] 토큰 발급 완료');
-
-            console.log('📞 [PetCall] 보호자 전원 호출...');
-            await callUsersByPet(sessionId);
-            console.log('✅ [PetCall] 보호자 호출 완료');
-
-            console.log('📞 [PetCall] OpenVidu 연결...');
-            await connectToSession(token);
-            console.log('✅ [PetCall] OpenVidu 연결 완료');
-
-        } catch (error) {
-            console.error('❌ [PetCall] 영상 통화 발신 실패:', error);
-            cleanup();
-            setCallState('idle');
-        }
-    }, [connectToSession, cleanup]);
+    }, [cleanupOpenVidu]);
 
     const value = {
         callState,
@@ -304,6 +262,7 @@ const VideoCallProvider = ({ children }) => {
         remoteStream,
         isMicOn,
         isCameraOn,
+        error,
         startCall,
         startPetCall,
         acceptCall,
@@ -313,11 +272,7 @@ const VideoCallProvider = ({ children }) => {
         toggleCamera,
     };
 
-    return (
-        <VideoCallContext.Provider value={value}>
-            {children}
-        </VideoCallContext.Provider>
-    );
+    return <VideoCallContext.Provider value={value}>{children}</VideoCallContext.Provider>;
 };
 
 export default VideoCallProvider;

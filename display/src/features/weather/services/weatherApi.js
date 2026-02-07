@@ -1,94 +1,117 @@
-import axios from 'axios';
+// src/features/weather/services/weatherApi.js
 
-const API_KEY = import.meta.env.VITE_DATA_GO_KR_API_KEY;
-const NX = import.meta.env.VITE_WEATHER_NX || '60';
-const NY = import.meta.env.VITE_WEATHER_NY || '127';
-const STATION_NAME = import.meta.env.VITE_AIR_STATION_NAME || '종로구';
+import client from '../../../api/client';
 
-// 현재 날짜/시간 포맷
-const getBaseDateTime = () => {
-    const now = new Date();
-    // 정시 기준으로 데이터 제공 (최근 1시간 전 데이터 사용)
-    now.setHours(now.getHours() - 1);
+// PM10 등급 기준
+const PM10_GRADES = {
+    1: {text: '좋음', max: 30, color: 'text-green-500'},
+    2: {text: '보통', max: 80, color: 'text-yellow-500'},
+    3: {text: '나쁨', max: 150, color: 'text-orange-500'},
+    4: {text: '매우나쁨', max: Infinity, color: 'text-red-500'},
+};
 
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    const hour = String(now.getHours()).padStart(2, '0');
+// ==================== 유틸 함수 ====================
+
+/**
+ * PM10 수치를 등급 번호로 변환
+ * @param {number} pm10Value - PM10 수치
+ * @returns {string} 등급 번호 ('1' | '2' | '3' | '4')
+ */
+export const getGradeByPm10 = (pm10Value) => {
+    const value = parseInt(pm10Value);
+
+    if (isNaN(value) || value < 0) return null;
+    if (value <= 30) return '1';
+    if (value <= 80) return '2';
+    if (value <= 150) return '3';
+    return '4';
+};
+
+/**
+ * PM10 수치를 등급 정보로 변환
+ * @param {number|string|null} pm10Value - PM10 수치
+ * @returns {{pm10: number|null, text: string, colorClass: string}}
+ */
+export const parseAirQuality = (pm10Value) => {
+    // null/undefined 처리
+    if (pm10Value === null || pm10Value === undefined) {
+        return {
+            pm10: null,
+            text: '알수없음',
+            colorClass: 'text-gray-500',
+        };
+    }
+
+    const value = parseInt(pm10Value);
+
+    // 잘못된 값 처리
+    if (isNaN(value) || value < 0) {
+        console.warn('잘못된 PM10 값:', pm10Value);
+        return {
+            pm10: null,
+            text: '알수없음',
+            colorClass: 'text-gray-500',
+        };
+    }
+
+    const gradeKey = getGradeByPm10(value);
+    const grade = PM10_GRADES[gradeKey];
 
     return {
-        baseDate: `${year}${month}${day}`,
-        baseTime: `${hour}00`,
+        pm10: value,
+        text: grade.text,
+        colorClass: grade.color,
     };
 };
 
-// 기상청 초단기실황 조회
-export const fetchCurrentWeather = async () => {
-    const { baseDate, baseTime } = getBaseDateTime();
+/**
+ * 기상 데이터 파싱 및 검증
+ * @param {Object} data - 백엔드 응답 데이터
+ * @returns {{temp: number, humidity: number}}
+ */
+export const parseWeatherData = (data) => {
+    const temp = parseFloat(data.temperature);
+    const humidity = parseInt(data.humidity);
 
-    const response = await axios.get(
-        '/api/weather/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst',
-        {
-            params: {
-                serviceKey: API_KEY,
-                numOfRows: 10,
-                pageNo: 1,
-                dataType: 'JSON',
-                base_date: baseDate,
-                base_time: baseTime,
-                nx: NX,
-                ny: NY,
-            },
-        }
-    );
+    // 유효성 검증
+    if (isNaN(temp)) {
+        throw new Error(`잘못된 온도 값: ${data.temperature}`);
+    }
 
-    return response.data;
+    if (isNaN(humidity)) {
+        throw new Error(`잘못된 습도 값: ${data.humidity}`);
+    }
+
+    return {
+        temp: Math.round(temp),
+        humidity: humidity,
+    };
 };
 
-// 에어코리아 실시간 대기오염 정보 조회
-export const fetchAirPollution = async () => {
-    const response = await axios.get(
-        '/api/air/B552584/ArpltnInforInqireSvc/getMsrstnAcctoRltmMesureDnsty',
-        {
-            params: {
-                stationName: STATION_NAME,
-                dataTerm: 'month',
-                pageNo: 1,
-                numOfRows: 1,
-                returnType: 'json',
-                serviceKey: API_KEY,
-            },
-        }
-    );
+// ==================== API 함수 ====================
 
-    return response.data;
+/**
+ * 오늘의 날씨 정보 조회
+ * @returns {Promise<{weather: Object, airQuality: Object}>}
+ */
+export const fetchTodayWeather = async () => {
+    const response = await client.get('/api/weather/today');
+    const data = response.data;
+
+    return {
+        weather: parseWeatherData(data),
+        airQuality: parseAirQuality(data.pm10),
+    };
 };
 
-// PM10 수치를 등급 텍스트로 변환
-export const getAirQualityText = (pm10Value) => {
-    const value = parseInt(pm10Value);
-    if (isNaN(value)) return '알수없음';
-    if (value <= 30) return '좋음';
-    if (value <= 80) return '보통';
-    if (value <= 150) return '나쁨';
-    return '매우나쁨';
+// ==================== Export ====================
+
+export const weatherApi = {
+    fetchTodayWeather,
 };
 
-// PM10 수치에 따른 색상 클래스
-export const getAirQualityColor = (pm10Value) => {
-    const value = parseInt(pm10Value);
-    if (isNaN(value)) return 'text-gray-500';
-    if (value <= 30) return 'text-green-500';
-    if (value <= 80) return 'text-yellow-500';
-    if (value <= 150) return 'text-orange-500';
-    return 'text-red-500';
-};
-
-// 등급 텍스트에 따른 색상 클래스
-export const getAirQualityColorByGrade = (grade) => {
-    if (grade === '좋음') return 'text-green-500';
-    if (grade === '보통') return 'text-yellow-500';
-    if (grade === '나쁨') return 'text-orange-500';
-    if (grade === '매우나쁨') return 'text-red-500';
-    return 'text-gray-500';
+export const weatherUtils = {
+    getGradeByPm10,
+    parseAirQuality,
+    parseWeatherData,
 };

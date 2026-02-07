@@ -1,3 +1,5 @@
+// src/pages/LoginPage.jsx
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LoginForm from '../features/auth/components/LoginForm';
@@ -32,13 +34,56 @@ const LoginPage = () => {
     };
 
     return (
-        <div className="h-full w-full bg-background flex flex-col items-center justify-center p-10">
-            <div className="bg-surface rounded-card shadow-card p-16 w-full max-w-2xl">
+        <div style={{
+            width: 1920,
+            height: 1080,
+            background: '#f5f5f5',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 60,
+        }}>
+            <div style={{
+                background: 'white',
+                borderRadius: 20,
+                boxShadow: '0 8px 24px rgba(0,0,0,0.1)',
+                padding: 80,
+                width: 800,
+            }}>
                 {/* 로고 영역 */}
-                <div className="flex flex-col items-center mb-12">
-                    <img src={logo} alt="No-ill 로고" className="w-48 h-48 object-contain mb-6" />
-                    <h1 className="text-8xl font-bold text-text-main mb-4">노일</h1>
-                    <p className="text-[#5BA3D0] text-5xl font-semibold mt-2">No-ill</p>
+                <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    marginBottom: 60,
+                }}>
+                    <img
+                        src={logo}
+                        alt="No-ill 로고"
+                        style={{
+                            width: 160,
+                            height: 160,
+                            objectFit: 'contain',
+                            marginBottom: 30,
+                        }}
+                    />
+                    <h1 style={{
+                        fontSize: 72,
+                        fontWeight: 'bold',
+                        color: '#1a1a1a',
+                        marginBottom: 16,
+                    }}>
+                        노일
+                    </h1>
+                    <p style={{
+                        color: '#5BA3D0',
+                        fontSize: 40,
+                        fontWeight: '600',
+                        marginTop: 8,
+                    }}>
+                        No-ill
+                    </p>
                 </div>
 
                 {/* 로그인 폼 */}
@@ -49,7 +94,12 @@ const LoginPage = () => {
                 />
 
                 {/* 안내 문구 */}
-                <p className="text-center text-2xl text-text-body mt-10">
+                <p style={{
+                    textAlign: 'center',
+                    fontSize: 20,
+                    color: '#6b7280',
+                    marginTop: 40,
+                }}>
                     로봇펫에 표시된 번호를 입력해주세요
                 </p>
             </div>
