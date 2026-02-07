@@ -71,7 +71,7 @@ class ScheduleMainScreen extends ConsumerWidget {
       selectedDayPredicate: (day) => isSameDay(selectedDate, day),
       onDaySelected: (selectedDay, focusedDay) {
         // ✅ 선택 날짜 업데이트 (Provider 연동)
-        ref.read(selectedDateProvider.notifier).state = selectedDay;
+        ref.read(selectedDateProvider.notifier).update(selectedDay);
       },
       // 이벤트가 있는 날짜에 점 표시
       eventLoader: (day) {

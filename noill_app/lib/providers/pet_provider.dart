@@ -1,37 +1,53 @@
+// lib/providers/pet_provider.dart
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/pet_model.dart'; // ✅ 통합 모델 사용
-import '../services/pet_service.dart';
-import '../core/network/dio_provider.dart';
-import 'care_provider.dart'; // careListProvider, selectedPetProvider가 있는 곳
+import '../models/pet_model.dart';
+import '../core/utils/logger.dart';
+import '../core/utils/result.dart';
+import 'care_provider.dart';
 
-// 1. 서비스 프로바이더
-final petServiceProvider = Provider((ref) {
-  final dio = ref.watch(dioProvider);
-  return PetService(dio);
-});
+// ═══════════════════════════════════════════════════════════════════════
+// petServiceProvider는 care_provider.dart에서 정의됨
+// ═══════════════════════════════════════════════════════════════════════
 
-// 2. Notifier 클래스 정의
+// ═══════════════════════════════════════════════════════════════════════
+// 2. Pet Registration Notifier (어르신 등록 상태 관리)
+// ═══════════════════════════════════════════════════════════════════════
+
+/// 어르신 등록 과정의 상태를 관리하는 Notifier
+///
+/// 사용 흐름:
+/// 1. updatePetId() - 기기 ID 입력
+/// 2. updatePetName() - 어르신 이름 입력
+/// 3. updateProfile() - 주소, 전화번호, 돌봄 대상자 이름 입력
+/// 4. submit() - 서버에 등록 요청
 class PetRegistrationNotifier extends Notifier<PetModel> {
+  final _logger = AppLogger('PetRegistrationNotifier');
+
   @override
   PetModel build() {
-    // 초기값 설정: PetModel의 필수값인 petId를 빈 문자열로 초기화
     return PetModel(petId: '');
   }
 
-  // ✅ copyWith를 사용하여 상태 업데이트 로직 간소화
+  /// 기기 ID 업데이트
   void updatePetId(String id) {
+    _logger.debug('기기 ID 업데이트: $id');
     state = state.copyWith(petId: id);
   }
 
+  /// 어르신 이름 업데이트
   void updatePetName(String name) {
+    _logger.debug('어르신 이름 업데이트: $name');
     state = state.copyWith(petName: name);
   }
 
+  /// 프로필 정보 업데이트 (주소, 전화번호, 돌봄 대상자 이름)
   void updateProfile({
     required String address,
     required String phone,
     required String careName,
   }) {
+    _logger.debug('프로필 업데이트: $careName, $address, $phone');
     state = state.copyWith(
       petAddress: address,
       petPhone: phone,
@@ -39,13 +55,29 @@ class PetRegistrationNotifier extends Notifier<PetModel> {
     );
   }
 
-  /// ✅ 최종 서버 전송 및 상태 동기화 로직
-  Future<bool> submit() async {
-    final service = ref.read(petServiceProvider);
+  /// 전체 상태 초기화
+  void reset() {
+    _logger.info('등록 상태 초기화');
+    state = PetModel(petId: '');
+  }
 
+  /// 서버에 등록 요청
+  ///
+  /// Returns: true - 등록 성공
+  ///          false - 등록 실패
+  Future<bool> submit() async {
     try {
-      // 1. 서버에 등록 요청
-      final newPet = await service.registerCare(
+      _logger.info('어르신 등록 제출 시작: ${state.petName} (${state.petId})');
+
+      // 입력값 검증
+      if (!_validateState()) {
+        return false;
+      }
+
+      final service = ref.read(petServiceProvider);
+
+      // 서버에 등록 요청
+      final result = await service.registerCare(
         petId: state.petId,
         petName: state.petName,
         careName: state.careName,
@@ -53,24 +85,98 @@ class PetRegistrationNotifier extends Notifier<PetModel> {
         petPhone: state.petPhone,
       );
 
-      // 2. 등록 성공 시, 전체 목록에 새 데이터 추가
-      // (careListProvider의 notifier가 addPet 메서드를 가지고 있어야 합니다)
-      ref.read(careListProvider.notifier).addPet(newPet);
+      return result.fold(
+        // 성공
+        onSuccess: (newPet) {
+          _logger.info('어르신 등록 성공: ${newPet.petName}');
 
-      // 3. ⭐ 가장 중요한 부분: 등록된 어르신을 즉시 '선택된 상태'로 변경
-      // selectedPetProvider를 업데이트하면 파생된 ID, No 프로바이더도 자동 갱신됩니다.
-      ref.read(selectedPetProvider.notifier).state = newPet;
+          // 전체 목록에 추가
+          ref.read(careListProvider.notifier).addPet(newPet);
 
-      return true;
-    } catch (e) {
-      print('❌ 등록 실패: $e');
+          // 등록된 어르신을 즉시 선택 상태로 설정
+          ref.read(selectedPetProvider.notifier).update(newPet);
+
+          // 등록 상태 초기화
+          reset();
+
+          return true;
+        },
+
+        // 실패
+        onFailure: (exception) {
+          _logger.error('어르신 등록 실패: ${exception.message}');
+          return false;
+        },
+      );
+    } catch (e, stackTrace) {
+      _logger.error('예상치 못한 등록 에러', e, stackTrace);
       return false;
     }
   }
+
+  /// 입력값 검증
+  bool _validateState() {
+    if (state.petId.isEmpty) {
+      _logger.warning('검증 실패: 기기 ID 없음');
+      return false;
+    }
+
+    if (state.petName.isEmpty) {
+      _logger.warning('검증 실패: 어르신 이름 없음');
+      return false;
+    }
+
+    if (state.careName.isEmpty) {
+      _logger.warning('검증 실패: 돌봄 대상자 이름 없음');
+      return false;
+    }
+
+    if (state.petAddress.isEmpty) {
+      _logger.warning('검증 실패: 주소 없음');
+      return false;
+    }
+
+    if (state.petPhone.isEmpty) {
+      _logger.warning('검증 실패: 전화번호 없음');
+      return false;
+    }
+
+    return true;
+  }
+
+  /// 현재 상태의 에러 메시지 반환 (검증용)
+  String? get validationError {
+    if (state.petId.isEmpty) return '기기 ID를 입력해주세요';
+    if (state.petName.isEmpty) return '어르신 이름을 입력해주세요';
+    if (state.careName.isEmpty) return '돌봄 대상자 이름을 입력해주세요';
+    if (state.petAddress.isEmpty) return '주소를 입력해주세요';
+    if (state.petPhone.isEmpty) return '전화번호를 입력해주세요';
+    return null;
+  }
+
+  /// 등록 가능 여부
+  bool get canSubmit => validationError == null;
 }
 
-// 3. 프로바이더 정의
+// ═══════════════════════════════════════════════════════════════════════
+// 3. Provider 정의
+// ═══════════════════════════════════════════════════════════════════════
+
 final petRegistrationProvider =
-    NotifierProvider<PetRegistrationNotifier, PetModel>(
+NotifierProvider<PetRegistrationNotifier, PetModel>(
       () => PetRegistrationNotifier(),
-    );
+);
+
+// ═══════════════════════════════════════════════════════════════════════
+// 4. 편의 Provider들
+// ═══════════════════════════════════════════════════════════════════════
+
+/// 등록 가능 여부
+final canSubmitPetProvider = Provider<bool>((ref) {
+  return ref.watch(petRegistrationProvider.notifier).canSubmit;
+});
+
+/// 검증 에러 메시지
+final petValidationErrorProvider = Provider<String?>((ref) {
+  return ref.watch(petRegistrationProvider.notifier).validationError;
+});

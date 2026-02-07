@@ -57,12 +57,9 @@ class CareDropdown extends ConsumerWidget {
               onChanged: (id) {
                 if (id != null) {
                   print("✅ 선택된 어르신 ID: $id");
-                  // 🎯 선택 시 ID 프로바이더를 먼저 업데이트합니다.
-                  ref.read(selectedPetIdProvider.notifier).state = id;
-
-                  // 만약 selectedPetProvider가 자동 갱신되지 않는 구조라면 여기서 직접 객체를 찾아 넣어줄 수도 있습니다.
+                  // 🎯 selectedPetProvider를 직접 업데이트 (selectedPetIdProvider는 파생 Provider)
                   final pickedPet = list.firstWhere((p) => p.petId == id);
-                  ref.read(selectedPetProvider.notifier).state = pickedPet;
+                  ref.read(selectedPetProvider.notifier).update(pickedPet);
                 }
               },
             );

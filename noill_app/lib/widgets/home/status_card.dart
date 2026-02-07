@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:noill_app/core/constants/color_constants.dart';
+import 'package:noill_app/models/event_model.dart';
 import 'package:noill_app/providers/care_provider.dart';
 import 'package:noill_app/providers/event_provider.dart';
 
@@ -14,8 +15,8 @@ class StatusCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedCare = ref.watch(selectedPetProvider);
     final reportAsync = selectedCare != null
-        ? ref.watch(singlePetReportProvider(selectedCare.petId))
-        : const AsyncValue<List<dynamic>>.data([]);
+        ? ref.watch(eventListByPetProvider(selectedCare.petId))
+        : const AsyncValue<List<EventModel>>.data([]);
 
     final bool isWarning = reportAsync.maybeWhen(
       data: (d) => d.isNotEmpty,

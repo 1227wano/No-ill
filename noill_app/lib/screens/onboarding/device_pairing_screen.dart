@@ -6,8 +6,10 @@ import '../../widgets/atoms/gradient_background.dart';
 import '../../widgets/atoms/otp_input.dart';
 import '../../widgets/atoms/solid_button.dart';
 import '../../core/constants/color_constants.dart';
+import '../../models/pet_model.dart';
 import '../../providers/pet_provider.dart';
 import '../../providers/care_provider.dart';
+import '../../core/utils/result.dart';
 import 'elderly_profile_registration_screen.dart';
 
 class DevicePairingScreen extends ConsumerStatefulWidget {
@@ -120,9 +122,10 @@ class _DevicePairingScreenState extends ConsumerState<DevicePairingScreen>
                         );
 
                         // 2. 서버 연동 시도 (POST /api/auth/pets/login)
-                        final petData = await ref
+                        final result = await ref
                             .read(petServiceProvider)
                             .connectPet(_inputSerial);
+                        final petData = result.dataOrNull;
 
                         if (!mounted) return;
                         Navigator.pop(context); // 로딩 창 닫기
@@ -257,7 +260,10 @@ class _DevicePairingScreenState extends ConsumerState<DevicePairingScreen>
               ref.invalidate(careListProvider);
 
               // ✅ 2. 현재 선택된 어르신 변경
-              ref.read(selectedPetIdProvider.notifier).state = data.petId;
+              // selectedPetProvider를 통해 선택 (selectedPetIdProvider는 파생 Provider)
+              if (data is PetModel) {
+                ref.read(selectedPetProvider.notifier).update(data);
+              }
 
               // ✅ 3. 메인으로 점프
               Navigator.pushAndRemoveUntil(

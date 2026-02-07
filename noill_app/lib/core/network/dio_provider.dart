@@ -1,14 +1,16 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'api_constants.dart';
-import '../storage/storage_provider.dart'; // 👈 공통 저장소 사용
+import '../utils/jwt_decoder.dart';
+import '../storage/storage_provider.dart';
 
 final dioProvider = Provider<Dio>((ref) {
   final dio = Dio(
     BaseOptions(
       baseUrl: ApiConstants.baseUrl,
-      connectTimeout: const Duration(seconds: 5),
-      receiveTimeout: const Duration(seconds: 3),
+      connectTimeout: const Duration(seconds: 10),
+      receiveTimeout: const Duration(seconds: 10),
+      sendTimeout: const Duration(seconds: 10),
       // ✅ [첨삭 1] 공통 헤더 추가: 서버와의 통신 규격을 명확히 함
       headers: {
         'Accept': 'application/json',
@@ -29,16 +31,24 @@ final dioProvider = Provider<Dio>((ref) {
         // 요청 경로가 noAuthPaths에 포함되어 있지 않다면 토큰을 삽입합니다.
         final requestPath = options.path;
         final bool requiresAuth = !noAuthPaths.any(
-          (p) => requestPath.contains(p),
+              (p) => requestPath.contains(p),
         );
 
         if (requiresAuth) {
           final accessToken = await storage.read(key: 'accessToken');
           if (accessToken != null && accessToken.isNotEmpty) {
-            print('🚀 API 호출에 쓰이는 access 토큰: $accessToken'); // 여기에 추가!
+            print('🚀 API 호출: ${options.method} ${options.path}');
+            print('🔑 토큰 (처음 30자): ${accessToken.substring(0, 30)}...');
+
+            // ⭐ 토큰 정보 확인
+            decodeJwtToken(accessToken);
+
             options.headers['Authorization'] = 'Bearer $accessToken';
+          } else {
+            print('⚠️ [AUTH] 토큰이 없습니다');
           }
         }
+
         return handler.next(options);
       },
 

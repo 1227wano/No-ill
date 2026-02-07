@@ -129,7 +129,7 @@ class RecentEventScreen extends ConsumerWidget {
               child: ElevatedButton(
                 onPressed: () {
                   // ✅ 확인 버튼을 누르면 바구니를 다시 null로 비웁니다.
-                  ref.read(recentEventProvider.notifier).state = null;
+                  ref.read(recentEventProvider.notifier).update(null);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,

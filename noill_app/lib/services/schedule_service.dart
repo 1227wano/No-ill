@@ -1,160 +1,423 @@
+// lib/services/schedule_service.dart
+
 import 'package:dio/dio.dart';
 import '../models/schedule_model.dart';
+import '../core/utils/result.dart';
+import '../core/utils/logger.dart';
+import '../core/exceptions/app_exception.dart';
 
 class ScheduleService {
   final Dio _dio;
+  final _logger = AppLogger('ScheduleService');
 
   ScheduleService(this._dio);
 
-  //// 1. 전체 일정 목록 조회 (수정 완료 ✅)
-  Future<List<ScheduleModel>> fetchAllSchedules(String petId) async {
+  // ═══════════════════════════════════════════════════════════════════════
+  // 1. 일정 조회
+  // ═══════════════════════════════════════════════════════════════════════
+
+  /// 전체 일정 목록 조회
+  ///
+  /// [petId]: 어르신 기기 ID
+  ///
+  /// Returns: [Success<List<ScheduleModel>>] 조회 성공
+  ///          [Failure<List<ScheduleModel>>] 조회 실패
+  Future<Result<List<ScheduleModel>>> fetchAllSchedules(String petId) async {
     try {
-      // 💡 주소를 /api/schedules/pets 로 변경하고
-      // 💡 petId를 queryParameters로 전달합니다.
+      _logger.info('전체 일정 조회: $petId');
+
       final response = await _dio.get(
-        '/schedules/app',
+        '/api/schedules/app',
         queryParameters: {'petId': petId},
       );
 
-      print("🚀 호출 주소 확인: ${response.realUri}"); // 실제 호출된 전체 주소가 출력됩니다.
+      _logger.debug('요청 URL: ${response.realUri}');
+      _logger.info('응답 수신: ${response.statusCode}');
 
       if (response.statusCode == 200) {
+        if (response.data == null) {
+          _logger.info('응답 데이터가 null - 빈 리스트 반환');
+          return const Success([]);
+        }
+
         final List<dynamic> data = response.data;
-        return data.map((json) => ScheduleModel.fromJson(json)).toList();
+        final schedules = data.map((json) => ScheduleModel.fromJson(json)).toList();
+
+        _logger.info('일정 ${schedules.length}개 조회 완료');
+        return Success(schedules);
       }
-      return [];
-    } catch (e) {
-      print("🚨 전체 일정 조회 실패: $e");
-      return [];
+
+      _logger.warning('예상치 못한 응답 코드: ${response.statusCode}');
+      return const Success([]);
+
+    } on DioException catch (e, stackTrace) {
+      _logger.error('전체 일정 조회 실패', e, stackTrace);
+      return Failure(_handleDioException(e, '전체 일정 조회'));
+    } on TypeError catch (e, stackTrace) {
+      _logger.error('데이터 파싱 실패', e, stackTrace);
+      return Failure(ParseException('일정 데이터 형식이 올바르지 않습니다', originalError: e));
+    } catch (e, stackTrace) {
+      _logger.error('예상치 못한 에러', e, stackTrace);
+      return Failure(AppException('일정 조회 중 오류가 발생했습니다'));
     }
   }
 
-  /// 2. 월별 일정 조회 (수정 완료 ✅)
-  /// GET /api/schedules/app/month?petId=N0111&yearMonth=2026-02
-  Future<List<ScheduleModel>> fetchMonthlySchedules(
-    String petId,
-    int year,
-    int month,
-  ) async {
+  /// 월별 일정 조회
+  ///
+  /// [petId]: 어르신 기기 ID
+  /// [year]: 년도
+  /// [month]: 월 (1-12)
+  ///
+  /// Returns: [Success<List<ScheduleModel>>] 조회 성공
+  ///          [Failure<List<ScheduleModel>>] 조회 실패
+  Future<Result<List<ScheduleModel>>> fetchMonthlySchedules(
+      String petId,
+      int year,
+      int month,
+      ) async {
     try {
-      // 💡 1. 주소에서 $petId를 제거하고 '/api/schedules/app/month'로 고정합니다.
-      // 💡 2. 'year'와 'month'를 서버가 원하는 'YYYY-MM' 형식으로 변환합니다.
-      final String formattedMonth = month.toString().padLeft(2, '0');
-      final String yearMonth = "$year-$formattedMonth";
+      // YYYY-MM 형식으로 변환
+      final yearMonth = _formatYearMonth(year, month);
+      _logger.info('월별 일정 조회: $petId / $yearMonth');
 
       final response = await _dio.get(
         '/api/schedules/app/month',
         queryParameters: {
-          'petId': petId, // 예: N0111
-          'yearMonth': yearMonth, // 예: 2026-02
+          'petId': petId,
+          'yearMonth': yearMonth,
         },
       );
 
-      print("🚀 월별 조회 호출: ${response.realUri}");
+      _logger.debug('요청 URL: ${response.realUri}');
+      _logger.info('응답 수신: ${response.statusCode}');
 
       if (response.statusCode == 200) {
+        if (response.data == null) {
+          _logger.info('응답 데이터가 null - 빈 리스트 반환');
+          return const Success([]);
+        }
+
         final List<dynamic> data = response.data;
-        return data.map((json) => ScheduleModel.fromJson(json)).toList();
+        final schedules = data.map((json) => ScheduleModel.fromJson(json)).toList();
+
+        _logger.info('일정 ${schedules.length}개 조회 완료');
+        return Success(schedules);
       }
-      return [];
-    } catch (e) {
-      print("🚨 월별 일정 조회 실패: $e");
-      return [];
+
+      _logger.warning('예상치 못한 응답 코드: ${response.statusCode}');
+      return const Success([]);
+
+    } on DioException catch (e, stackTrace) {
+      _logger.error('월별 일정 조회 실패', e, stackTrace);
+      return Failure(_handleDioException(e, '월별 일정 조회'));
+    } on TypeError catch (e, stackTrace) {
+      _logger.error('데이터 파싱 실패', e, stackTrace);
+      return Failure(ParseException('일정 데이터 형식이 올바르지 않습니다', originalError: e));
+    } catch (e, stackTrace) {
+      _logger.error('예상치 못한 에러', e, stackTrace);
+      return Failure(AppException('일정 조회 중 오류가 발생했습니다'));
     }
   }
 
-  //// 3. 일별 일정 조회 (수정 완료 ✅)
-  /// GET /api/schedules/app/day?petId=N0111&date=2026-02-03
-  Future<List<ScheduleModel>> fetchDailySchedules(
-    String petId,
-    DateTime date,
-  ) async {
+  /// 일별 일정 조회
+  ///
+  /// [petId]: 어르신 기기 ID
+  /// [date]: 조회할 날짜
+  ///
+  /// Returns: [Success<List<ScheduleModel>>] 조회 성공
+  ///          [Failure<List<ScheduleModel>>] 조회 실패
+  Future<Result<List<ScheduleModel>>> fetchDailySchedules(
+      String petId,
+      DateTime date,
+      ) async {
     try {
-      // 💡 서버가 원하는 YYYY-MM-DD 형식으로 날짜를 변환합니다.
-      final String formattedDate =
-          "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+      // YYYY-MM-DD 형식으로 변환
+      final formattedDate = _formatDate(date);
+      _logger.info('일별 일정 조회: $petId / $formattedDate');
 
       final response = await _dio.get(
         '/api/schedules/app/day',
         queryParameters: {
-          'petId': petId, // 예: N0111
-          'date': formattedDate, // 예: 2026-02-03
+          'petId': petId,
+          'date': formattedDate,
         },
       );
 
-      print("🚀 일별 조회 호출: ${response.realUri}");
+      _logger.debug('요청 URL: ${response.realUri}');
+      _logger.info('응답 수신: ${response.statusCode}');
 
       if (response.statusCode == 200) {
+        if (response.data == null) {
+          _logger.info('응답 데이터가 null - 빈 리스트 반환');
+          return const Success([]);
+        }
+
         final List<dynamic> data = response.data;
-        return data.map((json) => ScheduleModel.fromJson(json)).toList();
+        final schedules = data.map((json) => ScheduleModel.fromJson(json)).toList();
+
+        _logger.info('일정 ${schedules.length}개 조회 완료');
+        return Success(schedules);
       }
-      return [];
-    } catch (e) {
-      print("🚨 일별 일정 조회 실패: $e");
-      return [];
+
+      _logger.warning('예상치 못한 응답 코드: ${response.statusCode}');
+      return const Success([]);
+
+    } on DioException catch (e, stackTrace) {
+      _logger.error('일별 일정 조회 실패', e, stackTrace);
+      return Failure(_handleDioException(e, '일별 일정 조회'));
+    } on TypeError catch (e, stackTrace) {
+      _logger.error('데이터 파싱 실패', e, stackTrace);
+      return Failure(ParseException('일정 데이터 형식이 올바르지 않습니다', originalError: e));
+    } catch (e, stackTrace) {
+      _logger.error('예상치 못한 에러', e, stackTrace);
+      return Failure(AppException('일정 조회 중 오류가 발생했습니다'));
     }
   }
 
-  /// 4. 일정 등록 (POST /api/schedule)
-  Future<bool> createSchedule(ScheduleModel schedule, String petId) async {
+  // ═══════════════════════════════════════════════════════════════════════
+  // 2. 일정 생성
+  // ═══════════════════════════════════════════════════════════════════════
+
+  /// 일정 생성
+  ///
+  /// [schedule]: 생성할 일정 정보
+  /// [petId]: 어르신 기기 ID
+  ///
+  /// Returns: [Success<ScheduleModel>] 생성 성공
+  ///          [Failure<ScheduleModel>] 생성 실패
+  Future<Result<ScheduleModel>> createSchedule(
+      ScheduleModel schedule,
+      String petId,
+      ) async {
     try {
-      // ✅ 사용자님이 제공해주신 Request 규격 반영
+      _logger.info('일정 생성: ${schedule.schName}');
+
+      final requestData = schedule.toJson(petId);
+      _logger.debug('요청 데이터: $requestData');
+
       final response = await _dio.post(
-        '/schedules/app',
-        data: schedule.toJson(petId),
+        '/api/schedules/app',
+        data: requestData,
       );
-      return response.statusCode == 200 || response.statusCode == 201;
-    } catch (e) {
-      print("🚨 일정 등록 실패: $e");
-      return false;
-    }
-  }
 
-  // 5. 일정 수정 (디버깅 버전)
-  Future<bool> updateSchedule(ScheduleModel schedule, String petId) async {
-    if (schedule.id == null) {
-      print("🚨 에러: schedule.id가 null입니다!");
-      return false;
-    }
+      _logger.info('응답 수신: ${response.statusCode}');
 
-    try {
-      final body = schedule.toJson(petId); // 서버로 보낼 데이터
-      final url = '/schedules/app/${schedule.id}'; // 호출할 주소
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        _logger.info('일정 생성 성공');
 
-      print("📡 [수정 요청] 주소: $url");
-      print("📡 [수정 요청] 데이터: $body"); // 💡 이 데이터를 유심히 보세요!
+        // 생성된 일정 반환 (서버가 ID를 부여한 데이터)
+        if (response.data != null) {
+          return Success(ScheduleModel.fromJson(response.data));
+        }
 
-      final response = await _dio.put(url, data: body);
-
-      return response.statusCode == 200;
-    } catch (e) {
-      if (e is DioException && e.response != null) {
-        // 서버가 왜 400을 줬는지 상세 이유를 알려주는 경우가 많습니다.
-        print("🚨 서버 응답 에러 상세: ${e.response?.data}");
+        // 응답에 데이터가 없으면 원본 반환
+        return Success(schedule);
       }
-      print("🚨 일정 수정 실패: $e");
-      return false;
+
+      _logger.warning('일정 생성 실패: ${response.statusCode}');
+      return Failure(AppException('일정 생성에 실패했습니다'));
+
+    } on DioException catch (e, stackTrace) {
+      _logger.error('일정 생성 실패', e, stackTrace);
+      return Failure(_handleDioException(e, '일정 생성'));
+    } catch (e, stackTrace) {
+      _logger.error('예상치 못한 에러', e, stackTrace);
+      return Failure(AppException('일정 생성 중 오류가 발생했습니다'));
     }
   }
 
-  // schedule_service.dart
+  // ═══════════════════════════════════════════════════════════════════════
+  // 3. 일정 수정
+  // ═══════════════════════════════════════════════════════════════════════
 
-  Future<bool> deleteSchedule(int id, String petId) async {
+  /// 일정 수정
+  ///
+  /// [schedule]: 수정할 일정 정보 (ID 필수)
+  /// [petId]: 어르신 기기 ID
+  ///
+  /// Returns: [Success<ScheduleModel>] 수정 성공
+  ///          [Failure<ScheduleModel>] 수정 실패
+  Future<Result<ScheduleModel>> updateSchedule(
+      ScheduleModel schedule,
+      String petId,
+      ) async {
+    // ID 검증
+    if (schedule.id == null) {
+      _logger.error('일정 수정 실패: ID가 null입니다');
+      return Failure(AppException('일정 ID가 없습니다'));
+    }
+
     try {
-      print("🗑️ 삭제 시도 - ID: $id, PetId: $petId");
+      _logger.info('일정 수정: ID=${schedule.id}, ${schedule.schName}');
+
+      final requestData = schedule.toJson(petId);
+      final url = '/api/schedules/app/${schedule.id}';
+
+      _logger.debug('요청 URL: $url');
+      _logger.debug('요청 데이터: $requestData');
+
+      final response = await _dio.put(url, data: requestData);
+
+      _logger.info('응답 수신: ${response.statusCode}');
+
+      if (response.statusCode == 200) {
+        _logger.info('일정 수정 성공');
+
+        // 수정된 일정 반환
+        if (response.data != null) {
+          return Success(ScheduleModel.fromJson(response.data));
+        }
+
+        // 응답에 데이터가 없으면 원본 반환
+        return Success(schedule);
+      }
+
+      _logger.warning('일정 수정 실패: ${response.statusCode}');
+      return Failure(AppException('일정 수정에 실패했습니다'));
+
+    } on DioException catch (e, stackTrace) {
+      _logger.error('일정 수정 실패', e, stackTrace);
+
+      // 400 에러 시 상세 정보 로깅
+      if (e.response?.statusCode == 400) {
+        _logger.error('서버 응답 상세: ${e.response?.data}');
+      }
+
+      return Failure(_handleDioException(e, '일정 수정'));
+    } catch (e, stackTrace) {
+      _logger.error('예상치 못한 에러', e, stackTrace);
+      return Failure(AppException('일정 수정 중 오류가 발생했습니다'));
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // 4. 일정 삭제
+  // ═══════════════════════════════════════════════════════════════════════
+
+  /// 일정 삭제
+  ///
+  /// [id]: 삭제할 일정 ID
+  /// [petId]: 어르신 기기 ID
+  ///
+  /// Returns: [Success<void>] 삭제 성공
+  ///          [Failure<void>] 삭제 실패
+  Future<Result<void>> deleteSchedule(int id, String petId) async {
+    try {
+      _logger.info('일정 삭제: ID=$id, PetId=$petId');
 
       final response = await _dio.delete(
-        '/schedules/app/$id',
-        // 💡 핵심: DELETE 요청의 body에 petId를 담습니다.
+        '/api/schedules/app/$id',
         data: {'petId': petId},
-        // 아까 논의한 대로 혹시 모를 500 에러 방지를 위해 추가
-        options: Options(contentType: Headers.jsonContentType),
+        options: Options(
+          contentType: Headers.jsonContentType,
+        ),
       );
 
-      return response.statusCode == 200 || response.statusCode == 204;
-    } on DioException catch (e) {
-      print("❌ [Service] 삭제 실패: ${e.response?.data}");
-      return false;
+      _logger.info('응답 수신: ${response.statusCode}');
+
+      if (response.statusCode == 200 || response.statusCode == 204) {
+        _logger.info('일정 삭제 성공');
+        return const Success(null);
+      }
+
+      _logger.warning('일정 삭제 실패: ${response.statusCode}');
+      return Failure(AppException('일정 삭제에 실패했습니다'));
+
+    } on DioException catch (e, stackTrace) {
+      _logger.error('일정 삭제 실패', e, stackTrace);
+      _logger.error('서버 응답: ${e.response?.data}');
+      return Failure(_handleDioException(e, '일정 삭제'));
+    } catch (e, stackTrace) {
+      _logger.error('예상치 못한 에러', e, stackTrace);
+      return Failure(AppException('일정 삭제 중 오류가 발생했습니다'));
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // Private: 유틸리티
+  // ═══════════════════════════════════════════════════════════════════════
+
+  /// 년월을 YYYY-MM 형식으로 변환
+  String _formatYearMonth(int year, int month) {
+    final formattedMonth = month.toString().padLeft(2, '0');
+    return '$year-$formattedMonth';
+  }
+
+  /// 날짜를 YYYY-MM-DD 형식으로 변환
+  String _formatDate(DateTime date) {
+    final year = date.year;
+    final month = date.month.toString().padLeft(2, '0');
+    final day = date.day.toString().padLeft(2, '0');
+    return '$year-$month-$day';
+  }
+
+  /// DioException을 AppException으로 변환
+  AppException _handleDioException(DioException e, String operation) {
+    final statusCode = e.response?.statusCode;
+
+    switch (e.type) {
+      case DioExceptionType.connectionTimeout:
+      case DioExceptionType.sendTimeout:
+      case DioExceptionType.receiveTimeout:
+        return NetworkException(
+          '네트워크 연결 시간이 초과되었습니다',
+          code: 'TIMEOUT',
+          originalError: e,
+        );
+
+      case DioExceptionType.connectionError:
+        return NetworkException(
+          '네트워크 연결을 확인해주세요',
+          code: 'CONNECTION_ERROR',
+          originalError: e,
+        );
+
+      case DioExceptionType.badResponse:
+        if (statusCode == 400) {
+          final serverMessage = e.response?.data?['message'] as String?;
+          return AppException(
+            serverMessage ?? '잘못된 요청입니다',
+            code: 'BAD_REQUEST',
+            originalError: e,
+          );
+        } else if (statusCode == 401 || statusCode == 403) {
+          return AuthException('인증이 만료되었습니다', originalError: e);
+        } else if (statusCode == 404) {
+          return ServerException(
+            '요청한 일정을 찾을 수 없습니다',
+            statusCode: 404,
+            code: 'NOT_FOUND',
+            originalError: e,
+          );
+        } else if (statusCode != null && statusCode >= 500) {
+          return ServerException(
+            '서버 오류가 발생했습니다',
+            statusCode: statusCode,
+            code: 'SERVER_ERROR',
+            originalError: e,
+          );
+        }
+
+        final serverMessage = e.response?.data?['message'] as String?;
+        return ServerException(
+          serverMessage ?? '$operation 처리 중 오류가 발생했습니다',
+          statusCode: statusCode,
+          originalError: e,
+        );
+
+      case DioExceptionType.cancel:
+        return AppException(
+          '요청이 취소되었습니다',
+          code: 'CANCELLED',
+          originalError: e,
+        );
+
+      default:
+        return AppException(
+          '알 수 없는 오류가 발생했습니다',
+          code: 'UNKNOWN',
+          originalError: e,
+        );
     }
   }
 }

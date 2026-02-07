@@ -1,16 +1,39 @@
-// 입력 필드 위젯
+// lib/widgets/atoms/custom_input_field.dart
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../core/constants/color_constants.dart';
 
+/// 공통 입력 필드 위젯
+///
+/// [label]: 입력 필드 위의 레이블 텍스트
+/// [hintText]: placeholder 텍스트
+/// [controller]: TextEditingController
+/// [errorText]: 에러 메시지 (null이면 표시 안 함)
+/// [obscureText]: 비밀번호 입력 필드 여부
+/// [readOnly]: 읽기 전용 여부
+/// [enabled]: 활성화 여부 (false면 입력 불가, 회색 처리)
+/// [suffixIcon]: 오른쪽에 표시할 아이콘
+/// [onSubmitted]: 엔터키 입력 시 실행될 콜백
+/// [keyboardType]: 키보드 타입
+/// [inputFormatters]: 입력 형식 제한
+/// [maxLength]: 최대 입력 길이
 class CustomInputField extends StatelessWidget {
   final String label;
   final String hintText;
   final TextEditingController? controller;
   final String? errorText;
   final bool obscureText;
-  final bool readOnly; // 👈 1. 이 줄을 추가하세요.
-  final Widget? suffixIcon; // ✅ 이 줄이 있는지 꼭 확인하세요!
+  final bool readOnly;
+  final bool enabled;
+  final Widget? suffixIcon;
+  final ValueChanged<String>? onSubmitted;
+  final ValueChanged<String>? onChanged;
+  final TextInputType? keyboardType;
+  final List<TextInputFormatter>? inputFormatters;
+  final int? maxLength;
+  final int? maxLines;
+  final FocusNode? focusNode;
 
   const CustomInputField({
     super.key,
@@ -19,8 +42,16 @@ class CustomInputField extends StatelessWidget {
     this.controller,
     this.errorText,
     this.obscureText = false,
-    this.readOnly = false, // 👈 2. 기본값을 false로 설정하세요.
-    this.suffixIcon, // ✅ 여기에 추가되어야 밖에서 사용할 수 있습니다.
+    this.readOnly = false,
+    this.enabled = true,
+    this.suffixIcon,
+    this.onSubmitted,
+    this.onChanged,
+    this.keyboardType,
+    this.inputFormatters,
+    this.maxLength,
+    this.maxLines = 1,
+    this.focusNode,
   });
 
   @override
@@ -28,48 +59,92 @@ class CustomInputField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // 1. 레이블
+        // 레이블
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w700,
-            color: NoIllColors.textMain,
+            color: enabled ? NoIllColors.textMain : NoIllColors.textBody,
           ),
         ),
         const SizedBox(height: 8),
-        // 2. 입력창
+
+        // 입력 필드
         TextFormField(
           controller: controller,
           obscureText: obscureText,
-          readOnly: readOnly, // 👈 3. 여기에 넘겨줘야 진짜 작동합니다!
-          style: const TextStyle(fontSize: 16, color: NoIllColors.textMain),
+          readOnly: readOnly,
+          enabled: enabled,
+          focusNode: focusNode,
+          onFieldSubmitted: onSubmitted,
+          onChanged: onChanged,
+          keyboardType: keyboardType,
+          inputFormatters: inputFormatters,
+          maxLength: maxLength,
+          maxLines: maxLines,
+          style: TextStyle(
+            fontSize: 16,
+            color: enabled ? NoIllColors.textMain : NoIllColors.textBody,
+          ),
           decoration: InputDecoration(
-            // 스타일
+            // 기본 스타일
             filled: true,
-            fillColor: Colors.white.withOpacity(0.6), // 배경 살짝 비침
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide.none, // 기본 테두리 없음
-            ),
-            // 힌트
+            fillColor: _getFillColor(),
+
+            // 테두리
+            border: _buildBorder(NoIllColors.textBody.withOpacity(0.3)),
+            enabledBorder: _buildBorder(NoIllColors.textBody.withOpacity(0.3)),
+            focusedBorder: _buildBorder(NoIllColors.primary, width: 2),
+            disabledBorder: _buildBorder(NoIllColors.textBody.withOpacity(0.2)),
+            errorBorder: _buildBorder(NoIllColors.danger),
+            focusedErrorBorder: _buildBorder(NoIllColors.danger, width: 2),
+
+            // 힌트 및 에러
             hintText: hintText,
-            suffixIcon: suffixIcon, // ✅ 여기에 전달해줘야 아이콘이 나타납니다.
-            hintStyle: const TextStyle(color: NoIllColors.textBody),
-            errorText: errorText, // 에러 메시지가 있으면 빨간색으로 자동 표시
-            // 에러 발생 시 테두리 스타일
-            errorStyle: const TextStyle(color: NoIllColors.danger),
-            focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: NoIllColors.danger, width: 2),
+            hintStyle: TextStyle(
+              color: NoIllColors.textBody.withOpacity(0.6),
+              fontSize: 16,
             ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: NoIllColors.danger),
+            errorText: errorText,
+            errorStyle: const TextStyle(
+              color: NoIllColors.danger,
+              fontSize: 12,
             ),
+
+            // 아이콘
+            suffixIcon: suffixIcon,
+
+            // 패딩
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 16,
+            ),
+
+            // maxLength 카운터 숨기기
+            counterText: '',
           ),
         ),
       ],
+    );
+  }
+
+  /// 입력 필드 배경색 결정
+  Color _getFillColor() {
+    if (!enabled) {
+      return Colors.grey.shade100;
+    }
+    if (readOnly) {
+      return Colors.grey.shade50;
+    }
+    return Colors.white.withOpacity(0.6);
+  }
+
+  /// 테두리 스타일 생성
+  OutlineInputBorder _buildBorder(Color color, {double width = 1}) {
+    return OutlineInputBorder(
+      borderRadius: BorderRadius.circular(16),
+      borderSide: BorderSide(color: color, width: width),
     );
   }
 }

@@ -52,8 +52,8 @@ class LatestAccidentBanner extends ConsumerWidget {
                   visualDensity: VisualDensity.compact,
                   icon: const Icon(Icons.close, size: 20),
                   onPressed: () =>
-                      ref.read(latestAccidentImageProvider.notifier).state =
-                          null,
+                      ref.read(latestAccidentImageProvider.notifier).update(
+                          null),
                 ),
               ],
             ),

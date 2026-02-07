@@ -1,6 +1,8 @@
 // lib/providers/fcm_provider.dart
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/network/dio_provider.dart'; // dio 프로바이더
+import '../core/utils/result.dart';
 import '../services/fcm_service.dart'; // 수정했던 FcmService(dio)
 
 final fcmProvider = Provider((ref) {
@@ -21,8 +23,8 @@ class FcmLogic {
   Future<void> setupAfterLogin(String accessToken) async {
     final token = await service.getFcmToken();
     if (token != null) {
-      final success = await service.sendTokenToServer(token);
-      if (success) {
+      final result = await service.sendTokenToServer(token);
+      if (result.isSuccess) {
         await service.initialize(); // 리스너 등록 등 포함
       }
     }

@@ -1,96 +1,311 @@
+// lib/providers/schedule_provider.dart
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import '../models/schedule_model.dart';
 import '../services/schedule_service.dart';
 import '../core/network/dio_provider.dart';
-import 'care_provider.dart'; // ✅ selectedPetIdProvider를 사용하기 위해 임포트
+import '../core/utils/logger.dart';
+import '../core/utils/result.dart';
+import 'care_provider.dart';
 
-// 1. 서비스 프로바이더
-final scheduleServiceProvider = Provider(
-  (ref) => ScheduleService(ref.read(dioProvider)),
-);
+// ═══════════════════════════════════════════════════════════════════════
+// Service Provider
+// ═══════════════════════════════════════════════════════════════════════
 
-// 2. 현재 달력에서 선택된 날짜 관리
-final selectedDateProvider = StateProvider<DateTime>((ref) => DateTime.now());
+final scheduleServiceProvider = Provider<ScheduleService>((ref) {
+  final dio = ref.read(dioProvider);
+  return ScheduleService(dio);
+});
 
-// 3. 특정 어르신의 전체 일정 데이터를 관리하는 AsyncNotifier
-class ScheduleNotifier extends AsyncNotifier<List<ScheduleModel>> {
+// ═══════════════════════════════════════════════════════════════════════
+// State Providers
+// ═══════════════════════════════════════════════════════════════════════
+
+/// 현재 선택된 날짜
+class SelectedDateNotifier extends Notifier<DateTime> {
   @override
-  Future<List<ScheduleModel>> build() async {
-    // ✅ [수정] 객체가 아닌 String ID만 반환하는 프로바이더를 구독(watch)합니다.
-    final petId = ref.watch(selectedPetIdProvider);
-    // final petNo = ref.watch(selectedPetNoProvider);
+  DateTime build() => DateTime.now();
 
-    // 어르신이 선택되지 않았다면 빈 목록 반환
-    if (petId == null) return [];
-
-    // 서비스 함수에 String 타입의 petId를 전달합니다.
-    return await ref.read(scheduleServiceProvider).fetchAllSchedules(petId);
-  }
-
-  /// 일정 등록 후 상태 갱신
-  Future<bool> addSchedule(ScheduleModel schedule, String petId) async {
-    // ✅ [수정] String ID를 읽어옵니다.
-    final success = await ref
-        .read(scheduleServiceProvider)
-        .createSchedule(schedule, petId);
-
-    if (success) {
-      ref.invalidateSelf(); // 성공 시 목록 갱신
-    }
-    return success;
-  }
-
-  /// 일정 수정 후 상태 갱신
-  Future<bool> editSchedule(ScheduleModel schedule, String petId) async {
-    // ✅ [수정] 일관성을 위해 selectedPetIdProvider 사용
-    final success = await ref
-        .read(scheduleServiceProvider)
-        .updateSchedule(schedule, petId);
-
-    if (success) {
-      ref.invalidateSelf();
-    }
-    return success; // 💡 결과 반환 필수!
-  }
-
-  /// 일정 삭제 후 상태 갱신
-  // providers/schedule_provider.dart 내의 ScheduleNotifier 클래스
-
-  /// ✅ 일정 삭제 후 상태 갱신 (petId 포함 버전)
-  Future<bool> removeSchedule(int id) async {
-    // 1. 현재 선택된 어르신 ID를 읽어옵니다. (낚아채기)
-    final petId = ref.read(selectedPetIdProvider);
-
-    if (petId == null) {
-      print("🚨 [Notifier] petId가 없어 삭제를 중단합니다.");
-      return false;
-    }
-
-    // 2. 서비스에 id와 petId를 함께 넘깁니다.
-    final success = await ref
-        .read(scheduleServiceProvider)
-        .deleteSchedule(id, petId);
-    if (success) {
-      ref.invalidateSelf(); // 삭제 성공 시 목록 새로고침
-    }
-    return success;
+  void update(DateTime value) {
+    state = value;
   }
 }
 
-final scheduleNotifierProvider =
-    AsyncNotifierProvider<ScheduleNotifier, List<ScheduleModel>>(() {
-      return ScheduleNotifier();
-    });
+final selectedDateProvider = NotifierProvider<SelectedDateNotifier, DateTime>(
+  () => SelectedDateNotifier(),
+);
 
-// 4. 선택된 날짜에 해당하는 일정만 필터링 (기존 로직 유지)
+/// 현재 선택된 월 (달력용)
+class SelectedMonthNotifier extends Notifier<DateTime> {
+  @override
+  DateTime build() => DateTime.now();
+
+  void update(DateTime value) {
+    state = value;
+  }
+}
+
+final selectedMonthProvider = NotifierProvider<SelectedMonthNotifier, DateTime>(
+  () => SelectedMonthNotifier(),
+);
+
+// ═══════════════════════════════════════════════════════════════════════
+// Schedule Notifier - 일정 관리
+// ═══════════════════════════════════════════════════════════════════════
+
+class ScheduleNotifier extends AsyncNotifier<List<ScheduleModel>> {
+  final _logger = AppLogger('ScheduleNotifier');
+
+  @override
+  Future<List<ScheduleModel>> build() async {
+    // 선택된 어르신 ID 확인
+    final petId = ref.watch(selectedPetIdProvider);
+
+    if (petId == null) {
+      _logger.info('선택된 어르신 없음 - 빈 리스트 반환');
+      return [];
+    }
+
+    // 전체 일정 로드
+    return await _loadAllSchedules(petId);
+  }
+
+  /// 전체 일정 로드
+  Future<List<ScheduleModel>> _loadAllSchedules(String petId) async {
+    try {
+      _logger.info('전체 일정 로드: $petId');
+
+      final service = ref.read(scheduleServiceProvider);
+      final result = await service.fetchAllSchedules(petId);
+
+      return result.fold(
+        onSuccess: (schedules) {
+          _logger.info('일정 ${schedules.length}개 로드 완료');
+          return schedules;
+        },
+        onFailure: (exception) {
+          _logger.error('일정 로드 실패: ${exception.message}');
+          throw exception;
+        },
+      );
+    } catch (e, stackTrace) {
+      _logger.error('예상치 못한 에러', e, stackTrace);
+      rethrow;
+    }
+  }
+
+  /// 일정 추가
+  Future<bool> addSchedule(ScheduleModel schedule, String petId) async {
+    try {
+      _logger.info('일정 추가: ${schedule.schName}');
+
+      final service = ref.read(scheduleServiceProvider);
+      final result = await service.createSchedule(schedule, petId);
+
+      return result.fold(
+        onSuccess: (createdSchedule) {
+          _logger.info('일정 추가 성공: ${createdSchedule.schName}');
+
+          // 목록 새로고침
+          ref.invalidateSelf();
+          return true;
+        },
+        onFailure: (exception) {
+          _logger.error('일정 추가 실패: ${exception.message}');
+          return false;
+        },
+      );
+    } catch (e, stackTrace) {
+      _logger.error('예상치 못한 에러', e, stackTrace);
+      return false;
+    }
+  }
+
+  /// 일정 수정
+  Future<bool> editSchedule(ScheduleModel schedule, String petId) async {
+    try {
+      _logger.info('일정 수정: ID=${schedule.id}, ${schedule.schName}');
+
+      final service = ref.read(scheduleServiceProvider);
+      final result = await service.updateSchedule(schedule, petId);
+
+      return result.fold(
+        onSuccess: (updatedSchedule) {
+          _logger.info('일정 수정 성공: ${updatedSchedule.schName}');
+
+          // 목록 새로고침
+          ref.invalidateSelf();
+          return true;
+        },
+        onFailure: (exception) {
+          _logger.error('일정 수정 실패: ${exception.message}');
+          return false;
+        },
+      );
+    } catch (e, stackTrace) {
+      _logger.error('예상치 못한 에러', e, stackTrace);
+      return false;
+    }
+  }
+
+  /// 일정 삭제
+  Future<bool> removeSchedule(int id) async {
+    try {
+      _logger.info('일정 삭제: ID=$id');
+
+      // 선택된 어르신 ID 확인
+      final petId = ref.read(selectedPetIdProvider);
+      if (petId == null) {
+        _logger.error('선택된 어르신 없음 - 삭제 중단');
+        return false;
+      }
+
+      final service = ref.read(scheduleServiceProvider);
+      final result = await service.deleteSchedule(id, petId);
+
+      return result.fold(
+        onSuccess: (_) {
+          _logger.info('일정 삭제 성공');
+
+          // 목록 새로고침
+          ref.invalidateSelf();
+          return true;
+        },
+        onFailure: (exception) {
+          _logger.error('일정 삭제 실패: ${exception.message}');
+          return false;
+        },
+      );
+    } catch (e, stackTrace) {
+      _logger.error('예상치 못한 에러', e, stackTrace);
+      return false;
+    }
+  }
+
+  /// 목록 새로고침
+  Future<void> refresh() async {
+    _logger.info('일정 목록 새로고침');
+    ref.invalidateSelf();
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// Providers
+// ═══════════════════════════════════════════════════════════════════════
+
+/// 전체 일정 목록
+final scheduleNotifierProvider =
+AsyncNotifierProvider<ScheduleNotifier, List<ScheduleModel>>(
+      () => ScheduleNotifier(),
+);
+
+/// 선택된 날짜의 일정만 필터링
 final filteredScheduleProvider = Provider<List<ScheduleModel>>((ref) {
   final allSchedules = ref.watch(scheduleNotifierProvider).value ?? [];
   final selectedDate = ref.watch(selectedDateProvider);
 
-  return allSchedules.where((s) {
-    return s.schTime.year == selectedDate.year &&
-        s.schTime.month == selectedDate.month &&
-        s.schTime.day == selectedDate.day;
-  }).toList()..sort((a, b) => a.schTime.compareTo(b.schTime));
+  return allSchedules
+      .where((schedule) => _isSameDay(schedule.schTime, selectedDate))
+      .toList()
+    ..sort((a, b) => a.schTime.compareTo(b.schTime));
 });
+
+/// 선택된 월의 일정만 필터링
+final monthlyScheduleProvider = Provider<List<ScheduleModel>>((ref) {
+  final allSchedules = ref.watch(scheduleNotifierProvider).value ?? [];
+  final selectedMonth = ref.watch(selectedMonthProvider);
+
+  return allSchedules
+      .where((schedule) => _isSameMonth(schedule.schTime, selectedMonth))
+      .toList()
+    ..sort((a, b) => a.schTime.compareTo(b.schTime));
+});
+
+/// 오늘의 일정
+final todayScheduleProvider = Provider<List<ScheduleModel>>((ref) {
+  final allSchedules = ref.watch(scheduleNotifierProvider).value ?? [];
+  final today = DateTime.now();
+
+  return allSchedules
+      .where((schedule) => _isSameDay(schedule.schTime, today))
+      .toList()
+    ..sort((a, b) => a.schTime.compareTo(b.schTime));
+});
+
+/// 다가오는 일정 (미래 일정만, 최대 10개)
+final upcomingScheduleProvider = Provider<List<ScheduleModel>>((ref) {
+  final allSchedules = ref.watch(scheduleNotifierProvider).value ?? [];
+  final now = DateTime.now();
+
+  return allSchedules
+      .where((schedule) => schedule.schTime.isAfter(now))
+      .toList()
+    ..sort((a, b) => a.schTime.compareTo(b.schTime))
+    ..take(10);
+});
+
+/// 특정 날짜에 일정이 있는지 확인 (달력 마커용)
+final hasScheduleOnDateProvider = Provider.family<bool, DateTime>((ref, date) {
+  final allSchedules = ref.watch(scheduleNotifierProvider).value ?? [];
+  return allSchedules.any((schedule) => _isSameDay(schedule.schTime, date));
+});
+
+/// 일정 통계
+final scheduleStatsProvider = Provider<ScheduleStats>((ref) {
+  final allSchedules = ref.watch(scheduleNotifierProvider).value ?? [];
+  final now = DateTime.now();
+
+  return ScheduleStats(
+    totalCount: allSchedules.length,
+    todayCount: allSchedules.where((s) => _isSameDay(s.schTime, now)).length,
+    weekCount: allSchedules.where((s) => _isThisWeek(s.schTime)).length,
+    monthCount: allSchedules.where((s) => _isSameMonth(s.schTime, now)).length,
+    upcomingCount: allSchedules.where((s) => s.schTime.isAfter(now)).length,
+    pastCount: allSchedules.where((s) => s.schTime.isBefore(now)).length,
+  );
+});
+
+// ═══════════════════════════════════════════════════════════════════════
+// Helper Functions
+// ═══════════════════════════════════════════════════════════════════════
+
+bool _isSameDay(DateTime a, DateTime b) {
+  return a.year == b.year && a.month == b.month && a.day == b.day;
+}
+
+bool _isSameMonth(DateTime a, DateTime b) {
+  return a.year == b.year && a.month == b.month;
+}
+
+bool _isThisWeek(DateTime date) {
+  final now = DateTime.now();
+  final weekAgo = now.subtract(const Duration(days: 7));
+  return date.isAfter(weekAgo) && date.isBefore(now.add(const Duration(days: 1)));
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// Models
+// ═══════════════════════════════════════════════════════════════════════
+
+class ScheduleStats {
+  final int totalCount;
+  final int todayCount;
+  final int weekCount;
+  final int monthCount;
+  final int upcomingCount;
+  final int pastCount;
+
+  const ScheduleStats({
+    required this.totalCount,
+    required this.todayCount,
+    required this.weekCount,
+    required this.monthCount,
+    required this.upcomingCount,
+    required this.pastCount,
+  });
+
+  @override
+  String toString() {
+    return 'ScheduleStats(total: $totalCount, today: $todayCount, week: $weekCount, month: $monthCount)';
+  }
+}
