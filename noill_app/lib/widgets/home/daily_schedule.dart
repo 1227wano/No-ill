@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart'; // 시간 포맷팅을 위해 필요 (flutter pub add intl)
-import '../../core/constants/color_constants.dart';
 import '../../providers/schedule_provider.dart';
 
 class DailyScheduleSection extends ConsumerWidget {

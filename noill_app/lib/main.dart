@@ -70,8 +70,7 @@ void main() async {
       final petId = message.data['petId'] ?? '';
 
       // Provider에서 현재 로드된 PetModel 리스트를 가져옵니다.
-      final List<PetModel> pets =
-          container.read(careListProvider).value ?? [];
+      final List<PetModel> pets = container.read(careListProvider).value ?? [];
 
       // 리스트에서 petId가 일치하는 모델을 찾습니다.
       final matchedPet = pets.firstWhere(
@@ -82,11 +81,7 @@ void main() async {
       // 통화 프로바이더에 수신 정보 전달 (이름 포함)
       container
           .read(callProvider.notifier)
-          .setIncomingCall(
-            sessionId,
-            petId,
-            matchedPet.careName,
-          );
+          .setIncomingCall(sessionId, petId, matchedPet.careName);
 
       // 화상 통화 화면으로 이동
       navigatorKey.currentState?.push(

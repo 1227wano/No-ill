@@ -70,24 +70,10 @@ class SettingsScreen extends ConsumerWidget {
               },
             ),
 
-            // 2. 사고기록 조회
-            _buildMenuTile(
-              Icons.history,
-              "사고기록 조회",
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const RecentEventScreen(),
-                  ),
-                );
-              },
-            ),
-
             // 3. 기기 관리
             _buildMenuTile(
               Icons.smart_toy_outlined,
-              "노일이 관리",
+              "노일이 등록하기",
               onTap: () {
                 // 💡 [핵심] 기기 연동 화면으로 이동합니다.
                 Navigator.push(
@@ -98,10 +84,8 @@ class SettingsScreen extends ConsumerWidget {
                 );
               },
             ),
-            _buildMenuTile(Icons.group_outlined, "공동 보호자 초대", onTap: () {}),
             _buildMenuTile(Icons.notifications_none, "알림 설정", onTap: () {}),
             const Divider(height: 40),
-            _buildMenuTile(Icons.help_outline, "고객 센터", onTap: () {}),
 
             // 로그아웃
             _buildMenuTile(

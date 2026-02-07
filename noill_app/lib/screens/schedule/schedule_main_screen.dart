@@ -37,12 +37,6 @@ class ScheduleMainScreen extends ConsumerWidget {
             onPressed: () =>
                 ref.read(calendarExpandedProvider.notifier).state = !isExpanded,
           ),
-          // 3. 편집/삭제 관리 모드 (선택 사항)
-          IconButton(
-            icon: const Icon(Icons.settings_outlined),
-            onPressed: () => print("관리 모드 진입"),
-          ),
-          const SizedBox(width: 8),
         ],
       ),
       body: Column(

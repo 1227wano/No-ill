@@ -61,52 +61,25 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       }
     });
 
-    return LightDiffusionBackground(
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        extendBody: true,
-        // 메인 상단
-        appBar: const MainAppBar(),
-        body: IndexedStack(index: _currentIndex, children: _pages),
-        bottomNavigationBar: CustomBottomNavBar(
-          currentIndex: _currentIndex,
-          onTap: (index) {
-            if (index == 1) {
-              // 🎯 [수정] petId 대신 ref를 넘깁니다.
-              _showContactSelection(context, ref);
-            } else {
-              setState(() => _currentIndex = index);
-            }
-          },
-        ),
-        // Move the FAB here so it's visible along with the BottomNavigationBar
-        floatingActionButton: FloatingActionButton.extended(
-          onPressed: () {
-            // 1. 현재 선택된 어르신 정보를 가져옵니다.
-            final selectedPet = ref.read(selectedPetProvider);
-
-            // 2. 선택된 어르신이 없을 경우를 대비한 방어 코드
-            if (selectedPet == null) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("테스트를 위해 어르신을 먼저 선택해주세요.")),
-              );
-              return;
-            }
-
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => VideoCallScreen(
-                  isIncoming: true,
-                  petId: selectedPet.petId,
-                  careName: selectedPet.careName,
-                ),
-              ),
-            );
-          },
-          label: const Text("수신 테스트"),
-          icon: const Icon(Icons.call_received),
-          backgroundColor: Colors.blueAccent,
+    return SafeArea(
+      child: LightDiffusionBackground(
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          extendBody: true,
+          // 메인 상단
+          appBar: const MainAppBar(),
+          body: IndexedStack(index: _currentIndex, children: _pages),
+          bottomNavigationBar: CustomBottomNavBar(
+            currentIndex: _currentIndex,
+            onTap: (index) {
+              if (index == 1) {
+                // 🎯 [수정] petId 대신 ref를 넘깁니다.
+                _showContactSelection(context, ref);
+              } else {
+                setState(() => _currentIndex = index);
+              }
+            },
+          ),
         ),
       ),
     );

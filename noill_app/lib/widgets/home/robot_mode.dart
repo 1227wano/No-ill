@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/constants/color_constants.dart';
 import '../../providers/care_provider.dart';
-import '../atoms/custom_card.dart';
 
 class RobotSection extends ConsumerWidget {
   const RobotSection({super.key});
