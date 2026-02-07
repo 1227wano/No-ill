@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 
 const FAMILY_PHOTOS = [
-    { id: 1, emoji: '👨‍👩‍👧‍👦', caption: '우리 가족 나들이', bg: 'from-sky-200 to-blue-300' },
-    { id: 2, emoji: '🌳🧓🧒', caption: '손주와 공원 산책', bg: 'from-green-200 to-emerald-300' },
-    { id: 3, emoji: '🎂🎉', caption: '생일 축하 파티', bg: 'from-pink-200 to-rose-300' },
-    { id: 4, emoji: '🏖️👨‍👩‍👧', caption: '여름 바다 여행', bg: 'from-cyan-200 to-teal-300' },
-    { id: 5, emoji: '🍽️👨‍👩‍👧‍👦', caption: '추석 가족 모임', bg: 'from-amber-200 to-orange-300' },
-    { id: 6, emoji: '🌸🧓👴', caption: '봄 꽃구경', bg: 'from-fuchsia-200 to-pink-300' },
+    { id: 1, emoji: '👨‍👩‍👧‍👦', caption: '우리 가족 나들이', bg: '#bae6fd' },
+    { id: 2, emoji: '🌳🧓🧒', caption: '손주와 공원 산책', bg: '#bbf7d0' },
+    { id: 3, emoji: '🎂🎉', caption: '생일 축하 파티', bg: '#fbcfe8' },
+    { id: 4, emoji: '🏖️👨‍👩‍👧', caption: '여름 바다 여행', bg: '#a5f3fc' },
+    { id: 5, emoji: '🍽️👨‍👩‍👧‍👦', caption: '추석 가족 모임', bg: '#fed7aa' },
+    { id: 6, emoji: '🌸🧓👴', caption: '봄 꽃구경', bg: '#f5d0fe' },
 ];
 
 const IdleScreen = ({ onWakeUp }) => {
@@ -22,7 +22,6 @@ const IdleScreen = ({ onWakeUp }) => {
         return () => clearInterval(timer);
     }, []);
 
-    // 슬라이드쇼 자동 전환
     useEffect(() => {
         if (mode !== 'slideshow') return;
         const interval = setInterval(() => {
@@ -64,25 +63,58 @@ const IdleScreen = ({ onWakeUp }) => {
 
     return (
         <div
-            className="fixed inset-0 bg-background z-50 flex flex-col items-center justify-center p-10 cursor-pointer"
+            style={{
+                width: 1920,
+                height: 1080,
+                position: 'relative',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: 40,  // ⭐ 60 → 40
+                cursor: 'pointer',
+                background: '#f5f5f5',
+            }}
             onClick={onWakeUp}
             onTouchStart={onWakeUp}
         >
             {/* 시간 표시 */}
-            <div className="text-8xl font-bold text-text-main mb-10">
+            <div style={{
+                fontSize: 80,  // ⭐ 120 → 80
+                fontWeight: 'bold',
+                color: '#1a1a1a',
+                marginBottom: 20,  // ⭐ 40 → 20
+            }}>
                 {timeString}
             </div>
 
             {/* 년월일 표시 */}
-            <div className="text-7xl font-semibold text-text-body mt-10 mb-10">
+            <div style={{
+                fontSize: 40,  // ⭐ 64 → 40
+                fontWeight: '600',
+                color: '#4a4a4a',
+                marginBottom: 20,  // ⭐ 40 → 20
+            }}>
                 {year}년 {month}월 {day}일
             </div>
 
             {/* 모드 전환 버튼 */}
-            <div className="mb-6">
+            <div style={{ marginBottom: 20 }}>  {/* ⭐ 30 → 20 */}
                 <button
                     onClick={handleModeToggle}
-                    className="px-8 py-3 bg-primary text-white text-2xl font-bold rounded-button hover:bg-primary/90 transition-colors"
+                    style={{
+                        padding: '12px 30px',  // ⭐ 16px 40px → 12px 30px
+                        background: '#5B8FCC',
+                        color: 'white',
+                        fontSize: 22,  // ⭐ 28 → 22
+                        fontWeight: 'bold',
+                        borderRadius: 12,
+                        border: 'none',
+                        cursor: 'pointer',
+                        transition: 'background 0.2s',
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = '#4a7ab8'}
+                    onMouseLeave={(e) => e.currentTarget.style.background = '#5B8FCC'}
                 >
                     {mode === 'calendar' ? '📷 가족 앨범' : '📅 달력'}
                 </button>
@@ -90,34 +122,62 @@ const IdleScreen = ({ onWakeUp }) => {
 
             {mode === 'calendar' ? (
                 /* 캘린더 */
-                <div className="bg-surface rounded-card shadow-card p-8 w-full max-w-7xl">
-                    <div className="grid grid-cols-7 gap-2 mb-4">
+                <div style={{
+                    background: 'white',
+                    borderRadius: 16,
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                    padding: 30,  // ⭐ 40 → 30
+                    width: 1100,  // ⭐ 1400 → 1100
+                }}>
+                    {/* 요일 헤더 */}
+                    <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(7, 1fr)',
+                        gap: 8,  // ⭐ 10 → 8
+                        marginBottom: 15,  // ⭐ 20 → 15
+                    }}>
                         {weekDays.map((d, index) => (
                             <div
                                 key={d}
-                                className={`text-center text-5xl font-bold py-3 ${
-                                    index === 0 ? 'text-red-500' : index === 6 ? 'text-blue-500' : 'text-text-body'
-                                }`}
+                                style={{
+                                    textAlign: 'center',
+                                    fontSize: 28,  // ⭐ 40 → 28
+                                    fontWeight: 'bold',
+                                    padding: '8px 0',  // ⭐ 12px → 8px
+                                    color: index === 0 ? '#ef4444' : index === 6 ? '#3b82f6' : '#4a4a4a',
+                                }}
                             >
                                 {d}
                             </div>
                         ))}
                     </div>
-                    <div className="grid grid-cols-7 gap-2">
+
+                    {/* 날짜 그리드 */}
+                    <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(7, 1fr)',
+                        gap: 8,  // ⭐ 10 → 8
+                    }}>
                         {days.map((d, index) => (
                             <div
                                 key={index}
-                                className={`text-center text-5xl py-8 rounded-lg ${
-                                    d === null
-                                        ? ''
+                                style={{
+                                    textAlign: 'center',
+                                    fontSize: 28,  // ⭐ 40 → 28
+                                    padding: '20px 0',  // ⭐ 32px → 20px
+                                    borderRadius: 10,
+                                    background: d === currentDate.getDate() ? '#5B8FCC' : 'transparent',
+                                    color: d === null
+                                        ? 'transparent'
                                         : d === currentDate.getDate()
-                                        ? 'bg-primary text-white font-bold'
-                                        : index % 7 === 0
-                                        ? 'text-red-500'
-                                        : index % 7 === 6
-                                        ? 'text-blue-500'
-                                        : 'text-text-main'
-                                }`}
+                                            ? 'white'
+                                            : index % 7 === 0
+                                                ? '#ef4444'
+                                                : index % 7 === 6
+                                                    ? '#3b82f6'
+                                                    : '#1a1a1a',
+                                    fontWeight: d === currentDate.getDate() ? 'bold' : 'normal',
+                                }}
                             >
                                 {d}
                             </div>
@@ -126,26 +186,56 @@ const IdleScreen = ({ onWakeUp }) => {
                 </div>
             ) : (
                 /* 가족 사진 슬라이드쇼 */
-                <div className="w-full max-w-5xl">
+                <div style={{ width: 900 }}>  {/* ⭐ 1200 → 900 */}
                     <div
-                        className={`bg-gradient-to-br ${photo.bg} rounded-card shadow-card p-12 flex flex-col items-center justify-center transition-opacity duration-500 ${
-                            fade ? 'opacity-100' : 'opacity-0'
-                        }`}
-                        style={{ minHeight: '400px' }}
+                        style={{
+                            background: photo.bg,
+                            borderRadius: 16,
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                            padding: 40,  // ⭐ 60 → 40
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            minHeight: 320,  // ⭐ 450 → 320
+                            transition: 'opacity 0.5s',
+                            opacity: fade ? 1 : 0,
+                        }}
                     >
-                        <span className="text-[120px] mb-6">{photo.emoji}</span>
-                        <p className="text-4xl font-bold text-white drop-shadow-lg">
+                        <span style={{
+                            fontSize: 100,  // ⭐ 150 → 100
+                            marginBottom: 20  // ⭐ 30 → 20
+                        }}>
+                            {photo.emoji}
+                        </span>
+                        <p style={{
+                            fontSize: 32,  // ⭐ 48 → 32
+                            fontWeight: 'bold',
+                            color: 'white',
+                            textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
+                        }}>
                             {photo.caption}
                         </p>
                     </div>
+
                     {/* 인디케이터 */}
-                    <div className="flex justify-center gap-3 mt-6">
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        gap: 10,  // ⭐ 12 → 10
+                        marginTop: 20,  // ⭐ 30 → 20
+                    }}>
                         {FAMILY_PHOTOS.map((_, i) => (
                             <div
                                 key={i}
-                                className={`w-4 h-4 rounded-full transition-all ${
-                                    i === photoIndex ? 'bg-primary scale-125' : 'bg-gray-300'
-                                }`}
+                                style={{
+                                    width: 12,  // ⭐ 16 → 12
+                                    height: 12,  // ⭐ 16 → 12
+                                    borderRadius: '50%',
+                                    background: i === photoIndex ? '#5B8FCC' : '#d1d5db',
+                                    transform: i === photoIndex ? 'scale(1.25)' : 'scale(1)',
+                                    transition: 'all 0.3s',
+                                }}
                             />
                         ))}
                     </div>
@@ -153,9 +243,25 @@ const IdleScreen = ({ onWakeUp }) => {
             )}
 
             {/* 안내 문구 */}
-            <p className="text-5xl text-text-body mt-10 animate-pulse">
+            <p style={{
+                fontSize: 24,  // ⭐ 36 → 24
+                color: '#6b7280',
+                marginTop: 25,  // ⭐ 40 → 25
+            }}>
                 화면을 터치하면 돌아갑니다
             </p>
+
+            {/* ⭐ CSS 애니메이션 추가 */}
+            <style>{`
+                @keyframes pulse {
+                    0%, 100% {
+                        opacity: 1;
+                    }
+                    50% {
+                        opacity: 0.5;
+                    }
+                }
+            `}</style>
         </div>
     );
 };

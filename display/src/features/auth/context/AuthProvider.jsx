@@ -1,61 +1,136 @@
-import React, { useState, useCallback } from 'react';
-import { AuthContext } from './AuthContext';
-import { login as loginApi } from '../services/authApi';
-import { requestFcmToken, registerFcmToken } from '../../videocall/services/fcmService';
+// src/features/auth/context/AuthProvider.jsx
 
-const getInitialUser = () => {
-    const token = localStorage.getItem('token');
-    const savedUser = localStorage.getItem('user');
-    if (token && savedUser) {
+import React, {useState, useCallback, useEffect} from 'react';
+import {AuthContext} from './AuthContext';
+import {authApi} from '../services/authApi';
+import {tokenManager} from '@/api/client.js';
+import {requestFcmToken, registerFcmToken} from '../../videocall/services/fcmService';
+
+const getInitialPet = () => {
+    const token = tokenManager.get();
+    const savedPet = localStorage.getItem('pet');
+
+    if (token && savedPet) {
         try {
-            return JSON.parse(savedUser);
+            return JSON.parse(savedPet);
         } catch {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
+            tokenManager.remove();
+            localStorage.removeItem('pet');
         }
     }
     return null;
 };
 
-const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(getInitialUser);
-    const [isLoading] = useState(false);
+const AuthProvider = ({children}) => {
+    const [pet, setPet] = useState(getInitialPet);
+    const [isLoading, setIsLoading] = useState(false);
+    const [isInitializing, setIsInitializing] = useState(false);
 
-    const isAuthenticated = !!user;
+    const isAuthenticated = !!pet;
 
-    const login = useCallback(async (petNo) => {
-        const { token, user: userData } = await loginApi(petNo);
-        localStorage.setItem('token', token);
-        localStorage.setItem('user', JSON.stringify(userData));
-        setUser(userData);
+    // 초기 토큰 검증
+    useEffect(() => {
+        const verifyInitialToken = async () => {
+            const token = tokenManager.get();
 
-        // FCM 토큰 등록
-        try {
-            const fcmToken = await requestFcmToken();
-            if (fcmToken) {
-                const petId = userData.petId || petNo;
-                await registerFcmToken(fcmToken, petId);
+            if (token && pet) {
+                try {
+                    const data = await authApi.verifyToken();
+                    setPet(data);
+                    localStorage.setItem('pet', JSON.stringify(data));
+                } catch (error) {
+                    console.error('토큰 검증 실패:', error);
+
+                    // 토큰이 유효하지 않으면 로그아웃
+                    tokenManager.remove();
+                    localStorage.removeItem('pet');
+                    setPet(null);
+                }
             }
-        } catch (error) {
-            console.error('FCM 토큰 등록 실패:', error);
-        }
 
-        return userData;
+            setIsInitializing(false);
+        };
+
+        verifyInitialToken();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+
+
+
+    // auth:logout 이벤트 리스너 (client.js에서 발생)
+    useEffect(() => {
+        const handleAuthLogout = () => {
+            localStorage.removeItem('pet');
+            setPet(null);
+        };
+
+        window.addEventListener('auth:logout', handleAuthLogout);
+
+        return () => {
+            window.removeEventListener('auth:logout', handleAuthLogout);
+        };
+    }, [])
+
+    const login = useCallback(async (petId) => {
+        setIsLoading(true);
+
+        try {
+            // 1. FCM 토큰 요청
+            let fcmToken = null;
+            try {
+                fcmToken = await requestFcmToken();
+            } catch (fcmError) {
+                console.warn('FCM 토큰 요청 실패 (계속 진행):', fcmError);
+            }
+
+            // 2. 로그인
+            const {token, pet: petData} = await authApi.login(petId, fcmToken);
+
+            // 3. 토큰 저장
+            tokenManager.set(token.accessToken);
+            localStorage.setItem('refreshToken', token.refreshToken);
+            localStorage.setItem('pet', JSON.stringify(petData));
+
+            setPet(petData);
+
+            // 4. FCM 토큰 등록
+            if (fcmToken) {
+                try {
+                    await registerFcmToken(fcmToken);
+                } catch (fcmError) {
+                    console.error('FCM 토큰 등록 실패:', fcmError);
+                }
+            }
+
+            return petData;
+        } catch (error) {
+            console.error('로그인 실패:', error);
+            throw error;
+        } finally {
+            setIsLoading(false);
+        }
     }, []);
 
     const logout = useCallback(() => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        setUser(null);
+        tokenManager.remove();
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('pet');
+        setPet(null);
     }, []);
 
     const value = {
-        user,
+        pet,
         isAuthenticated,
         isLoading,
+        isInitializing,
         login,
         logout,
     };
+
+    if (isInitializing) {
+        return null; // 또는 <LoadingSpinner />
+    }
 
     return (
         <AuthContext.Provider value={value}>

@@ -1,3 +1,5 @@
+// src/features/auth/index.js
+
 export { AuthContext } from './context/AuthContext';
 export { default as AuthProvider } from './context/AuthProvider';
 export { default as useAuth } from './hooks/useAuth';

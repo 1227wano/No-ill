@@ -1,9 +1,9 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { useEffect } from 'react';  // 추가!
-import { AuthProvider, useAuth } from './features/auth';  // useAuth 추가!
+import { useEffect } from 'react';
+import { AuthProvider, useAuth } from './features/auth';
 import { FallAlertProvider, FallAlertOverlay } from './features/fall';
 import { VideoCallProvider, VideoCallOverlay, IncomingCallOverlay } from './features/videocall';
-import { requestFcmToken, registerFcmToken } from './features/videocall/services/fcmService';  // 추가!
+import { requestFcmToken, registerFcmToken } from './features/videocall/services/fcmService';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import FixedLayout from './components/common/FixedLayout';
 import DisplayPage from './pages/DisplayPage';
@@ -47,7 +47,7 @@ function AppContent() {
 
     return (
         <>
-            <FixedLayout>
+            <FixedLayout background="#000">
             <FallAlertOverlay />
             <VideoCallOverlay />
             <IncomingCallOverlay />

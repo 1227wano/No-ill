@@ -1,121 +1,147 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
-import { fetchSchedules, saveSchedule, updateSchedule, deleteSchedule } from '../services/scheduleApi';
+// src/features/schedule/hooks/useSchedule.js
+
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { scheduleApi } from '../services/scheduleApi';
 import useAuth from '../../auth/hooks/useAuth';
 
+const REFRESH_INTERVAL = 30 * 1000; // 30초
+
 const useSchedule = () => {
-    const { user } = useAuth();
+    const { pet } = useAuth();
     const [scheduleItems, setScheduleItems] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingItem, setEditingItem] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    useEffect(() => {
-        let ignore = false;
+    const intervalRef = useRef(null);
 
-        const loadData = async () => {
-            try {
-                const data = await fetchSchedules();
-                if (!ignore) {
-                    setScheduleItems(data);
-                }
-            } catch (error) {
-                console.error('Load schedules failed:', error);
-            }
-        };
-
-        loadData();
-
-        // 30초마다 일정 갱신
-        const interval = setInterval(loadData, 30 * 1000);
-
-        return () => {
-            ignore = true;
-            clearInterval(interval);
-        };
-    }, []);
-
+    // 일정 목록 조회
     const loadSchedules = useCallback(async () => {
         try {
-            const data = await fetchSchedules();
+            setError(null);
+            const data = await scheduleApi.fetchSchedules();
             setScheduleItems(data);
-        } catch (error) {
-            console.error('Load schedules failed:', error);
-            throw new Error('일정 목록을 불러오는데 실패했습니다.');
+        } catch (err) {
+            console.error('일정 목록 조회 실패:', err);
+            setError(err.message || '일정을 불러올 수 없습니다.');
+        } finally {
+            setLoading(false);
         }
     }, []);
 
+    // 초기 로드 및 자동 갱신
+    useEffect(() => {
+        loadSchedules();
+
+        // 30초마다 갱신
+        intervalRef.current = setInterval(loadSchedules, REFRESH_INTERVAL);
+
+        return () => {
+            if (intervalRef.current) {
+                clearInterval(intervalRef.current);
+            }
+        };
+    }, [loadSchedules]);
+
+    // 정렬된 일정 목록 (시간순)
     const sortedSchedules = useMemo(() => {
         const now = new Date();
 
         return [...scheduleItems]
-            .map(item => {
+            .map((item) => {
                 const scheduleDate = new Date(item.schTime);
-                const calculatedStatus = scheduleDate < now ? 'N' : 'Y';
-                return { ...item, schStatus: calculatedStatus };
+                const isPast = scheduleDate < now;
+
+                return {
+                    ...item,
+                    schStatus: isPast ? 'N' : 'Y',
+                    isPast,
+                };
             })
-            .sort((a, b) => {
-                return new Date(a.schTime) - new Date(b.schTime);
-            });
+            .sort((a, b) => new Date(a.schTime) - new Date(b.schTime));
     }, [scheduleItems]);
 
-    const handleDelete = async (id) => {
-        try {
-            await deleteSchedule(id);
-            await loadSchedules(); // 삭제 후 목록 갱신
-        } catch (error) {
-            console.error('Delete failed:', error);
-            alert('삭제에 실패했습니다.');
-            throw error;
-        }
-    };
-
-    const handleSave = async (formData) => {
-        const today = new Date().toISOString().split('T')[0];
-        const formattedTime = `${today}T${formData.time}:00`;
-
-        const postData = {
-            schName: formData.content,
-            schTime: formattedTime,
-            petId: user?.petId || user?.petNo || '',
-            schMemo: formData.description || ""
-        };
-
-        try {
-            if (editingItem) {
-                const targetId = editingItem.id;
-                await updateSchedule(targetId, postData);
-            } else {
-                await saveSchedule(postData);
+    // 일정 저장/수정
+    const handleSave = useCallback(
+        async (formData) => {
+            if (!pet?.petId) {
+                throw new Error('사용자 정보를 찾을 수 없습니다.');
             }
-            await loadSchedules();
-            setIsModalOpen(false);
-            setEditingItem(null);
-        } catch (error) {
-            console.error('Save failed:', error);
-            alert('서버 저장에 실패했습니다. (미래 시간인지 확인해주세요)');
-            throw error;
-        }
-    };
+
+            // 날짜/시간 포맷팅
+            const today = new Date().toISOString().split('T')[0];
+            const formattedTime = `${today}T${formData.time}:00`;
+
+            const postData = {
+                schName: formData.content,
+                schTime: formattedTime,
+                petId: pet.petId,
+                schMemo: formData.description || '',
+            };
+
+            try {
+                if (editingItem) {
+                    await scheduleApi.updateSchedule(editingItem.id, postData);
+                } else {
+                    await scheduleApi.saveSchedule(postData);
+                }
+
+                await loadSchedules();
+                setIsModalOpen(false);
+                setEditingItem(null);
+            } catch (error) {
+                console.error('일정 저장 실패:', error);
+                throw error;
+            }
+        },
+        [pet, editingItem, loadSchedules]
+    );
+
+    // 일정 삭제
+    const handleDelete = useCallback(
+        async (id) => {
+            try {
+                await scheduleApi.deleteSchedule(id);
+                await loadSchedules();
+            } catch (error) {
+                console.error('일정 삭제 실패:', error);
+                throw error;
+            }
+        },
+        [loadSchedules]
+    );
+
+    // 모달 열기 (새 일정)
+    const openModal = useCallback(() => {
+        setEditingItem(null);
+        setIsModalOpen(true);
+    }, []);
+
+    // 모달 열기 (수정)
+    const openModalForEdit = useCallback((item) => {
+        setEditingItem(item);
+        setIsModalOpen(true);
+    }, []);
+
+    // 모달 닫기
+    const closeModal = useCallback(() => {
+        setIsModalOpen(false);
+        setEditingItem(null);
+    }, []);
 
     return {
         scheduleItems: sortedSchedules,
+        loading,
+        error,
         isModalOpen,
+        editingItem,
         handleSave,
         handleDelete,
-        openModal: () => {
-            setEditingItem(null);
-            setIsModalOpen(true);
-        },
-        openModalForEdit: (item) => {
-            setEditingItem(item);
-            setIsModalOpen(true);
-        },
-        closeModal: () => {
-            setIsModalOpen(false);
-            setEditingItem(null);
-        },
-        editingItem,
-        setEditingItem,
-        setIsModalOpen
+        openModal,
+        openModalForEdit,
+        closeModal,
+        refetch: loadSchedules,
     };
 };
 
