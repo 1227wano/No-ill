@@ -60,7 +60,7 @@ class CallNotifier extends Notifier<CallState> {
 
       // Step 1: 세션 생성
       final sessionResult = await _service.createSession();
-      final sessionId = await sessionResult.fold(
+      final sessionId = sessionResult.fold(
         onSuccess: (id) {
           _logger.info('세션 생성 성공: $id');
           return id;
@@ -74,7 +74,7 @@ class CallNotifier extends Notifier<CallState> {
 
       // Step 2: 토큰 발급
       final tokenResult = await _service.getConnectionToken(sessionId);
-      final token = await tokenResult.fold(
+      final token = tokenResult.fold(
         onSuccess: (token) {
           _logger.info('토큰 발급 성공');
           return token;
@@ -121,7 +121,7 @@ class CallNotifier extends Notifier<CallState> {
 
       // Step 1: 토큰 발급
       final tokenResult = await _service.getConnectionToken(sessionId);
-      final token = await tokenResult.fold(
+      final token = tokenResult.fold(
         onSuccess: (token) {
           _logger.info('토큰 발급 성공');
           return token;

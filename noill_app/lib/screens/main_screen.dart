@@ -3,7 +3,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:noill_app/core/constants/color_constants.dart';
 import 'package:noill_app/providers/care_provider.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../providers/auth_provider.dart';
 
 import '../widgets/molecules/bottom_nav_bar.dart';
@@ -93,35 +95,89 @@ class _MainScreenState extends ConsumerState<MainScreen> {
 
     showModalBottomSheet(
       context: context,
-      builder: (context) => careListAsync.when(
-        data: (list) => ListView.builder(
-          shrinkWrap: true,
-          itemCount: list.length,
-          itemBuilder: (context, index) {
-            final pet = list[index];
-            return ListTile(
-              title: Text(pet.careName), // 어르신 성함
-              subtitle: Text(pet.petName), // 로봇 이름/별명
-              leading: const Icon(Icons.person),
-              onTap: () {
-                Navigator.pop(context); // 팝업 닫기
+      backgroundColor: Colors.white,
+      // ✅ RobotSection과 동일한 상단 30r 라운드 적용
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+      ),
+      builder: (context) => Padding(
+        padding: EdgeInsets.all(24.w), // ✅ 동일한 24 패딩
+        child: Column(
+          mainAxisSize: MainAxisSize.min, // ✅ 콘텐츠 크기만큼만 차지
+          children: [
+            // ✅ 타이틀 스타일 통일
+            Text(
+              "화상통화 대상 선택",
+              style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 20.h),
 
-                // 2. 선택된 어르신의 실제 petId와 이름을 전달하며 이동
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => VideoCallScreen(
-                      petId: pet.petId,
-                      careName: pet.careName,
+            careListAsync.when(
+              data: (list) => ListView.builder(
+                shrinkWrap: true, // ✅ Column 내부에서 필수
+                physics: const NeverScrollableScrollPhysics(), // 내부 스크롤 방지
+                itemCount: list.length,
+                itemBuilder: (context, index) {
+                  final pet = list[index];
+                  // ✅ RobotSection의 _buildModeItem 스타일로 구현
+                  return ListTile(
+                    contentPadding: EdgeInsets.zero, // 기본 패딩 제거
+                    leading: Container(
+                      padding: EdgeInsets.all(8.w),
+                      decoration: BoxDecoration(
+                        color: NoIllColors.primary.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.person_rounded,
+                        color: NoIllColors.primary,
+                      ),
                     ),
-                  ),
-                );
-              },
-            );
-          },
+                    title: Text(
+                      pet.careName, // 어르신 성함
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16.sp,
+                      ),
+                    ),
+                    subtitle: Text(
+                      "${pet.petName} (로봇) 연결하기", // 로봇 이름/별명 포함 문구
+                      style: TextStyle(fontSize: 13.sp, color: Colors.grey),
+                    ),
+                    trailing: const Icon(
+                      Icons.keyboard_arrow_right,
+                      color: Colors.grey,
+                    ),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => VideoCallScreen(
+                            petId: pet.petId,
+                            careName: pet.careName,
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+              loading: () => const Padding(
+                padding: EdgeInsets.symmetric(vertical: 40),
+                child: CircularProgressIndicator(color: NoIllColors.primary),
+              ),
+              error: (err, _) => Padding(
+                padding: EdgeInsets.symmetric(vertical: 40),
+                child: Text(
+                  "목록을 불러오지 못했습니다.",
+                  style: TextStyle(color: Colors.grey, fontSize: 14.sp),
+                ),
+              ),
+            ),
+            SizedBox(height: 10.h), // 하단 여백 추가
+          ],
         ),
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, _) => const Center(child: Text("목록을 불러오지 못했습니다.")),
       ),
     );
   }

@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:noill_app/screens/accident/event_screen.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/constants/color_constants.dart';
 
 class MainAppBar extends ConsumerWidget implements PreferredSizeWidget {
@@ -22,8 +23,9 @@ class MainAppBar extends ConsumerWidget implements PreferredSizeWidget {
 
       // 1. 왼쪽: 깔끔한 브랜드 로고
       title: const Text(
-        "No-Ill",
+        "No-ill",
         style: TextStyle(
+          fontFamily: 'KERIS',
           color: NoIllColors.primary,
           fontWeight: FontWeight.bold,
           fontSize: 22,
@@ -47,9 +49,10 @@ class MainAppBar extends ConsumerWidget implements PreferredSizeWidget {
                 color: Colors.white,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.notifications_none,
                 color: NoIllColors.primary,
+                size: 26.sp,
               ),
             ),
           ),

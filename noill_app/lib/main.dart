@@ -13,12 +13,7 @@ import 'core/utils/logger.dart';
 import 'core/utils/result.dart';
 
 // ✅ 리팩토링된 Providers/Services 임포트
-import 'providers/auth_provider.dart';
-import 'providers/care_provider.dart';
-import 'providers/event_provider.dart';
-import 'providers/schedule_provider.dart';
-import 'providers/call_provider.dart';
-import 'providers/fcm_provider.dart'; // 또는 services/fcm_service.dart
+// 또는 services/fcm_service.dart
 import 'services/fcm_service.dart';
 
 // ✅ 모든 화면 임포트

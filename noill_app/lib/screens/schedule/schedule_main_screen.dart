@@ -22,7 +22,10 @@ class ScheduleMainScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("어르신 일정 관리"),
+        title: const Text(
+          "어르신 일정 관리",
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
         centerTitle: false, // 아이콘 배치를 위해 왼쪽 정렬 권장
         actions: [
           // 1. 등록 아이콘

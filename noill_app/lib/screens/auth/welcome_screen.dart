@@ -112,77 +112,87 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 20.h),
+          SizedBox(height: 30.h),
 
           // -- 로고 --
           Row(
+            crossAxisAlignment: CrossAxisAlignment.center, // 수직 정렬 맞춤
             children: [
-              Image.asset(NoIllAssets.logo, width: 28.sp),
-              SizedBox(width: 8.w),
+              Transform.translate(
+                offset: Offset(-8.w, 0), // 숫자를 조절하며 텍스트와 수직선을 맞추세요.
+                child: Image.asset(
+                  NoIllAssets.logo,
+                  width: 100.sp,
+                  height: 100.sp,
+                  fit: BoxFit.contain,
+                ),
+              ),
               Text(
-                "NoIll",
+                "No-ill",
                 style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 20.sp,
-                  color: NoIllColors.textMain,
-                  letterSpacing: -0.3,
+                  fontFamily: 'KERIS',
+                  fontWeight: FontWeight.w800,
+                  fontSize: 26.sp,
+                  color: NoIllColors.primary,
+                  letterSpacing: -0.5,
                 ),
               ),
             ],
           ),
-
-          const Spacer(flex: 3),
-
+          SizedBox(height: 16.h), // 👈 16.h ~ 24.h 사이에서 조절해 보세요.
           // -- 타이틀 --
           Text(
             "환영합니다!",
             style: TextStyle(
-              fontSize: 30.sp,
+              fontSize: 32.sp,
               fontWeight: FontWeight.w800,
               color: NoIllColors.textMain,
-              letterSpacing: -0.5,
+              letterSpacing: -0.8,
             ),
           ),
-          SizedBox(height: 6.h),
+
+          SizedBox(height: 8.h),
           Text(
             "어르신의 스마트한\n동반자, 노일입니다.",
             style: TextStyle(
               fontSize: 24.sp,
               fontWeight: FontWeight.w600,
               color: NoIllColors.textMain.withValues(alpha: 0.85),
-              height: 1.4,
+              height: 1.3,
               letterSpacing: -0.3,
             ),
           ),
-          SizedBox(height: 14.h),
-          Text(
-            "연결과 안심으로 든든한 내일을\n함께 만들어가요.",
-            style: TextStyle(
-              fontSize: 15.sp,
-              color: NoIllColors.textBody,
-              height: 1.6,
-            ),
-          ),
 
-          const Spacer(flex: 2),
+          // SizedBox(height: 14.h),
+          // Text(
+          //   "연결과 안심으로 든든한 내일을\n함께 만들어가요.",
+          //   style: TextStyle(
+          //     fontSize: 15.sp,
+          //     color: NoIllColors.textBody,
+          //     height: 1.6,
+          //   ),
+          // ),
+
+          // const Spacer(flex: 1),
 
           // -- 로봇 캐릭터 --
           Flexible(
-            flex: 8,
+            flex: 12,
             child: Center(
               child: Image.asset(
                 NoIllAssets.robot,
+                width: 0.75.sw,
                 fit: BoxFit.contain,
               ),
             ),
           ),
 
-          const Spacer(flex: 3),
+          const Spacer(flex: 2),
 
           // -- 버튼 섹션 --
           SizedBox(
             width: double.infinity,
-            height: 54.h,
+            height: 58.h,
             child: ElevatedButton(
               onPressed: _handleStart,
               style: ElevatedButton.styleFrom(
@@ -195,10 +205,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
               ),
               child: Text(
                 "시작하기",
-                style: TextStyle(
-                  fontSize: 17.sp,
-                  fontWeight: FontWeight.w700,
-                ),
+                style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w700),
               ),
             ),
           ),
@@ -206,7 +213,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
           SizedBox(
             width: double.infinity,
-            height: 54.h,
+            height: 58.h,
             child: OutlinedButton(
               onPressed: _handleLogin,
               style: OutlinedButton.styleFrom(
@@ -219,14 +226,11 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
               ),
               child: Text(
                 "이미 계정이 있어요",
-                style: TextStyle(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600),
               ),
             ),
           ),
-          SizedBox(height: 24.h),
+          SizedBox(height: 32.h),
         ],
       ),
     );

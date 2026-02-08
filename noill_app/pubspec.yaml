@@ -56,6 +56,7 @@ dependencies:
 
   # 하드웨어 권한 관리
   permission_handler: ^11.3.1
+  flutter_launcher_icons: ^0.14.4
 
 dev_dependencies:
   flutter_test:
@@ -102,6 +103,29 @@ flutter:
         - asset: assets/fonts/Pretendard-Regular.otf
         - asset: assets/fonts/Pretendard-Bold.otf
           weight: 700
+
+    # 2. 새로 추가할 Cafe24 써라운드 (로고/포인트용)
+    - family: Cafe24
+      fonts:
+        - asset: assets/fonts/Cafe24Meongi-B-v1.0.otf
+          weight: 700
+
+    # 3. 새로 추가할 폰트
+    - family: KERIS
+      fonts:
+        - asset: assets/fonts/KERISKEDU_B.otf
+        - asset: assets/fonts/KERISKEDU_Line.otf
+          weight: 700
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+  # 2. 아이콘 설정 추가 (파일 맨 하단에 붙여넣기)
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  # ✅ 안드로이드 Adaptive Icon 설정
+  adaptive_icon_background: "#F8F5ED" # 👈 여기에 베이지색 색상 코드를 넣으세요.
+  adaptive_icon_foreground: "assets/icons/ci_noill.png" # 👈 배경을 제거한 로고 파일 경로
+  # ✅ iOS 및 구형 안드로이드를 위한 기본 설정
+  image_path: "assets/icons/ci_noill.png" # iOS는 이 이미지를 사용합니다.
+  min_sdk_android: 21
