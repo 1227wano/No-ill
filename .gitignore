@@ -26,6 +26,9 @@ venv/
 # 에디터/도구 설정
 .idea/
 
+# .idea 폴더 전체 제외
+.idea/
+
 # Created by https://www.toptal.com/developers/gitignore/api/windows,macos,jetbrains
 # Edit at https://www.toptal.com/developers/gitignore?templates=windows,macos,jetbrains
 
@@ -206,3 +209,15 @@ $RECYCLE.BIN/
 
 .vscode/
 vscode/
+
+# Local environment files
+.vscode/
+display/.env
+
+# Claude Code
+.continue/
+CLAUDE.md
+
+# Qodana
+qodana.sarif.json
+qodana.yaml

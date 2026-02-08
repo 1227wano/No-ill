@@ -1,43 +1,129 @@
 stages:
+  - lint
+  - test
   - build
+  - docker
   - deploy
 
-# 1. 빌드 (CI)
-flutter_build:
-  stage: build
-  image: ghcr.io/cirruslabs/flutter:stable
-  script:
-    - cd noill_app
-    # gitlab 변수에 저장된 BASE_URL 값을 flutter 환경변수로 설정
-    - echo "BASE_URL=$PROD_BASE_URL" > .env
-    - flutter pub get
-    - flutter build web --release --no-tree-shake-icons --no-wasm-dry-run
-  artifacts: # 👈 보물 상자에 빌드 결과물을 담는 과정입니다.
-    paths:
-      - noill_app/build/web/
+variables:
+  IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
 
-# 2. 배포 (CD)
-server_deploy:
+lint:
+  stage: lint
+  image: node:20-alpine
+  rules:
+    - if: $CI_MERGE_REQUEST_IID
+    - if: $CI_COMMIT_BRANCH
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - display/node_modules/
+  before_script:
+    - cd display
+    - npm ci
+  script:
+    - npm run lint
+
+security:
+  stage: lint
+  image: node:20-alpine
+  rules:
+    - if: $CI_MERGE_REQUEST_IID
+    - if: $CI_COMMIT_BRANCH
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - display/node_modules/
+  before_script:
+    - cd display
+    - npm ci
+  script:
+    - npm audit --audit-level=high
+  allow_failure: true
+
+test:
+  stage: test
+  image: node:20-alpine
+  rules:
+    - if: $CI_MERGE_REQUEST_IID
+    - if: $CI_COMMIT_BRANCH
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - display/node_modules/
+  before_script:
+    - cd display
+    - npm ci
+  script:
+    - npm run test
+  coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
+
+build:
+  stage: build
+  image: node:20-alpine
+  rules:
+    - if: $CI_MERGE_REQUEST_IID
+    - if: $CI_COMMIT_BRANCH
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - display/node_modules/
+  before_script:
+    - cd display
+    - npm ci
+  script:
+    - npm run build
+  artifacts:
+    paths:
+      - display/dist/
+    expire_in: 1 hour
+
+docker:
+  stage: docker
+  image: docker:latest
+  only:
+    - display
+  services:
+    - docker:dind
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - >-
+      docker build
+      --build-arg VITE_API_BASE_URL=$VITE_API_BASE_URL
+      --build-arg VITE_FIREBASE_API_KEY=$VITE_FIREBASE_API_KEY
+      --build-arg VITE_FIREBASE_AUTH_DOMAIN=$VITE_FIREBASE_AUTH_DOMAIN
+      --build-arg VITE_FIREBASE_PROJECT_ID=$VITE_FIREBASE_PROJECT_ID
+      --build-arg VITE_FIREBASE_MESSAGING_SENDER_ID=$VITE_FIREBASE_MESSAGING_SENDER_ID
+      --build-arg VITE_FIREBASE_APP_ID=$VITE_FIREBASE_APP_ID
+      --build-arg VITE_FIREBASE_VAPID_KEY=$VITE_FIREBASE_VAPID_KEY
+      --build-arg VITE_WS_URL=$VITE_WS_URL
+      -t $IMAGE_TAG ./display
+    - docker push $IMAGE_TAG
+
+deploy:
   stage: deploy
   image: alpine:latest
-  before_script:
-    - apk add --no-cache openssh-client
-    - eval $(ssh-agent -s)
-    # 1. SSH 폴더가 없다면 생성
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-    # 2. 변수 내용을 파일로 직접 쓰고, 불필요한 공백과 줄바꿈 정리
-    - echo "$SERVER_SSH_PRIVATE_KEY" | base64 -d > ~/.ssh/id_rsa
-    - chmod 600 ~/.ssh/id_rsa
-    # 3. 파일로부터 열쇠 등록
-    - ssh-add ~/.ssh/id_rsa
-    - echo -e "$SERVER_SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
-  script:
-    - ssh -o StrictHostKeyChecking=no $SERVER_DEPLOY_USER@$SERVER_HOST_2 "whoami"
-    - ssh -o StrictHostKeyChecking=no $SERVER_DEPLOY_USER@$SERVER_HOST_2 "mkdir -p /home/$SERVER_DEPLOY_USER/temp_build"
-
-    - scp -o StrictHostKeyChecking=no -r noill_app/build/web/* $SERVER_DEPLOY_USER@$SERVER_HOST_2:/home/$SERVER_DEPLOY_USER/temp_build/
-
-    - ssh -o StrictHostKeyChecking=no $SERVER_DEPLOY_USER@$SERVER_HOST_2 "sudo rm -rf /var/www/html/* && sudo cp -r /home/$SERVER_DEPLOY_USER/temp_build/* /var/www/html/ && sudo chown -R $SERVER_DEPLOY_USER:$SERVER_DEPLOY_USER /var/www/html/ && rm -rf /home/$SERVER_DEPLOY_USER/temp_build"
   only:
-    - app
+    - display
+  before_script:
+    - apk add --no-cache openssh-client curl
+    - eval $(ssh-agent -s)
+    - mkdir -p ~/.ssh && chmod 700 ~/.ssh
+    - echo "$DISPLAY_SSH_PRIVATE_KEY" | base64 -d > ~/.ssh/deploy_key
+    - chmod 600 ~/.ssh/deploy_key && ssh-add ~/.ssh/deploy_key
+    - echo "$DISPLAY_SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+  parallel:
+    matrix:
+      - SERVER: ["$DISPLAY_SERVER_1", "$DISPLAY_SERVER_2"]
+  script:
+    - ssh $DISPLAY_DEPLOY_USER@$SERVER "/opt/homebrew/bin/docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY"
+    - ssh $DISPLAY_DEPLOY_USER@$SERVER "/opt/homebrew/bin/docker pull $IMAGE_TAG"
+    - ssh $DISPLAY_DEPLOY_USER@$SERVER "/opt/homebrew/bin/docker stop display || true"
+    - ssh $DISPLAY_DEPLOY_USER@$SERVER "/opt/homebrew/bin/docker rm display || true"
+    - ssh $DISPLAY_DEPLOY_USER@$SERVER "/opt/homebrew/bin/docker run -d --name display -p 3002:80 $IMAGE_TAG"
+    - sleep 5
+    - ssh $DISPLAY_DEPLOY_USER@$SERVER "curl -f http://localhost:3002 --retry 3 --retry-delay 5 || exit 1"

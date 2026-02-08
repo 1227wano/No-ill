@@ -1,0 +1,23 @@
+/* App.css */
+
+/* 뷰포트 기반 동적 폰트 스케일링 */
+/* 1920px에서 16px, 작은 화면에서 비례 축소, 최소 10px */
+html {
+    font-size: clamp(10px, 0.833vw, 16px);
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    background: #FDFBF7;
+}
+
+#root {
+    width: 100%;
+    height: 100%;
+    text-align: left;
+    overflow: hidden;
+}

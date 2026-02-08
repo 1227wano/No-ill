@@ -1,0 +1,66 @@
+/* 1. 폰트 임포트 (반드시 최상단) */
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 2. KERIS 실물 폰트 정의 */
+@font-face {
+  font-family: 'KERIS_B';
+  src: url('/fonts/KERISKEDU_B.otf') format('opentype'),
+       url('/fonts/KERISKEDU_B.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 3. 단일 디자인 시스템 정의 */
+:root {
+  /* 브랜드 컬러 (파스텔 조합) */
+  --color-primary: #5BA3D0;
+  --pastel-blue: #AAC4F5;
+  --pastel-green: #D9E9CF;
+  --pastel-orange: #EBD6FB;
+  --pastel-purple: #F5D2D2;
+  
+  --color-background: #FDFBF7;
+  --color-surface: #FFFFFF;
+  --color-text-main: #212529;
+
+  /* 타이포그래피 설정 */
+  --font-logo: 'KERIS_B', sans-serif; /* 👈 하단 로고용으로 정확히 지정 */
+  --font-family: 'Pretendard', -apple-system, sans-serif;
+
+  /* 수치 통일 */
+  --radius-card: 16px;
+  --radius-button: 24px;
+  --shadow-card: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+@layer base {
+  body {
+    background-color: var(--color-background);
+    color: var(--color-text-main);
+    font-family: var(--font-family);
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@layer utilities {
+  /* 글래스모피즘 효과 */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: var(--shadow-card);
+  }
+
+  /* 로고 전용 클래스 (자간 조정 포함) */
+  .font-keris-b {
+    font-family: var(--font-logo);
+    letter-spacing: -2px; /* 👈 이미지 속 그 느낌을 내기 위한 핵심 */
+    font-weight: bold;
+  }
+}
