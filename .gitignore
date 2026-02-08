@@ -25,12 +25,6 @@ venv/
 
 # 에디터/도구 설정
 .idea/
-.vscode/
-.claude/
-CLAUDE.md
-
-# 크래시 코어 덤프
-core
 
 # Created by https://www.toptal.com/developers/gitignore/api/windows,macos,jetbrains
 # Edit at https://www.toptal.com/developers/gitignore?templates=windows,macos,jetbrains

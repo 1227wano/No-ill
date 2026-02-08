@@ -1,0 +1,64 @@
+# 공통 설정
+
+file:
+  dir: ${FILE_DIR:/app/images/}
+
+server:
+  port: ${SERVER_PORT:8080}
+  url: ${SERVER_URL:http://localhost:8080}
+
+spring:
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+  jpa:
+    hibernate:
+      ddl-auto: update
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 5
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRATION:86400000}
+  refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000}
+
+gms:
+  api:
+    key: ${GMS_API_KEY}
+    url: ${GMS_API_URL}
+    model: gpt-4.1
+
+coolsms:
+  api:
+    key: ${SOLAPI_API_KEY:test_api_key}
+    secret: ${SOLAPI_API_SECRET:test_api_secret}
+    sender: ${WANO_PHONE:01000000000}
+
+openvidu:
+  url: ${OPENVIDU_URL}
+  secret: ${OPENVIDU_SECRET}
+  
+openweathermap:
+  api:
+    key: ${OPENWEATHERMAP_API_KEY:YOUR_API_KEY}
+

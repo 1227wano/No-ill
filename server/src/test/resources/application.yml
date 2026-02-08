@@ -1,0 +1,50 @@
+file:
+  dir: /tmp/images/
+
+server:
+  url: http://localhost:8080
+
+spring:
+  datasource:
+    url: jdbc:mysql://ssafy-mysql-db.mysql.database.azure.com:3306/S14P11A301?serverTimezone=UTC&useUnicode=true&characterEncoding=utf8
+    username: S14P11A301
+    password: DR6xES4pau
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: ""
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+
+logging:
+  level:
+    root: INFO
+    org.hibernate.SQL: DEBUG
+    com.noill: DEBUG
+
+jwt:
+  secret: 6TrvbGXb9ISGOpEYzQspPPpEtn6N/jAEBdye/jXCN9Y=
+  expiration: 86400000
+  refresh-expiration: 604800000
+
+gms:
+  api:
+    key: "test-gms-key"
+    url: "http://localhost"
+    model: "gpt-4.1"
+
+coolsms:
+  api:
+    key: "test-key"
+    secret: "test-secret"
+    sender: "01000000000"
+
+openvidu:
+  url: https://localhost:4443/
+  secret: MY_SECRET
