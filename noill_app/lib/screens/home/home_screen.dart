@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:noill_app/core/constants/color_constants.dart';
+
 import '../../providers/care_provider.dart';
 import '../../providers/schedule_provider.dart';
 import '../../core/utils/logger.dart';
+
 import '../call/call_screen.dart';
 import '../../widgets/atoms/light_diffusion_background.dart';
 import '../../widgets/home/event_banner.dart';
@@ -14,6 +16,7 @@ import '../../widgets/home/care_dropdown.dart';
 import '../../widgets/home/status_card.dart';
 import '../../widgets/home/robot_mode.dart';
 import '../../widgets/home/daily_schedule.dart';
+import '../../core/constants/app_constants.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -157,8 +160,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: 16.h),
-
+                    SizedBox(height: AppLayout.topSectionGap), // ✅ 표준화된 간격
                     // 최근 사고 배너
                     const LatestAccidentBanner(),
 
@@ -249,8 +251,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   /// 영상통화 버튼
   Widget _buildVideoCallButton(bool enabled) {
     return SizedBox(
-      width: 60.w,
-      height: 60.h,
+      width: 40.w,
+      height: 40.h,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: enabled ? NoIllColors.primary : Colors.grey.shade300,

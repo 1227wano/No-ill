@@ -2,8 +2,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import '../../core/constants/app_constants.dart';
 import '../../core/constants/color_constants.dart';
 import '../../providers/auth_provider.dart';
+
 import '../auth/welcome_screen.dart';
 import '../onboarding/device_pairing_screen.dart';
 import '../mypage/mypage_screen.dart';
@@ -18,46 +22,73 @@ class SettingsScreen extends ConsumerWidget {
     final user = authState.userData;
 
     return Scaffold(
-      backgroundColor: NoIllColors.background,
+      backgroundColor: Colors.transparent,
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(24, 20, 24, 120),
           children: [
-            const Text(
+            SizedBox(height: AppLayout.topSectionGap),
+            Text(
               "설정",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 24.sp, // ScreenUtil 적용
+                fontWeight: FontWeight.w800, // 더 두껍게 (홈 화면 타이틀과 통일)
+                color: Colors.black,
+                letterSpacing: -0.5, // 자간을 살짝 좁혀 정돈된 느낌 부여
+              ),
             ),
             const SizedBox(height: 32),
 
             // 프로필 섹션
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 35,
-                  backgroundColor: NoIllColors.primary.withOpacity(
-                    0.5,
-                  ), // 부드러운 연회색 배경
-                  child: Icon(
-                    Icons.person_rounded, // 일러스트 느낌의 둥근 사람 아이콘
-                    size: 45,
-                    color: Colors.white, // 아이콘 색상
+            // 프로필 섹션을 Container로 감싸서 '카드' 느낌 주기
+            Container(
+              padding: EdgeInsets.all(20.w),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(24.r),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.03),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
                   ),
-                ),
-                SizedBox(width: 20),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      user?.userName ?? "사용자", // 유기적 변경
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: 35.r,
+                    backgroundColor: NoIllColors.primary.withOpacity(
+                      0.1,
+                    ), // 너무 진하지 않게 조정
+                    child: Icon(
+                      Icons.person_rounded,
+                      size: 40.sp,
+                      color: NoIllColors.primary, // 아이콘을 브랜드 컬러로
                     ),
-                    Text("주보호자", style: TextStyle(color: Colors.grey)),
-                  ],
-                ),
-              ],
+                  ),
+                  SizedBox(width: 16.w),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        user?.userName ?? "사용자",
+                        style: TextStyle(
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        "주보호자",
+                        style: TextStyle(
+                          fontSize: 13.sp,
+                          color: Colors.black45,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 40),
 

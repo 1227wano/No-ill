@@ -1,6 +1,7 @@
 // 홈 화면 상단 사고 알림 위젯
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../services/fcm_service.dart';
 
 class LatestAccidentBanner extends ConsumerWidget {
@@ -17,10 +18,10 @@ class LatestAccidentBanner extends ConsumerWidget {
     if (imageUrl == null) return const SizedBox.shrink();
 
     return Container(
-      margin: const EdgeInsets.all(16),
+      margin: EdgeInsets.only(bottom: 24.h),
       decoration: BoxDecoration(
         color: Colors.red.shade50,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.red.shade200, width: 2),
         boxShadow: [
           BoxShadow(
@@ -51,9 +52,9 @@ class LatestAccidentBanner extends ConsumerWidget {
                 IconButton(
                   visualDensity: VisualDensity.compact,
                   icon: const Icon(Icons.close, size: 20),
-                  onPressed: () =>
-                      ref.read(latestAccidentImageProvider.notifier).update(
-                          null),
+                  onPressed: () => ref
+                      .read(latestAccidentImageProvider.notifier)
+                      .update(null),
                 ),
               ],
             ),

@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/legacy.dart';
 import 'package:noill_app/core/constants/color_constants.dart';
 import 'package:noill_app/screens/schedule/schedule_form_sheet.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../core/constants/app_constants.dart';
 import '../../models/schedule_model.dart';
 import '../../providers/schedule_provider.dart';
 
@@ -21,41 +23,74 @@ class ScheduleMainScreen extends ConsumerWidget {
     final isExpanded = ref.watch(calendarExpandedProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "어르신 일정 관리",
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: false, // 아이콘 배치를 위해 왼쪽 정렬 권장
-        actions: [
-          // 1. 등록 아이콘
-          IconButton(
-            icon: const Icon(Icons.add_box_outlined),
-            onPressed: () => _showAddScheduleSheet(context),
-          ),
-          // 2. 월별/일별 보기 전환 (달력 접기/펴기)
-          IconButton(
-            icon: Icon(
-              isExpanded ? Icons.keyboard_arrow_up : Icons.calendar_month,
+      backgroundColor: Colors.transparent, // 배경색 정돈용
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 🚀 [수정] 홈 화면과 동일한 상단 간격 및 타이틀 영역
+            SizedBox(height: 16.h), // 홈 화면과 동일한 높이 부여
+            _buildCustomHeader(context, ref, isExpanded),
+
+            SizedBox(height: 16.h), // 타이틀과 캘린더 사이 여백
+            // --- 상단: 월간 캘린더 ---
+            if (isExpanded)
+              _buildCalendar(ref, selectedDate, scheduleAsync.value ?? []),
+            const Divider(thickness: 1, height: 1),
+
+            // --- 하단: 일별 타임라인 리스트 ---
+            Expanded(
+              child: dailySchedules.isEmpty
+                  ? _buildEmptyState(ref)
+                  : _buildTimelineList(dailySchedules, ref),
             ),
-            onPressed: () =>
-                ref.read(calendarExpandedProvider.notifier).state = !isExpanded,
-          ),
-        ],
+          ],
+        ),
       ),
-      body: Column(
+    );
+  }
+
+  // 💡 홈 화면의 로고 위치와 높이를 맞춘 커스텀 헤더
+  Widget _buildCustomHeader(
+    BuildContext context,
+    WidgetRef ref,
+    bool isExpanded,
+  ) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20.w), // 홈 화면과 동일한 패딩
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // --- 상단: 월간 캘린더 (토글 가능) ---
-          if (isExpanded)
-            _buildCalendar(ref, selectedDate, scheduleAsync.value ?? []),
-
-          const Divider(thickness: 1, height: 1),
-
-          // --- 하단: 일별 타임라인 리스트 ---
-          Expanded(
-            child: dailySchedules.isEmpty
-                ? _buildEmptyState(ref)
-                : _buildTimelineList(dailySchedules, ref),
+          Text(
+            "어르신 일정 관리",
+            style: TextStyle(
+              fontSize: 24.sp, // 타이틀 크기 통일
+              fontWeight: FontWeight.w800,
+              color: Colors.black,
+              letterSpacing: -0.5,
+            ),
+          ),
+          Row(
+            children: [
+              IconButton(
+                onPressed: () => _showAddScheduleSheet(context),
+                icon: Icon(
+                  Icons.add_box_outlined,
+                  size: 26.sp,
+                  color: Colors.black87,
+                ),
+              ),
+              IconButton(
+                onPressed: () =>
+                    ref.read(calendarExpandedProvider.notifier).state =
+                        !isExpanded,
+                icon: Icon(
+                  isExpanded ? Icons.keyboard_arrow_up : Icons.calendar_month,
+                  size: 26.sp,
+                  color: Colors.black87,
+                ),
+              ),
+            ],
           ),
         ],
       ),
