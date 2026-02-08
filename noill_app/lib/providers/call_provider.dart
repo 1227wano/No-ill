@@ -87,22 +87,19 @@ class CallNotifier extends Notifier<CallState> {
       );
 
       // 상태 업데이트
-      state = state.copyWith(
-        sessionId: sessionId,
-        token: token,
-      );
+      state = state.copyWith(sessionId: sessionId, token: token);
 
       // Step 3: 상대방 호출 (실패해도 계속 진행)
       final notifyResult = await _service.notifyCall(petId, sessionId);
       notifyResult.fold(
         onSuccess: (_) => _logger.info('상대방 호출 성공'),
-        onFailure: (exception) => _logger.warning('상대방 호출 실패 (무시): ${exception.message}'),
+        onFailure: (exception) =>
+            _logger.warning('상대방 호출 실패 (무시): ${exception.message}'),
       );
 
       // Step 4: OpenVidu 연결
       _logger.info('OpenVidu 연결 시작');
       await _connectToOpenVidu(sessionId, token);
-
     } catch (e, stackTrace) {
       _logger.error('발신 통화 시작 실패', e, stackTrace);
       _endCallWithError('통화 연결에 실패했습니다');
@@ -142,7 +139,6 @@ class CallNotifier extends Notifier<CallState> {
       // Step 2: OpenVidu 연결
       _logger.info('OpenVidu 연결 시작');
       await _connectToOpenVidu(sessionId, token);
-
     } catch (e, stackTrace) {
       _logger.error('수신 전화 수락 실패', e, stackTrace);
       _endCallWithError('통화 연결에 실패했습니다');
@@ -169,7 +165,7 @@ class CallNotifier extends Notifier<CallState> {
       // OpenVidu 세션 종료
       state.session?.leaveSession();
       _logger.info('OpenVidu 세션 종료 완료');
-    } catch (e, stackTrace) {
+    } catch (e) {
       _logger.warning('세션 종료 중 오류 (무시): $e');
     }
 
@@ -221,23 +217,16 @@ class CallNotifier extends Notifier<CallState> {
       session.setWebSocket(webSocket);
 
       // 4. 연결 중 상태
-      state = state.copyWith(
-        session: session,
-        status: CallStatus.connecting,
-      );
+      state = state.copyWith(session: session, status: CallStatus.connecting);
 
       // 5. WebSocket 연결 시작
       webSocket.connect();
       _logger.info('WebSocket 연결 요청 완료');
 
       // 6. 연결 완료 상태
-      state = state.copyWith(
-        session: session,
-        status: CallStatus.connected,
-      );
+      state = state.copyWith(session: session, status: CallStatus.connected);
 
       _logger.info('OpenVidu 연결 완료');
-
     } catch (e, stackTrace) {
       _logger.error('OpenVidu 연결 실패', e, stackTrace);
       _endCallWithError('영상 통화 연결에 실패했습니다');
@@ -266,7 +255,7 @@ class CallNotifier extends Notifier<CallState> {
 
     // 메시지 스트림 구독
     session.messageStream.listen(
-          (_) {
+      (_) {
         _logger.debug('메시지 수신');
         _refreshState();
       },
@@ -296,10 +285,11 @@ class CallNotifier extends Notifier<CallState> {
     final webSocket = CustomWebSocket(
       session,
       customClient: HttpClient()
-        ..badCertificateCallback = (X509Certificate cert, String host, int port) {
-          _logger.debug('SSL 인증서 검증 우회 (개발 모드)');
-          return true;
-        },
+        ..badCertificateCallback =
+            (X509Certificate cert, String host, int port) {
+              _logger.debug('SSL 인증서 검증 우회 (개발 모드)');
+              return true;
+            },
     );
 
     // WebSocket 에러 핸들러

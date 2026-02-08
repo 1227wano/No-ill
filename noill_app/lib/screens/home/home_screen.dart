@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../providers/care_provider.dart';
-import '../../providers/call_provider.dart';
+import '../../providers/schedule_provider.dart';
 import '../../core/utils/logger.dart';
 import '../call/call_screen.dart';
 import '../../widgets/atoms/light_diffusion_background.dart';
@@ -35,20 +35,52 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   /// 초기 데이터 로드
+  /// 데이터 새로고침 (선택 상태 유지)
   Future<void> _loadInitialData() async {
     try {
-      _logger.info('홈 화면 초기 데이터 로드 시작');
+      _logger.info('홈 화면 데이터 새로고침 시작');
 
-      // 어르신 목록이 비어있으면 로드
-      final careList = ref.read(careListProvider);
-      if (careList.value?.isEmpty ?? true) {
-        await ref.read(careListProvider.notifier).refresh();
+      // 1. 현재 선택된 어르신의 ID를 미리 저장해둡니다.
+      final currentSelectedId = ref.read(selectedPetIdProvider);
+
+      // 2. 어르신 목록을 새로고침하여 최신 리스트를 가져옵니다.
+      final newList = await ref.refresh(careListProvider.future);
+
+      // 3. 목록이 비어있지 않다면 선택 상태를 복구합니다.
+      if (newList.isNotEmpty) {
+        if (currentSelectedId != null) {
+          // 기존에 선택했던 ID가 새 목록에도 있는지 확인합니다.
+          final matchedPet = newList.firstWhere(
+            (p) => p.petId == currentSelectedId,
+            orElse: () => newList.first, // 없으면 첫 번째 어르신 선택
+          );
+          ref.read(selectedPetProvider.notifier).update(matchedPet);
+        } else {
+          // 기존 선택이 없었다면 첫 번째 어르신을 자동으로 선택합니다.
+          ref.read(selectedPetProvider.notifier).update(newList.first);
+        }
       }
 
-      _logger.info('홈 화면 초기 데이터 로드 완료');
+      // 4. 선택이 완료된 후, 해당 어르신의 일정을 새로고침합니다.
+      await _refreshScheduleData();
+
+      _logger.info('홈 화면 데이터 새로고침 완료 (선택 유지)');
     } catch (e, stackTrace) {
-      _logger.error('초기 데이터 로드 실패', e, stackTrace);
+      _logger.error('데이터 새로고침 실패', e, stackTrace);
     }
+  }
+
+  /// ✅ [2] 일정 데이터 새로고침 담당
+  Future<void> _refreshScheduleData() async {
+    _logger.info('일정 데이터 강제 무효화 시작');
+    // 1. 기존 데이터를 완전히 날려버립니다.
+    ref.invalidate(scheduleNotifierProvider);
+
+    // 2. 무효화된 프로바이더가 다시 데이터를 가져올 때까지 기다립니다.
+    // .future를 기다려야 '로딩' 인디케이터가 데이터 완료 시점까지 유지됩니다.
+    await ref.read(scheduleNotifierProvider.future);
+
+    _logger.info('일정 데이터 강제 무효화 및 로드 완료');
   }
 
   /// 통화 시작
@@ -115,7 +147,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           body: SafeArea(
             bottom: false,
             child: RefreshIndicator(
+              // 사용자가 당기면 목록과 일정 모두 새로고침
               onRefresh: _loadInitialData,
+              color: const Color(0xFF6A85B6), // 로딩 아이콘 색상 커스텀
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 padding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 100.h),
@@ -128,10 +162,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     const LatestAccidentBanner(),
 
                     // 어르신 선택 섹션
-                    _buildSectionHeader(
-                      "어르신 선택",
-                      "보호 중인 어르신 목록이에요",
-                    ),
+                    _buildSectionHeader("어르신 선택", "보호 중인 어르신 목록이에요"),
 
                     // 드롭다운 + 통화 버튼
                     _buildCareSelectionRow(hasSelectedPet),
@@ -139,10 +170,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     SizedBox(height: 32.h),
 
                     // 실시간 상태 섹션
-                    _buildSectionHeader(
-                      "실시간 상태",
-                      "어르신이 안전하게 계신지 확인하세요",
-                    ),
+                    _buildSectionHeader("실시간 상태", "어르신이 안전하게 계신지 확인하세요"),
                     const StatusCard(),
 
                     SizedBox(height: 32.h),
@@ -153,10 +181,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     SizedBox(height: 32.h),
 
                     // 오늘의 일정 섹션
-                    _buildSectionHeader(
-                      "오늘의 일정",
-                      "예정된 주요 일과들이에요",
-                    ),
+                    _buildSectionHeader("오늘의 일정", "예정된 주요 일과들이에요"),
                     const DailyScheduleSection(),
                   ],
                 ),
@@ -239,10 +264,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           disabledForegroundColor: Colors.grey.shade500,
         ),
         onPressed: enabled ? _handleVideoCall : null,
-        child: Icon(
-          Icons.videocam_rounded,
-          size: 28.sp,
-        ),
+        child: Icon(Icons.videocam_rounded, size: 28.sp),
       ),
     );
   }

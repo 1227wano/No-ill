@@ -50,7 +50,7 @@ class ScheduleMainScreen extends ConsumerWidget {
           // --- 하단: 일별 타임라인 리스트 ---
           Expanded(
             child: dailySchedules.isEmpty
-                ? _buildEmptyState()
+                ? _buildEmptyState(ref)
                 : _buildTimelineList(dailySchedules, ref),
           ),
         ],
@@ -100,54 +100,75 @@ class ScheduleMainScreen extends ConsumerWidget {
 
   // 타임라인 리스트
   Widget _buildTimelineList(List<ScheduleModel> schedules, WidgetRef ref) {
-    return ListView.builder(
-      // 💡 하단바 높이만큼 여백을 주어 마지막 아이템이 가려지지 않게 합니다.
-      padding: const EdgeInsets.only(top: 16, bottom: 100),
-      itemCount: schedules.length,
-      itemBuilder: (context, index) {
-        final schedule = schedules[index];
-        final bool isPassed = schedule.isPassed; // ✅ 시간 지남 여부 판단
-
-        return ListTile(
-          leading: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "${schedule.schTime.hour.toString().padLeft(2, '0')}:${schedule.schTime.minute.toString().padLeft(2, '0')}",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: isPassed ? Colors.grey : Colors.black, // ✅ 회색 처리 로직
-                ),
-              ),
-              if (isPassed)
-                const Icon(Icons.check_circle, size: 16, color: Colors.grey),
-            ],
-          ),
-          title: Text(
-            schedule.schName,
-            style: TextStyle(
-              decoration: isPassed
-                  ? TextDecoration.lineThrough
-                  : null, // ✅ 취소선 추가
-              color: isPassed ? Colors.grey : Colors.black87,
-              fontWeight: isPassed ? FontWeight.normal : FontWeight.w600,
-            ),
-          ),
-          subtitle: schedule.schMemo != null ? Text(schedule.schMemo!) : null,
-          trailing: IconButton(
-            icon: const Icon(Icons.edit_outlined, size: 20),
-            onPressed: () => _showEditScheduleSheet(context, schedule),
-          ),
-        );
+    return RefreshIndicator(
+      onRefresh: () async {
+        ref.invalidate(scheduleNotifierProvider);
+        return await ref.watch(scheduleNotifierProvider.future);
       },
+      child: ListView.builder(
+        // 일정이 적어도 당겨서 새로고침 가능하게 함
+        physics: const AlwaysScrollableScrollPhysics(),
+        // 💡 하단바 높이만큼 여백을 주어 마지막 아이템이 가려지지 않게 합니다.
+        padding: const EdgeInsets.only(top: 16, bottom: 100),
+        itemCount: schedules.length,
+        itemBuilder: (context, index) {
+          final schedule = schedules[index];
+          final bool isPassed = schedule.isPassed; // ✅ 시간 지남 여부 판단
+
+          return ListTile(
+            leading: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "${schedule.schTime.hour.toString().padLeft(2, '0')}:${schedule.schTime.minute.toString().padLeft(2, '0')}",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: isPassed ? Colors.grey : Colors.black, // ✅ 회색 처리 로직
+                  ),
+                ),
+                if (isPassed)
+                  const Icon(Icons.check_circle, size: 16, color: Colors.grey),
+              ],
+            ),
+            title: Text(
+              schedule.schName,
+              style: TextStyle(
+                decoration: isPassed
+                    ? TextDecoration.lineThrough
+                    : null, // ✅ 취소선 추가
+                color: isPassed ? Colors.grey : Colors.black87,
+                fontWeight: isPassed ? FontWeight.normal : FontWeight.w600,
+              ),
+            ),
+            subtitle: schedule.schMemo != null ? Text(schedule.schMemo!) : null,
+            trailing: IconButton(
+              icon: const Icon(Icons.edit_outlined, size: 20),
+              onPressed: () => _showEditScheduleSheet(context, schedule),
+            ),
+          );
+        },
+      ),
     );
   }
 
-  Widget _buildEmptyState() {
-    return const Center(
-      child: Text(
-        "기록된 일정이 없습니다.\n새로운 일정을 추가해 보세요!",
-        textAlign: TextAlign.center,
+  Widget _buildEmptyState(WidgetRef ref) {
+    // ref 추가
+    return RefreshIndicator(
+      onRefresh: () async {
+        ref.invalidate(scheduleNotifierProvider);
+        return await ref.watch(scheduleNotifierProvider.future);
+      },
+      child: SingleChildScrollView(
+        // ✅ 화면 전체 높이를 차지하게 해서 어디서든 당길 수 있게 함
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: Container(
+          height: 400, // 적당한 높이 부여 (혹은 LayoutBuilder로 유연하게 조정)
+          alignment: Alignment.center,
+          child: const Text(
+            "기록된 일정이 없습니다.\n새로운 일정을 추가해 보세요!",
+            textAlign: TextAlign.center,
+          ),
+        ),
       ),
     );
   }

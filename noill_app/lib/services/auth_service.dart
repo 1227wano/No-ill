@@ -30,10 +30,7 @@ class AuthService {
 
       final response = await _dio.post(
         ApiConstants.login,
-        data: {
-          "userId": id,
-          "userPassword": password,
-        },
+        data: {"userId": id, "userPassword": password},
       );
 
       _logger.info('로그인 성공');
@@ -44,7 +41,6 @@ class AuthService {
       _registerFcmTokenAfterLogin();
 
       return Success(loginResponse);
-
     } on DioException catch (e, stackTrace) {
       _logger.error('로그인 실패', e, stackTrace);
       return Failure(_handleDioException(e, '로그인'));
@@ -67,7 +63,6 @@ class AuthService {
       _logger.info('회원가입 성공');
 
       return Success(CommonResponse.fromJson(response.data));
-
     } on DioException catch (e, stackTrace) {
       _logger.error('회원가입 실패', e, stackTrace);
       return Failure(_handleDioException(e, '회원가입'));
@@ -89,7 +84,6 @@ class AuthService {
       _logger.info('로그아웃 성공');
 
       return Success(CommonResponse.fromJson(response.data));
-
     } on DioException catch (e, stackTrace) {
       _logger.error('로그아웃 실패', e, stackTrace);
       return Failure(_handleDioException(e, '로그아웃'));
@@ -104,7 +98,7 @@ class AuthService {
     final statusCode = e.response?.statusCode;
 
     switch (e.type) {
-    // 타임아웃 에러
+      // 타임아웃 에러
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
@@ -114,7 +108,7 @@ class AuthService {
           originalError: e,
         );
 
-    // 연결 에러
+      // 연결 에러
       case DioExceptionType.connectionError:
         return NetworkException(
           '네트워크 연결을 확인해주세요',
@@ -122,7 +116,7 @@ class AuthService {
           originalError: e,
         );
 
-    // 서버 응답 에러
+      // 서버 응답 에러
       case DioExceptionType.badResponse:
         if (statusCode == 401) {
           return AuthException(
@@ -159,7 +153,7 @@ class AuthService {
           originalError: e,
         );
 
-    // 기타 에러
+      // 기타 에러
       default:
         return AppException(
           '알 수 없는 오류가 발생했습니다',
@@ -181,7 +175,7 @@ class AuthService {
       } else {
         _logger.warning('FCM 토큰이 없습니다');
       }
-    } catch (e, stackTrace) {
+    } catch (e) {
       // ⚠️ FCM 등록 실패는 로그인에 지장 없음
       _logger.warning('FCM 토큰 등록 실패 (로그인은 성공): $e');
     }
