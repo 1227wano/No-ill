@@ -59,7 +59,7 @@ const DisplaySchedulePanel = () => {
                         display: 'flex',
                         alignItems: 'center',
                         gap: 12,
-                        background: '#5B8FCC',
+                        background: 'var(--color-primary)',
                         color: 'white',
                         padding: '12px 24px',
                         borderRadius: 16,
@@ -74,7 +74,7 @@ const DisplaySchedulePanel = () => {
                         e.target.style.transform = 'scale(0.95)';
                     }}
                     onMouseLeave={(e) => {
-                        e.target.style.background = '#5B8FCC';
+                        e.target.style.background = 'var(--color-primary)';
                         e.target.style.transform = 'scale(1)';
                     }}
                     aria-label="새 일정 추가"

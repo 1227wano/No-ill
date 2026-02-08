@@ -1,74 +1,66 @@
+/* 1. 폰트 임포트 (반드시 최상단) */
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Pretendard 폰트 CDN */
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+/* 2. KERIS 실물 폰트 정의 */
+@font-face {
+  font-family: 'KERIS_B';
+  src: url('/fonts/KERISKEDU_B.otf') format('opentype'),
+       url('/fonts/KERISKEDU_B.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
 
-/* ========================================
-   NoIll Design System - CSS Variables
-   ======================================== */
+/* 3. 단일 디자인 시스템 정의 */
 :root {
-  /* Colors */
+  /* 브랜드 컬러 (파스텔 조합) */
   --color-primary: #5BA3D0;
-  --color-danger: #E53935;
+  --pastel-blue: #AAC4F5;
+  --pastel-green: #D9E9CF;
+  --pastel-orange: #EBD6FB;
+  --pastel-purple: #F5D2D2;
+  
   --color-background: #FDFBF7;
   --color-surface: #FFFFFF;
-  --color-border: #E0E0E0;
   --color-text-main: #212529;
-  --color-text-body: #495057;
 
-  /* Typography */
-  --font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
-  --font-size-h1: 20px;
-  --font-size-body: 16px;
-  --font-size-caption: 14px;
+  /* 타이포그래피 설정 */
+  --font-logo: 'KERIS_B', sans-serif; /* 👈 하단 로고용으로 정확히 지정 */
+  --font-family: 'Pretendard', -apple-system, sans-serif;
 
-  /* Spacing (8px base) */
-  --spacing-unit: 8px;
-
-  /* Border Radius */
+  /* 수치 통일 */
   --radius-card: 16px;
   --radius-button: 24px;
-  --radius-input: 8px;
-
-  /* Shadows */
   --shadow-card: 0px 4px 10px rgba(0, 0, 0, 0.1);
-
-  /* Component Sizes */
-  --button-height: 52px;
 }
 
 @layer base {
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-
-  html {
-    font-family: var(--font-family);
-  }
-
   body {
-    margin: 0;
-    min-width: 320px;
-    min-height: 100vh;
     background-color: var(--color-background);
     color: var(--color-text-main);
     font-family: var(--font-family);
-  }
-
-  #root {
-    width: 100%;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+    -webkit-font-smoothing: antialiased;
   }
 }
 
 @layer utilities {
-  .animate-spin-slow {
-    animation: spin 20s linear infinite;
+  /* 글래스모피즘 효과 */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: var(--shadow-card);
+  }
+
+  /* 로고 전용 클래스 (자간 조정 포함) */
+  .font-keris-b {
+    font-family: var(--font-logo);
+    letter-spacing: -2px; /* 👈 이미지 속 그 느낌을 내기 위한 핵심 */
+    font-weight: bold;
   }
 }

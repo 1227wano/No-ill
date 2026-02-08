@@ -1,89 +1,86 @@
-import React, {useState} from 'react';
-import {useVideoCall} from '../../features/videocall';
-import {useAuth} from '../../features/auth';
-import {MemoryGameOverlay} from '../../features/minigame';
+import React, { useState } from 'react';
+import { useVideoCall } from '../../features/videocall';
+import { useAuth } from '../../features/auth';
+import { MemoryGameOverlay } from '../../features/minigame';
 
 const CommandsPanel = () => {
     const [showAIHelp, setShowAIHelp] = useState(false);
     const [showGame, setShowGame] = useState(false);
     const [showQuote, setShowQuote] = useState(false);
-    const {pet} = useAuth();
-    const {startPetCall} = useVideoCall();
+    const { pet } = useAuth();
+    const { startPetCall } = useVideoCall();
 
     const DAILY_QUOTES = [
-        {text: '오늘 하루도 행복하세요', author: null},
-        {text: '건강이 최고의 재산입니다', author: null},
-        {text: '작은 것에 감사하세요', author: null},
+        { text: '오늘 하루도 행복하세요', author: null },
+        { text: '건강이 최고의 재산입니다', author: null },
+        { text: '작은 것에 감사하세요', author: null },
     ];
 
     const todayQuote = DAILY_QUOTES[new Date().getDate() % DAILY_QUOTES.length];
 
     const handleVideoCall = async () => {
-        console.log('🔵 영상 통화 버튼 클릭');
-        console.log('Pet 정보:', pet);
-
         if (pet?.petId) {
-            console.log('✅ Pet으로 보호자 호출:', pet.petId);
             startPetCall();
         } else {
-            console.warn('⚠️ Pet 정보 없음');
             alert('로그인 정보를 찾을 수 없습니다.');
         }
     };
 
+    // ✅ 노일 브랜드 컬러 팔레트로 색상 통일
     const features = [
         {
             id: 'ai-help',
             icon: '🤖',
-            title: 'AI 사용법',
-            color: '#5B8FCC',
+            title: '노일이 사용법',
+            color: 'var(--pastel-blue)', // Primary (메인 하늘색)
             onClick: () => setShowAIHelp(true)
         },
         {
             id: 'video-call',
             icon: '📞',
             title: '영상 통화',
-            color: '#22c55e',
+            color: 'var(--pastel-green)', // Light Sky Blue
             onClick: handleVideoCall
         },
         {
             id: 'mini-game',
             icon: '🧠',
             title: '미니 게임',
-            color: '#f97316',
+            color: 'var(--pastel-orange)', // Deep Blue
             onClick: () => setShowGame(true)
         },
         {
             id: 'daily-quote',
             icon: '💬',
             title: '오늘의 한마디',
-            color: '#a855f7',
+            color: 'var(--pastel-purple)', // Soft Pastel Blue
             onClick: () => setShowQuote(true)
         },
     ];
 
     const aiCommands = [
-        {icon: '☁️', text: '"오늘 날씨 어때?"'},
-        {icon: '💊', text: '"아침 약 먹었어"'},
-        {icon: '📰', text: '"오늘 뉴스 들려줘"'},
+        { icon: '☁️', text: '"오늘 날씨 어때?"' },
+        { icon: '💊', text: '"아침 약 먹었어"' },
+        { icon: '📰', text: '"오늘 뉴스 들려줘"' },
     ];
 
     return (
         <div style={{
             width: '100%',
             height: '100%',
-            background: 'white',
-            borderRadius: 20,
+            background: 'var(--color-surface)', // White
+            borderRadius: 'var(--radius-card)', // 16px
             padding: 40,
-            boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+            boxShadow: 'var(--shadow-card)', // 부드러운 그림자
             display: 'flex',
             flexDirection: 'column',
         }}>
             <h2 style={{
                 fontSize: 32,
                 fontWeight: 'bold',
-                color: '#1a1a1a',
+                color: 'var(--color-text-main)',
                 marginBottom: 30,
+                fontFamily: 'var(--font-family)', // Pretendard
             }}>
                 빠른 메뉴
             </h2>
@@ -97,182 +94,22 @@ const CommandsPanel = () => {
                 flex: 1,
             }}>
                 {features.map((feature) => (
-                    <FeatureButton key={feature.id} feature={feature}/>
+                    <FeatureButton key={feature.id} feature={feature} />
                 ))}
             </div>
 
             {/* 미니 게임 오버레이 */}
-            {showGame && <MemoryGameOverlay onClose={() => setShowGame(false)}/>}
+            {showGame && <MemoryGameOverlay onClose={() => setShowGame(false)} />}
 
-            {/* 오늘의 한마디 모달 */}
-            {showQuote && (
-                <div
-                    style={{
-                        position: 'fixed',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        background: 'rgba(0,0,0,0.5)',
-                        zIndex: 50,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                    }}
-                    onClick={() => setShowQuote(false)}
-                >
-                    <div
-                        style={{
-                            background: 'white',
-                            borderRadius: 20,
-                            padding: 60,
-                            width: 800,
-                            boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
-                            textAlign: 'center',
-                        }}
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        <span style={{
-                            fontSize: 80,
-                            display: 'block',
-                            marginBottom: 30,
-                        }}>
-                            💬
-                        </span>
-                        <h3 style={{
-                            fontSize: 28,
-                            fontWeight: 'bold',
-                            color: '#6b7280',
-                            marginBottom: 24,
-                        }}>
-                            오늘의 한마디
-                        </h3>
-                        <p style={{
-                            fontSize: 36,
-                            fontWeight: 'bold',
-                            color: '#1a1a1a',
-                            marginBottom: 16,
-                            lineHeight: 1.5,
-                        }}>
-                            "{todayQuote.text}"
-                        </p>
-                        {todayQuote.author && (
-                            <p style={{
-                                fontSize: 24,
-                                color: '#6b7280',
-                                marginBottom: 30,
-                            }}>
-                                - {todayQuote.author}
-                            </p>
+            {/* 오늘의 한마디 & AI 사용법 모달 (디자인 시스템 적용) */}
+            {(showQuote || showAIHelp) && (
+                <div style={modalOverlayStyle} onClick={() => { setShowQuote(false); setShowAIHelp(false); }}>
+                    <div style={modalContentStyle} onClick={(e) => e.stopPropagation()}>
+                        {showQuote ? (
+                            <QuoteContent todayQuote={todayQuote} onClose={() => setShowQuote(false)} />
+                        ) : (
+                            <AIHelpContent aiCommands={aiCommands} onClose={() => setShowAIHelp(false)} />
                         )}
-                        <button
-                            onClick={() => setShowQuote(false)}
-                            style={{
-                                width: '100%',
-                                padding: '16px 0',
-                                background: '#a855f7',
-                                color: 'white',
-                                fontSize: 24,
-                                fontWeight: 'bold',
-                                borderRadius: 16,
-                                border: 'none',
-                                cursor: 'pointer',
-                                marginTop: 24,
-                                transition: 'background 0.2s',
-                            }}
-                            onMouseEnter={(e) => e.currentTarget.style.background = '#9333ea'}
-                            onMouseLeave={(e) => e.currentTarget.style.background = '#a855f7'}
-                        >
-                            닫기
-                        </button>
-                    </div>
-                </div>
-            )}
-
-            {/* AI 사용법 모달 */}
-            {showAIHelp && (
-                <div
-                    style={{
-                        position: 'fixed',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        background: 'rgba(0,0,0,0.5)',
-                        zIndex: 50,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                    }}
-                    onClick={() => setShowAIHelp(false)}
-                >
-                    <div
-                        style={{
-                            background: 'white',
-                            borderRadius: 20,
-                            padding: 50,
-                            width: 800,
-                            boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
-                        }}
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        <h3 style={{
-                            fontSize: 36,
-                            fontWeight: 'bold',
-                            color: '#1a1a1a',
-                            marginBottom: 30,
-                            textAlign: 'center',
-                        }}>
-                            🤖 이렇게 말해보세요
-                        </h3>
-                        <div style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: 16,
-                            marginBottom: 30,
-                        }}>
-                            {aiCommands.map((command, index) => (
-                                <div
-                                    key={index}
-                                    style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: 16,
-                                        padding: '20px 24px',
-                                        background: '#f5f5f5',
-                                        borderRadius: 16,
-                                    }}
-                                >
-                                    <span style={{fontSize: 36}}>{command.icon}</span>
-                                    <span style={{
-                                        fontSize: 22,
-                                        fontWeight: '600',
-                                        color: '#1a1a1a',
-                                    }}>
-                                        {command.text}
-                                    </span>
-                                </div>
-                            ))}
-                        </div>
-                        <button
-                            onClick={() => setShowAIHelp(false)}
-                            style={{
-                                width: '100%',
-                                padding: '16px 0',
-                                background: '#5B8FCC',
-                                color: 'white',
-                                fontSize: 24,
-                                fontWeight: 'bold',
-                                borderRadius: 16,
-                                border: 'none',
-                                cursor: 'pointer',
-                                transition: 'background 0.2s',
-                            }}
-                            onMouseEnter={(e) => e.currentTarget.style.background = '#4a7ab8'}
-                            onMouseLeave={(e) => e.currentTarget.style.background = '#5B8FCC'}
-                        >
-                            닫기
-                        </button>
                     </div>
                 </div>
             )}
@@ -280,8 +117,10 @@ const CommandsPanel = () => {
     );
 };
 
-// ⭐ 버튼 컴포넌트 분리 (hover 문제 해결)
-const FeatureButton = ({feature}) => {
+// --- 서브 컴포넌트 및 스타일 ---
+
+// 세련된 감각의 FeatureButton
+const FeatureButton = ({ feature }) => {
     const [isHovered, setIsHovered] = useState(false);
 
     return (
@@ -290,33 +129,93 @@ const FeatureButton = ({feature}) => {
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             style={{
-                background: feature.color,
-                borderRadius: 20,
+                // ✅ 단색 대신 부드러운 그라데이션 적용
+                background: `linear-gradient(135deg, ${feature.color} 0%, ${feature.secondaryColor || feature.color} 100%)`,
+                borderRadius: '32px', // 더 둥글게 만들어 귀여운 느낌 강조
+                position: 'relative',
+                overflow: 'hidden',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: 16,
-                padding: 24,
-                color: 'white',
+                padding: '30px',
                 border: 'none',
                 cursor: 'pointer',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                transition: 'transform 0.2s, opacity 0.2s',
-                opacity: isHovered ? 0.9 : 1,
-                transform: isHovered ? 'scale(1.02)' : 'scale(1)',
+                // ✅ 버튼 색상을 머금은 부드러운 그림자
+                boxShadow: isHovered 
+                    ? `0 20px 40px ${feature.color}40` 
+                    : `0 10px 20px rgba(0,0,0,0.05)`,
+                transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)', // 쫀득한 애니메이션
+                transform: isHovered ? 'scale(1.05) translateY(-10px)' : 'scale(1)',
             }}
         >
-            <span style={{fontSize: 56, pointerEvents: 'none'}}>{feature.icon}</span>
-            <span style={{
-                fontSize: 22,
-                fontWeight: 'bold',
-                pointerEvents: 'none',
+            {/* 배경에 은은한 원형 패턴 추가 (디테일) */}
+            <div style={{
+                position: 'absolute', top: -20, right: -20, width: 100, height: 100,
+                background: 'rgba(255,255,255,0.1)', borderRadius: '50%'
+            }} />
+
+            <span style={{ 
+                fontSize: 80, // 아이콘을 더 과감하게 키움
+                marginBottom: 20,
+                filter: 'drop-shadow(0 10px 10px rgba(0,0,0,0.1))' 
+            }}>{feature.icon}</span>
+            
+            <span style={{ 
+                fontSize: 28, 
+                fontWeight: '800', 
+                color: 'white',
+                letterSpacing: '-0.5px',
+                fontFamily: 'var(--font-family)' // Pretendard
             }}>
                 {feature.title}
             </span>
         </button>
     );
+};
+
+// 공통 모달 스타일
+const modalOverlayStyle = {
+    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+    background: 'rgba(0,0,0,0.4)', zIndex: 100,
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+};
+
+const modalContentStyle = {
+    background: 'white', borderRadius: 32, padding: 60, width: 800,
+    boxShadow: '0 20px 40px rgba(0,0,0,0.2)', textAlign: 'center',
+};
+
+const QuoteContent = ({ todayQuote, onClose }) => (
+    <>
+        <span style={{ fontSize: 80, display: 'block', marginBottom: 20 }}>💬</span>
+        <p style={{ fontSize: 42, fontWeight: 'bold', lineHeight: 1.4, marginBottom: 40 }}>
+            "{todayQuote.text}"
+        </p>
+        <button onClick={onClose} style={closeButtonStyle}>닫기</button>
+    </>
+);
+
+const AIHelpContent = ({ aiCommands, onClose }) => (
+    <>
+        <h3 className="font-keris" style={{ fontSize: 42, color: 'var(--color-primary)', marginBottom: 40 }}>
+            노일이에게 물어보세요
+        </h3>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 20, marginBottom: 40 }}>
+            {aiCommands.map((cmd, i) => (
+                <div key={i} style={{ background: '#f8f9fa', padding: 24, borderRadius: 20, fontSize: 28, fontWeight: 'bold', display: 'flex', gap: 20 }}>
+                    <span>{cmd.icon}</span> {cmd.text}
+                </div>
+            ))}
+        </div>
+        <button onClick={onClose} style={closeButtonStyle}>알겠어!</button>
+    </>
+);
+
+const closeButtonStyle = {
+    width: '100%', padding: '20px 0', background: 'var(--color-primary)',
+    color: 'white', fontSize: 28, fontWeight: 'bold', borderRadius: 20,
+    border: 'none', cursor: 'pointer'
 };
 
 export default CommandsPanel;

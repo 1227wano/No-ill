@@ -1,3 +1,4 @@
+// src/components/layout/DisplayHeader.jsx
 import React, { useEffect, useState } from 'react';
 import logo from '@/assets/no-ill-logo.png';
 
@@ -5,10 +6,7 @@ const DisplayHeader = () => {
     const [time, setTime] = useState(new Date());
 
     useEffect(() => {
-        const timer = setInterval(() => {
-            setTime(new Date());
-        }, 1000);
-
+        const timer = setInterval(() => setTime(new Date()), 1000);
         return () => clearInterval(timer);
     }, []);
 
@@ -21,64 +19,52 @@ const DisplayHeader = () => {
     return (
         <header style={{
             width: '100%',
-            height: 120,
-            display: 'grid',
-            gridTemplateColumns: '640px 640px 640px',
+            height: '100%',
+            display: 'flex',
+            // ✅ 오타 수정 및 자식들을 양 끝으로 배분
+            justifyContent: 'space-between', 
             alignItems: 'center',
-            padding: '0 60px',
-            background: 'white',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+            padding: '0 80px', // 좌우 안전 여백
+            background: 'transparent',
         }}>
-            {/* 왼쪽: 로고 */}
-            <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 20,
+            {/* 1. 왼쪽 영역 (flex: 1) */}
+            <div style={{ 
+                flex: 1, 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: 15 
             }}>
-                <img
-                    src={logo}
-                    alt="No-ill 로고"
-                    style={{
-                        width: 80,
-                        height: 80,
-                        objectFit: 'contain',
-                    }}
-                />
-                <span style={{
-                    fontSize: 36,
-                    fontWeight: 'bold',
-                    color: '#1a1a1a',
+                <img src={logo} style={{ width: 80 }} alt="logo" />
+                <h1 className="font-keris-b" style={{ 
+                    fontSize: 48, 
+                    color: 'var(--color-primary)', 
+                    letterSpacing: '-1.5px' 
                 }}>
-                    No-ill (노일)
-                </span>
+                    No-ill
+                </h1>
             </div>
 
-            {/* 중앙: 시간 */}
-            <div style={{
-                display: 'flex',
-                justifyContent: 'center',
+            {/* 2. 중앙 영역 (flex: 1 + 중앙 정렬) */}
+            <div className="font-keris-b" style={{ 
+                flex: 1,
+                textAlign: 'center', // 텍스트를 박스 정중앙으로
+                fontSize: '64px', 
+                color: '#1A3A5F',
+                letterSpacing: '-1px',
+                whiteSpace: 'nowrap' // 줄바꿈 방지
             }}>
-                <span style={{
-                    fontSize: 56,
-                    fontWeight: 'bold',
-                    color: '#1a1a1a',
-                }}>
-                    {timeString}
-                </span>
+                {timeString}
             </div>
 
-            {/* 오른쪽: 날짜 */}
-            <div style={{
-                display: 'flex',
-                justifyContent: 'flex-end',
+            {/* 3. 오른쪽 영역 (flex: 1 + 우측 정렬) */}
+            <div style={{ 
+                flex: 1,
+                textAlign: 'right', // 텍스트를 오른쪽 끝으로
+                fontSize: '32px', 
+                color: 'var(--color-text-body)',
+                opacity: 0.8,
             }}>
-                <span style={{
-                    fontSize: 32,
-                    fontWeight: '600',
-                    color: '#1a1a1a',
-                }}>
-                    {dateString}
-                </span>
+                {dateString}
             </div>
         </header>
     );
