@@ -55,11 +55,7 @@ void main() async {
   // FCM 백그라운드 핸들러 등록
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-  runApp(
-    ProviderScope(
-      child: NoIllApp(),
-    ),
-  );
+  runApp(ProviderScope(child: NoIllApp()));
 }
 
 // 4. 앱 초기화 로직 (Provider에서 처리)
@@ -90,7 +86,8 @@ class _NoIllAppState extends ConsumerState<NoIllApp> {
       final initResult = await fcmService.initialize();
       initResult.fold(
         onSuccess: (_) => _logger.info('FCM 초기화 성공'),
-        onFailure: (exception) => _logger.error('FCM 초기화 실패: ${exception.message}'),
+        onFailure: (exception) =>
+            _logger.error('FCM 초기화 실패: ${exception.message}'),
       );
 
       // 알림 클릭 리스너 설정
@@ -98,7 +95,6 @@ class _NoIllAppState extends ConsumerState<NoIllApp> {
 
       // FCM 토큰 처리 (로그인 후 자동 처리됨)
       _logger.info('앱 초기화 완료');
-
     } catch (e, stackTrace) {
       _logger.error('앱 초기화 실패', e, stackTrace);
     }
@@ -107,15 +103,19 @@ class _NoIllAppState extends ConsumerState<NoIllApp> {
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
+      // ✅ 디자인 기준 사이즈를 고정합니다.
       designSize: const Size(393, 852),
       minTextAdapt: true,
-      splitScreenMode: true,
       builder: (context, child) {
         return MaterialApp(
           navigatorKey: navigatorKey,
           title: 'No-ill App',
           theme: AppTheme.lightTheme,
           debugShowCheckedModeBanner: false,
+          builder: (context, widget) {
+            // 별도의 Center나 Container로 가두지 않고 전체를 반환합니다.
+            return widget!;
+          },
           initialRoute: '/',
           routes: {
             '/': (context) => const SplashScreen(),
