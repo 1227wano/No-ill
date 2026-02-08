@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
+import 'package:noill_app/core/constants/color_constants.dart';
 import 'package:noill_app/screens/schedule/schedule_form_sheet.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../../models/schedule_model.dart';
@@ -59,6 +60,7 @@ class ScheduleMainScreen extends ConsumerWidget {
   }
 
   // 캘린더 위젯
+  // 캘린더 위젯: 점 제거 + 오늘(브랜드색) + 선택(회색)
   Widget _buildCalendar(
     WidgetRef ref,
     DateTime selectedDate,
@@ -70,30 +72,43 @@ class ScheduleMainScreen extends ConsumerWidget {
       focusedDay: selectedDate,
       selectedDayPredicate: (day) => isSameDay(selectedDate, day),
       onDaySelected: (selectedDay, focusedDay) {
-        // ✅ 선택 날짜 업데이트 (Provider 연동)
+        // ✅ 선택한 날짜를 상태에 저장
         ref.read(selectedDateProvider.notifier).update(selectedDay);
       },
-      // 이벤트가 있는 날짜에 점 표시
-      eventLoader: (day) {
-        return allSchedules.where((s) => isSameDay(s.schTime, day)).toList();
-      },
-      calendarStyle: const CalendarStyle(
-        todayDecoration: BoxDecoration(
-          color: Colors.blueAccent,
+
+      // 1. 달력의 점(마커)을 데이터 단계에서 제거합니다.
+      eventLoader: (day) => [],
+
+      calendarStyle: CalendarStyle(
+        // 2. 오늘 날짜: 노일 브랜드 컬러(0xFF6A85B6) 적용
+        todayDecoration: const BoxDecoration(
+          color: NoIllColors.primary,
           shape: BoxShape.circle,
         ),
-        selectedDecoration: BoxDecoration(
-          color: Colors.deepOrange,
+        todayTextStyle: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
+
+        // 3. 선택한 날짜: 회색(Colors.grey)으로 처리
+        selectedDecoration: const BoxDecoration(
+          color: Color.fromARGB(255, 186, 186, 186),
           shape: BoxShape.circle,
         ),
-        markerDecoration: BoxDecoration(
-          color: Colors.grey,
-          shape: BoxShape.circle,
+        selectedTextStyle: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
         ),
+
+        // 기타 UI 정리
+        outsideDaysVisible: false, // 다른 달 날짜 숨기기
+        weekendTextStyle: const TextStyle(color: Colors.redAccent),
       ),
+
       headerStyle: const HeaderStyle(
         formatButtonVisible: false,
         titleCentered: true,
+        titleTextStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
       ),
     );
   }

@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:noill_app/screens/accident/event_screen.dart';
 import '../../core/constants/color_constants.dart';
 import '../../providers/auth_provider.dart';
 import '../auth/welcome_screen.dart';
@@ -14,9 +13,6 @@ class SettingsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Unsplash 실시간 랜덤 이미지 URL (인물 사진 키워드)
-    const String randomProfileUrl =
-        "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80";
     // 유저 네임
     final authState = ref.watch(authProvider);
     final user = authState.userData;
@@ -38,7 +34,14 @@ class SettingsScreen extends ConsumerWidget {
               children: [
                 CircleAvatar(
                   radius: 35,
-                  backgroundImage: NetworkImage(randomProfileUrl),
+                  backgroundColor: NoIllColors.primary.withOpacity(
+                    0.5,
+                  ), // 부드러운 연회색 배경
+                  child: Icon(
+                    Icons.person_rounded, // 일러스트 느낌의 둥근 사람 아이콘
+                    size: 45,
+                    color: Colors.white, // 아이콘 색상
+                  ),
                 ),
                 SizedBox(width: 20),
                 Column(
@@ -84,7 +87,6 @@ class SettingsScreen extends ConsumerWidget {
                 );
               },
             ),
-            _buildMenuTile(Icons.notifications_none, "알림 설정", onTap: () {}),
             const Divider(height: 40),
 
             // 로그아웃
