@@ -1,0 +1,21 @@
+# config/twist_mux.yaml
+twist_mux:
+  ros__parameters:
+    publish_rate: 20.0
+    topics:
+      safety:
+        topic: cmd_vel_safety
+        timeout: 0.3
+        priority: 200
+      chatting:
+        topic: cmd_vel_is_chatting
+        timeout: 0.3
+        priority: 300
+      person:
+        topic: cmd_vel_person
+        timeout: 0.3
+        priority: 50
+      navigation:
+        topic: cmd_vel
+        timeout: 0.3
+        priority: 10
