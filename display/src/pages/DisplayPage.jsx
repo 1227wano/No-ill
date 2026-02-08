@@ -11,6 +11,13 @@ import useIdle from '@/hooks/useIdle';
 // src/pages/DisplayPage.jsx
 
 const DisplayPage = () => {
+    const isIdle = useIdle(10000);
+
+    // ✅ 2. 유휴 상태일 때 IdleScreen(보호 화면)을 우선적으로 보여줌
+  if (isIdle) {
+    return <IdleScreen />;
+  }
+  
   return (
     <div style={{
       width: 1920, height: 1080,
