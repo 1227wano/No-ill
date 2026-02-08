@@ -1,4 +1,29 @@
-# .idea 폴더 전체 제외
+# ROS2 산출물
+build/
+install/
+log/
+
+# 파이썬 실행 시 생성되는 임시 컴파일 파일들 제외
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# 기기 종속적인 엔진 파일은 제외 (각 기기에서 직접 생성 권장)
+*.engine
+*.pt
+
+# ROS2 rosbag 녹화 파일
+*.bag
+*.db3
+
+# 가상환경
+.venv/
+venv/
+
+# 환경변수/시크릿
+.env
+
+# 에디터/도구 설정
 .idea/
 
 # Created by https://www.toptal.com/developers/gitignore/api/windows,macos,jetbrains
@@ -178,5 +203,6 @@ $RECYCLE.BIN/
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,macos,jetbrains
 
-# Branch-specific folders
-display/
+
+.vscode/
+vscode/
