@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:noill_app/core/constants/color_constants.dart';
 import '../../providers/care_provider.dart';
 import '../../providers/schedule_provider.dart';
 import '../../core/utils/logger.dart';
@@ -249,22 +250,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget _buildVideoCallButton(bool enabled) {
     return SizedBox(
       width: 60.w,
-      height: 52.h,
+      height: 60.h,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: enabled
-              ? const Color(0xFF6A85B6)
-              : Colors.grey.shade300,
+          backgroundColor: enabled ? NoIllColors.primary : Colors.grey.shade300,
           foregroundColor: enabled ? Colors.white : Colors.grey.shade500,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
           elevation: enabled ? 2 : 0,
+          // ✅ 1. 기본 패딩 제거 (좁은 너비에서 아이콘이 쏠리는 현상 방지)
+          padding: EdgeInsets.zero,
           disabledBackgroundColor: Colors.grey.shade300,
           disabledForegroundColor: Colors.grey.shade500,
         ),
         onPressed: enabled ? _handleVideoCall : null,
-        child: Icon(Icons.videocam_rounded, size: 28.sp),
+        // ✅ 2. Center 위젯으로 아이콘을 정중앙에 고정
+        child: Center(child: Icon(Icons.videocam_rounded, size: 28.sp)),
       ),
     );
   }

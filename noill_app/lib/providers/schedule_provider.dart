@@ -195,9 +195,9 @@ class ScheduleNotifier extends AsyncNotifier<List<ScheduleModel>> {
 
 /// 전체 일정 목록
 final scheduleNotifierProvider =
-AsyncNotifierProvider<ScheduleNotifier, List<ScheduleModel>>(
+    AsyncNotifierProvider<ScheduleNotifier, List<ScheduleModel>>(
       () => ScheduleNotifier(),
-);
+    );
 
 /// 선택된 날짜의 일정만 필터링
 final filteredScheduleProvider = Provider<List<ScheduleModel>>((ref) {
@@ -280,7 +280,8 @@ bool _isSameMonth(DateTime a, DateTime b) {
 bool _isThisWeek(DateTime date) {
   final now = DateTime.now();
   final weekAgo = now.subtract(const Duration(days: 7));
-  return date.isAfter(weekAgo) && date.isBefore(now.add(const Duration(days: 1)));
+  return date.isAfter(weekAgo) &&
+      date.isBefore(now.add(const Duration(days: 1)));
 }
 
 // ═══════════════════════════════════════════════════════════════════════
