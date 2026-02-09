@@ -159,8 +159,8 @@
 
 ### 인식 관련
 - `/person_x`, `/person_y` (Int32) - 사람 좌표
-- `/object_type` (String) - "desk", "lying", "others"
-- `/check_accident` (Bool) - 낙상 감지
+- `/object_type` (String) - "lying", "others"
+- `/check_accident` (Bool) - 낙상 여부 확인 명령
 
 ### 주행 관련
 - `/cmd_vel` (Twist) - Nav2 명령
