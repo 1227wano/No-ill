@@ -8,7 +8,7 @@
 
 ## 프로젝트 목표
 
-고령화 시대의 독거 노인들을 위한 **모션 기반 추적형 보조 로봇 및 스마트 모니터**를 활용한 종합 케어 서비스 제공
+고령화 시대의 독거 노인들을 위한 **독거 노인을 위한 AI 로봇 케어 서비스**를 활용한 종합 케어 서비스 제공
 
 - 독거 노인의 외로움 해결 (정서적 지원)
 - 낙상 등 건강 관련 실시간 모니터링
@@ -64,15 +64,14 @@
 
 **보조 역할**:
 
-- LLM 기반 대화 챗봇 (STT/TTS 연동)
-- 낙상 감지 (상시 작동, TFLite 경량 모델)
+- LLM 기반 대화 챗봇 (STT/TTS 활용)
+- 낙상 감지 (상시 작동 / 객체 인식 활용)
 - 응급 상황 발생 시 신고 및 보호자 연락
 
-**주행 모드** (각 모드는 배타적으로 작동): 주행 API - Jetson 라이브러리
+**주행 모드** (각 모드는 배타적으로 작동): 주행 - PCA9685
 
 - **추적 모드**: 객체 인식에 의한 사용자 감지 및 거리 유지를 통한 추적 주행
-- **순찰 모드**: A* 알고리즘 기반 경로 계획
-- **취침 모드**: 수면 시간 데이터에 기반한 대기 상태
+- **순찰 모드**: 다익스트라 기반 다음 목적지로의 경로 계획
 
 **자율주행 기술**:
 
@@ -80,9 +79,6 @@
 - 사용자 인식 불가시 매핑된 지도를 활용해 재탐색
 - 실시간 장애물 회피 (사용자 경로 방해 방지)
 
-**참고 영상**:
-
-- [따라다니며 애교 부리기 예시 1](https://youtube.com/shorts/6A3n1TmvFYA?si=boGUwsOXyNlAYi5x)
 
 ## 2. 디스플레이 시스템 (Raspberry Pi 5 + 모니터)
 
@@ -146,32 +142,7 @@
 **LLM 기반 챗봇**:
 
 - STT/TTS API 연동
-- 노인 음성 특화 학습 데이터 활용
 - 서버와 REST 통신으로 LLM 응답 처리
-
-## 수면 시간 측정
-
-- 활동량 감지 기반 수면 판단
-- 침대/침실 영역 체류 시간 분석
-- 대시보드에 일일/주간 수면 통계 표시
+- 대화를 통한 일정 관리 기능
 
 ---
-
-# 데이터셋
-
-본 프로젝트는 AI-Hub의 공공 데이터셋을 활용합니다.
-
-## 1. 독거 노인 돌봄용 위험 감지 데이터
-
-- **출처**: [AI-Hub 링크](https://aihub.or.kr/aihubdata/data/view.do?pageIndex=1&currMenu=115&topMenu=100&srchOptnCnd=OPTNCND001&searchKeyword=%EB%85%B8%EC%9D%B8&srchDetailCnd=DETAILCND001&srchOrder=ORDER001&srchPagePer=20&aihubDataSe=data&dataSetSn=71803)
-- **활용 목적**: 낙상 및 응급 상황 감지 모델 학습
-
-## 2. 시나리오 기반 표정 3D 데이터
-
-- **출처**: [AI-Hub 링크](https://aihub.or.kr/aihubdata/data/view.do?pageIndex=1&currMenu=115&topMenu=100&srchOptnCnd=OPTNCND001&searchKeyword=%ED%91%9C%EC%A0%95&srchDetailCnd=DETAILCND001&srchOrder=ORDER001&srchPagePer=20&aihubDataSe=data&dataSetSn=71787)
-- **활용 목적**: 사용자 감정 상태 파악 및 응급 상황 판단 보조
-
-## 3. 명령어 음성 (노인 남여)
-
-- **출처**: [AI-Hub 링크](https://aihub.or.kr/aihubdata/data/view.do?pageIndex=2&currMenu=115&topMenu=100&srchOptnCnd=OPTNCND001&searchKeyword=%EB%85%B8%EC%9D%B8&srchDetailCnd=DETAILCND001&srchOrder=ORDER001&srchPagePer=20&aihubDataSe=data&dataSetSn=94)
-- **활용 목적**: 노인 특화 STT 모델 학습 및 음성 인식 정확도 향상
