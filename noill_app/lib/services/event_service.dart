@@ -26,7 +26,7 @@ class EventService {
     try {
       _logger.info('사고 기록 조회 시작: $petId');
 
-      final response = await _dio.get('/api/events/report');
+      final response = await _dio.get('/api/events/$petId');
 
       _logger.info('응답 수신: ${response.statusCode}');
       _logger.debug('응답 데이터: ${response.data}');
@@ -41,7 +41,9 @@ class EventService {
 
         // 데이터 파싱
         final List<dynamic> data = response.data;
-        final events = data.map((json) => EventModel.fromJson(json, petId)).toList();
+        final events = data
+            .map((json) => EventModel.fromJson(json, petId))
+            .toList();
 
         _logger.info('사고 기록 ${events.length}건 조회 완료');
         return Success(events);
@@ -50,7 +52,6 @@ class EventService {
       // 200이 아닌 경우
       _logger.warning('예상치 못한 응답 코드: ${response.statusCode}');
       return const Success([]); // 빈 리스트 반환
-
     } on DioException catch (e, stackTrace) {
       _logger.error('사고 기록 조회 실패', e, stackTrace);
 
@@ -62,14 +63,11 @@ class EventService {
 
       // 그 외 네트워크 에러
       return Failure(_handleDioException(e, '사고 기록 조회'));
-
     } on TypeError catch (e, stackTrace) {
       _logger.error('데이터 파싱 실패', e, stackTrace);
-      return Failure(ParseException(
-        '사고 기록 데이터 형식이 올바르지 않습니다',
-        originalError: e,
-      ));
-
+      return Failure(
+        ParseException('사고 기록 데이터 형식이 올바르지 않습니다', originalError: e),
+      );
     } catch (e, stackTrace) {
       _logger.error('예상치 못한 에러', e, stackTrace);
       return Failure(AppException('사고 기록 조회 중 오류가 발생했습니다'));
@@ -85,7 +83,7 @@ class EventService {
     final statusCode = e.response?.statusCode;
 
     switch (e.type) {
-    // 타임아웃 에러
+      // 타임아웃 에러
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
@@ -95,7 +93,7 @@ class EventService {
           originalError: e,
         );
 
-    // 연결 에러
+      // 연결 에러
       case DioExceptionType.connectionError:
         return NetworkException(
           '네트워크 연결을 확인해주세요',
@@ -103,13 +101,10 @@ class EventService {
           originalError: e,
         );
 
-    // 서버 응답 에러
+      // 서버 응답 에러
       case DioExceptionType.badResponse:
         if (statusCode == 401 || statusCode == 403) {
-          return AuthException(
-            '인증이 만료되었습니다',
-            originalError: e,
-          );
+          return AuthException('인증이 만료되었습니다', originalError: e);
         } else if (statusCode == 404) {
           return ServerException(
             '요청한 정보를 찾을 수 없습니다',
@@ -133,15 +128,11 @@ class EventService {
           originalError: e,
         );
 
-    // 요청 취소
+      // 요청 취소
       case DioExceptionType.cancel:
-        return AppException(
-          '요청이 취소되었습니다',
-          code: 'CANCELLED',
-          originalError: e,
-        );
+        return AppException('요청이 취소되었습니다', code: 'CANCELLED', originalError: e);
 
-    // 기타 에러
+      // 기타 에러
       default:
         return AppException(
           '알 수 없는 오류가 발생했습니다',

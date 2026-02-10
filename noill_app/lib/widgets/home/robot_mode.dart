@@ -87,7 +87,7 @@ class RobotSection extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "현재 모드: 순찰모드",
+                  "순찰모드 / 주행모드 더 알아보기",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
                 Text(

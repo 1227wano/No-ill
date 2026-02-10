@@ -19,7 +19,21 @@ class StatusCard extends ConsumerWidget {
         : const AsyncValue<List<EventModel>>.data([]);
 
     final bool isWarning = reportAsync.maybeWhen(
-      data: (d) => d.isNotEmpty,
+      data: (events) {
+        if (events.isEmpty) return false;
+
+        // 가장 최근 사고 가져오기 (이미 정렬되어 있다고 가정)
+        final latestEvent = events.first;
+
+        // ✨ [수정] 사고 발생 시간이 현재로부터 5분 이내일 때만 경고
+        final diff = DateTime.now().difference(latestEvent.eventTime).inMinutes;
+        // 🔥 [이거 추가!] "사고 난 지 1분 넘었으면 그냥 무시해" (초록색으로 초기화)
+        if (diff > 1) {
+          return false; // 👈 여기가 핵심! 강제 안전 처리
+        }
+
+        return true; // 1분 이내에 난 사고만 빨간색
+      },
       orElse: () => false,
     );
     final String name = selectedCare?.careName ?? "어르신";
