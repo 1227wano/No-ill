@@ -68,6 +68,7 @@ class SettingsScreen extends ConsumerWidget {
                     ),
                   ),
                   SizedBox(height: 16.w),
+                  SizedBox(width: 16.w),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

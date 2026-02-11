@@ -158,11 +158,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     if (selectedPet != null) {
       _logger.info('🚨 새 이벤트 감지! 서버 DB 저장 대기 중...');
 
-      // ✅ 서버의 DB Transaction 속도 이슈로 인한 딜레이 (Race Condition 방지)
+      // 서버의 DB Transaction 속도 이슈로 인한 딜레이 (Race Condition 방지)
       // 추후 서버 로직 개선 시 제거 가능
-      if (mounted) {
-        await Future.delayed(const Duration(seconds: 1));
-      }
+      // if (mounted) {
+      //   await Future.delayed(const Duration(seconds: 1));
+      // }
 
       if (mounted) {
         _logger.info('데이터 강제 Refresh 실행');
@@ -252,8 +252,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     // SizedBox(height: 32.h),
                     // 🚨 [수정 핵심] 사고가 있을 때만 배너와 간격(SizedBox)을 표시
                     if (hasAccident) ...[
-                      const LatestAccidentBanner(),
                       SizedBox(height: 32.h), // 배너가 뜰 때만 이 간격도 생김
+                      const LatestAccidentBanner(),
                     ],
                     _buildSectionHeader("오늘의 일정", "예정된 주요 일과들이에요"),
                     const DailyScheduleSection(),
