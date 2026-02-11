@@ -89,14 +89,8 @@ public:
     last_person_time_ = now();
 
     // 로그 출력
-    RCLCPP_INFO(get_logger(), "===========================================");
-    RCLCPP_INFO(get_logger(), "Patrol Node Started");
-    RCLCPP_INFO(get_logger(), "===========================================");
-    RCLCPP_INFO(get_logger(), "Waypoint 1: (%.2f, %.2f)", wp1_x, wp1_y);
-    RCLCPP_INFO(get_logger(), "Waypoint 2: (%.2f, %.2f)", wp2_x, wp2_y);
-    RCLCPP_INFO(get_logger(), "Person timeout: %.1f seconds", timeout);
-    RCLCPP_INFO(get_logger(), "Object type topic: %s", object_topic.c_str());
-    RCLCPP_INFO(get_logger(), "===========================================");
+    RCLCPP_INFO(get_logger(), "[PATROL] Started | wp1=(%.2f,%.2f) wp2=(%.2f,%.2f) | timeout=%.1fs",
+      wp1_x, wp1_y, wp2_x, wp2_y, timeout);
   }
 
 private:
@@ -124,7 +118,7 @@ private:
       // 처음 감지된 경우 순찰 중지
       if (!person_detected_) {
         person_detected_ = true;
-        RCLCPP_INFO(get_logger(), "👤 Person detected! Pausing patrol...");
+        RCLCPP_INFO(get_logger(), "[PATROL] Person detected, pausing");
         cancelCurrentNavigation();
       }
     }
@@ -145,7 +139,7 @@ private:
         get_logger(),
         *get_clock(),
         5000,  // 5초마다 한 번만 출력
-        "⏳ Waiting for Nav2 action server..."
+        "[PATROL] Waiting for Nav2..."
       );
       return;
     }
@@ -177,11 +171,7 @@ private:
 
     if (elapsed > timeout) {
       person_detected_ = false;
-      RCLCPP_INFO(
-        get_logger(),
-        "✓ Person lost for %.1f seconds. Resuming patrol...",
-        elapsed
-      );
+      RCLCPP_INFO(get_logger(), "[PATROL] Person lost %.1fs, resuming", elapsed);
     }
   }
 
@@ -220,11 +210,7 @@ private:
       };
 
     // Goal 전송
-    RCLCPP_INFO(
-      get_logger(),
-      "🚀 Navigating to waypoint %zu: (%.2f, %.2f)",
-      current_waypoint_ + 1, x, y
-    );
+    RCLCPP_INFO(get_logger(), "[PATROL] -> wp%zu (%.2f,%.2f)", current_waypoint_ + 1, x, y);
 
     nav_client_->async_send_goal(goal_msg, send_goal_options);
     navigating_ = true;
@@ -238,25 +224,21 @@ private:
 
     switch (result.code) {
       case rclcpp_action::ResultCode::SUCCEEDED:
-        RCLCPP_INFO(
-          get_logger(),
-          "✓ Reached waypoint %zu",
-          current_waypoint_ + 1
-        );
+        RCLCPP_INFO(get_logger(), "[PATROL] Reached wp%zu", current_waypoint_ + 1);
         // 다음 웨이포인트로 순환
         current_waypoint_ = (current_waypoint_ + 1) % waypoints_.size();
         break;
 
       case rclcpp_action::ResultCode::CANCELED:
-        RCLCPP_INFO(get_logger(), "⏸ Navigation canceled");
+        RCLCPP_INFO(get_logger(), "[PATROL] Nav canceled");
         break;
 
       case rclcpp_action::ResultCode::ABORTED:
-        RCLCPP_WARN(get_logger(), "⚠ Navigation aborted");
+        RCLCPP_WARN(get_logger(), "[PATROL] Nav aborted");
         break;
 
       default:
-        RCLCPP_ERROR(get_logger(), "❌ Navigation failed with unknown result code");
+        RCLCPP_ERROR(get_logger(), "[PATROL] Nav failed (unknown)");
         break;
     }
   }
@@ -266,7 +248,7 @@ private:
    */
   void cancelCurrentNavigation() {
     if (navigating_) {
-      RCLCPP_INFO(get_logger(), "⏹ Canceling current navigation...");
+      RCLCPP_INFO(get_logger(), "[PATROL] Canceling nav");
       nav_client_->async_cancel_all_goals();
       navigating_ = false;
     }

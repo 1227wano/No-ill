@@ -81,13 +81,10 @@ class EmergencyResponseNode(Node):
         self._init_subscribers()
         self._init_publishers()
 
-        self.get_logger().info('=' * 50)
-        self.get_logger().info('★★★ Emergency Response Node Started ★★★')
-        self.get_logger().info('=' * 50)
-        self.get_logger().info(f'Max attempts: {self.MAX_ATTEMPTS}')
-        self.get_logger().info(f'Response timeout: {self.RESPONSE_TIMEOUT}s')
-        self.get_logger().info(f'Cooldown: {self.COOLDOWN_DURATION/60:.0f} min')
-        self.get_logger().info('=' * 50)
+        self.get_logger().info(
+            f'[EMERGENCY] Started | max_attempts={self.MAX_ATTEMPTS} | '
+            f'timeout={self.RESPONSE_TIMEOUT}s | cooldown={self.COOLDOWN_DURATION/60:.0f}min'
+        )
 
     # =====================================================
     # 초기화
@@ -121,9 +118,7 @@ class EmergencyResponseNode(Node):
     def _arrived_callback(self, msg: Bool):
         """낙상 지점 도착 콜백"""
         if msg.data and self.state == EmergencyState.IDLE:
-            self.get_logger().warn('=' * 50)
-            self.get_logger().warn('🚨 EMERGENCY PROCESS STARTED')
-            self.get_logger().warn('=' * 50)
+            self.get_logger().warn('[EMERGENCY] PROCESS STARTED')
 
             self._transition_to(EmergencyState.ARRIVED)
             self.attempt_count = 0
@@ -138,7 +133,7 @@ class EmergencyResponseNode(Node):
     def _emergency_tts_done_callback(self, msg: Bool):
         """TTS 완료 콜백 (응급 모드)"""
         if msg.data and self.state == EmergencyState.ASKING:
-            self.get_logger().info('✓ Emergency TTS done. Activating listen mode.')
+            self.get_logger().info('[EMERGENCY] TTS done, listening...')
 
             # STT 강제 청취 활성화
             self._set_force_listen(True)
@@ -159,13 +154,13 @@ class EmergencyResponseNode(Node):
             return
 
         user_text = msg.data
-        self.get_logger().info(f'💬 Patient responded: "{user_text}"')
+        self.get_logger().info(f'[EMERGENCY] Patient: "{user_text}"')
 
         # 긍정 응답 키워드 확인
         if self._is_positive_response(user_text):
             self._handle_positive_response()
         else:
-            self.get_logger().info('No positive keyword detected. Still waiting...')
+            self.get_logger().debug('[EMERGENCY] No keyword match, waiting...')
 
     # =====================================================
     # 상태 머신 로직
@@ -193,7 +188,7 @@ class EmergencyResponseNode(Node):
 
         self.attempt_count += 1
         self.get_logger().info(
-            f'🗣️  Asking patient... (Attempt {self.attempt_count}/{self.MAX_ATTEMPTS})'
+            f'[EMERGENCY] Asking patient ({self.attempt_count}/{self.MAX_ATTEMPTS})'
         )
 
         # 질문 중 상태로 전환
@@ -217,7 +212,7 @@ class EmergencyResponseNode(Node):
         """긍정 응답 처리"""
         self._cancel_timer('response')
 
-        self.get_logger().info('✓ Positive response detected!')
+        self.get_logger().info('[EMERGENCY] Positive response detected')
 
         # 확인 메시지 출력
         self._trigger_tts(self.MSG_CONFIRMED)
@@ -229,9 +224,7 @@ class EmergencyResponseNode(Node):
         """사고 신고 프로세스"""
         self._transition_to(EmergencyState.REPORTING)
 
-        self.get_logger().warn('=' * 50)
-        self.get_logger().warn('📞 !!! REPORTING ACCIDENT !!!')
-        self.get_logger().warn('=' * 50)
+        self.get_logger().warn('[EMERGENCY] REPORTING ACCIDENT')
 
         # 1. 캡처 명령
         self._trigger_capture()
@@ -252,10 +245,7 @@ class EmergencyResponseNode(Node):
 
         self._transition_to(EmergencyState.ENDING)
 
-        self.get_logger().info('=' * 50)
-        self.get_logger().info('✓ Emergency process ended')
-        self.get_logger().info('⏳ Entering COOLDOWN...')
-        self.get_logger().info('=' * 50)
+        self.get_logger().info('[EMERGENCY] Process ended, entering cooldown')
 
         # 타이머 정리
         self._cancel_timer('response')
@@ -289,7 +279,7 @@ class EmergencyResponseNode(Node):
         )
 
         self.get_logger().info(
-            f'Cooldown for {self.COOLDOWN_DURATION/60:.0f} minutes'
+            f'[EMERGENCY] Cooldown {self.COOLDOWN_DURATION/60:.0f}min'
         )
 
     def _cooldown_done(self):
@@ -298,10 +288,7 @@ class EmergencyResponseNode(Node):
 
         self._transition_to(EmergencyState.IDLE)
 
-        self.get_logger().info('=' * 50)
-        self.get_logger().info('✓ COOLDOWN finished')
-        self.get_logger().info('Ready for next emergency event')
-        self.get_logger().info('=' * 50)
+        self.get_logger().info('[EMERGENCY] Cooldown finished, ready')
 
     # =====================================================
     # 헬퍼 함수
@@ -353,7 +340,7 @@ class EmergencyResponseNode(Node):
         msg.data = True
         self.pub_capture.publish(msg)
 
-        self.get_logger().info('📸 Capture command sent')
+        self.get_logger().info('[EMERGENCY] Capture sent')
 
     def _set_force_listen(self, enable: bool):
         """STT 강제 청취 설정"""

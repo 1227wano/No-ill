@@ -79,13 +79,10 @@ class YoloDetectorNode(Node):
         # 메인 타이머 (20Hz)
         self.timer = self.create_timer(0.05, self.inference_loop)
 
-        self.get_logger().info('=' * 50)
-        self.get_logger().info('YOLO Detector Node Started')
-        self.get_logger().info('=' * 50)
-        self.get_logger().info(f'Model: {self.MODEL_WIDTH}x{self.MODEL_HEIGHT}')
-        self.get_logger().info(f'Classes: {", ".join(self.CLASSES)}')
-        self.get_logger().info(f'Emergency Capture Mode: Enabled')
-        self.get_logger().info('=' * 50)
+        self.get_logger().info(
+            f'[YOLO] Started | model={self.MODEL_WIDTH}x{self.MODEL_HEIGHT} | '
+            f'classes={",".join(self.CLASSES)}'
+        )
 
         # 카메라 테스트 (TTS 비프 후)
         time.sleep(1.5)
@@ -185,14 +182,14 @@ class YoloDetectorNode(Node):
         ret, test_frame = self.cap.read()
 
         if ret:
-            self.get_logger().info('✓✓✓ CAMERA INITIALIZED ✓✓✓')
+            self.get_logger().info('[YOLO] Camera OK')
 
             # 비프 요청
             beep_msg = String()
             beep_msg.data = "CAMERA_OK"
             self.pub_test_beep.publish(beep_msg)
         else:
-            self.get_logger().error('✗✗✗ CAMERA FAILED ✗✗✗')
+            self.get_logger().error('[YOLO] Camera FAILED')
 
     # =====================================================
     # 콜백 함수들
@@ -209,7 +206,7 @@ class YoloDetectorNode(Node):
 
         # 대화 시작 시점
         if self.is_chatting and not self.prev_is_chatting:
-            self.get_logger().info('💬 Chatting started: Publishing 10 "others"')
+            self.get_logger().info('[YOLO] Chat mode, publishing "others"')
 
             others_msg = String()
             others_msg.data = "others"
@@ -226,7 +223,7 @@ class YoloDetectorNode(Node):
             file_name = os.path.join(self.save_path, "N0111.jpg")
             cv2.imwrite(file_name, self.current_frame)
 
-            self.get_logger().info(f'📸 Emergency Capture Saved: {file_name}')
+            self.get_logger().info(f'[YOLO] Captured: {file_name}')
 
             # 캡처 완료 알림
             cap_msg = Bool()
@@ -591,12 +588,13 @@ class YoloDetectorNode(Node):
         )
 
     def _display_frame(self, canvas: np.ndarray):
-        """프레임 표시 (개발용)"""
-        try:
-            cv2.imshow("Jetson YOLO 224x224 (Padded)", canvas)
-            cv2.waitKey(1)
-        except cv2.error:
-            pass
+        """프레임 표시 (개발용, 디스플레이 있을 때만)"""
+        if os.environ.get('DISPLAY'):
+            try:
+                cv2.imshow("Jetson YOLO 224x224 (Padded)", canvas)
+                cv2.waitKey(1)
+            except cv2.error:
+                pass
 
     # =====================================================
     # 정리
@@ -618,7 +616,8 @@ class YoloDetectorNode(Node):
                 if hasattr(out['device'], 'free'):
                     out['device'].free()
 
-        cv2.destroyAllWindows()
+        if os.environ.get('DISPLAY'):
+            cv2.destroyAllWindows()
 
 
 def main(args=None):

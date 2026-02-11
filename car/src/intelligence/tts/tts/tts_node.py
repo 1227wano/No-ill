@@ -153,13 +153,10 @@ class NoilTTSNode(Node):
 
     def _log_configuration(self):
         """설정 로그"""
-        self.get_logger().info('=' * 50)
-        self.get_logger().info('★★★ TTS Node Started ★★★')
-        self.get_logger().info('=' * 50)
-        self.get_logger().info(f'Speaker ID: {self.speaker_device_id}')
-        self.get_logger().info(f'Sample rate: {self.TARGET_SAMPLE_RATE} Hz')
-        self.get_logger().info(f'Playback speed: {self.PLAYBACK_SPEED}x')
-        self.get_logger().info('=' * 50)
+        self.get_logger().info(
+            f'[TTS] Started | speaker={self.speaker_device_id} | '
+            f'rate={self.TARGET_SAMPLE_RATE}Hz | speed={self.PLAYBACK_SPEED}x'
+        )
 
     # =====================================================
     # 콜백
@@ -173,9 +170,9 @@ class NoilTTSNode(Node):
         self.is_emergency_mode = msg.data
 
         if msg.data:
-            self.get_logger().info('🚨 Emergency mode ON (fall_arrived)')
+            self.get_logger().info('[TTS] Emergency mode ON')
         else:
-            self.get_logger().info('✓ Emergency mode OFF')
+            self.get_logger().info('[TTS] Emergency mode OFF')
 
     def _is_chatting_callback(self, msg: Bool):
         """대화 상태 콜백
@@ -186,7 +183,7 @@ class NoilTTSNode(Node):
         if msg.data:
             # 대화 시작
             self.is_session_active = True
-            self.get_logger().info('💬 Conversation session STARTED')
+            self.get_logger().info('[TTS] Session started')
 
             # 응급 모드가 아닐 때만 환영 메시지
             if not self.is_emergency_mode:
@@ -198,11 +195,9 @@ class NoilTTSNode(Node):
                 self.is_session_active = False
 
                 if self.is_emergency_mode:
-                    self.get_logger().info(
-                        '🚨 Emergency mode end. Skipping farewell.'
-                    )
+                    self.get_logger().debug('[TTS] Emergency end, skip farewell')
                 else:
-                    self.get_logger().info('💬 Conversation session ENDED')
+                    self.get_logger().info('[TTS] Session ended')
                     self._play_tts(self.MSG_SESSION_END)
             else:
                 self.get_logger().debug('Session already inactive. Ignored.')
@@ -212,7 +207,7 @@ class NoilTTSNode(Node):
         
         LLM 응답을 음성으로 출력
         """
-        self.get_logger().info(f'🗣️  LLM response: "{msg.data}"')
+        self.get_logger().info(f'[TTS] Speaking: "{msg.data}"')
         self._play_tts(msg.data)
         self.pub_tts_done.publish(Bool(data=True))
 
@@ -221,7 +216,7 @@ class NoilTTSNode(Node):
         
         응급 상황 메시지를 음성으로 출력
         """
-        self.get_logger().info(f'🚨 Emergency TTS: "{msg.data}"')
+        self.get_logger().info(f'[TTS] Emergency: "{msg.data}"')
         self._play_tts(msg.data)
         self.pub_emergency_tts_done.publish(Bool(data=True))
 

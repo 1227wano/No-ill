@@ -123,18 +123,31 @@ class NoilSTTNode(Node):
 
     def _find_microphone(self) -> Optional[int]:
         """Brio 마이크 찾기
-        
+
+        sounddevice에서 이름으로 찾고, 못 찾으면
+        ALSA hw:1,0 (Brio USB Audio)을 직접 사용
+
         Returns:
             Optional[int]: 마이크 장치 ID
         """
         devices = sd.query_devices()
 
+        # 1차: 이름으로 검색 (입력 채널이 있는 장치만)
         for i, dev in enumerate(devices):
-            if 'brio' in dev['name'].lower():
-                self.get_logger().info(f'✅ Found microphone: {dev["name"]} (ID: {i})')
+            if 'brio' in dev['name'].lower() and dev['max_input_channels'] > 0:
+                self.get_logger().info(f'[STT] Mic found: {dev["name"]} (ID: {i})')
                 return i
 
-        self.get_logger().warn('⚠️  Brio microphone not found. Using default.')
+        # 2차: ALSA hw:1,0 직접 시도 (Brio USB Audio 고정 위치)
+        try:
+            test_stream = sd.InputStream(device='hw:1,0', channels=1, samplerate=16000)
+            test_stream.close()
+            self.get_logger().info('[STT] Mic found via ALSA: hw:1,0')
+            return 'hw:1,0'
+        except Exception:
+            pass
+
+        self.get_logger().warn('[STT] Brio mic not found, using default')
         return None
 
     def _get_hotwords_path(self) -> str:
@@ -232,14 +245,10 @@ class NoilSTTNode(Node):
 
     def _log_configuration(self):
         """설정 로그"""
-        self.get_logger().info('=' * 50)
-        self.get_logger().info('★★★ STT Control Node Started ★★★')
-        self.get_logger().info('=' * 50)
-        self.get_logger().info(f'Microphone ID: {self.mic_device_id}')
-        self.get_logger().info(f'Sample rate: {self.SAMPLE_RATE} Hz')
-        self.get_logger().info(f'Hotwords: {len(self.keywords)} loaded')
-        self.get_logger().info(f'Conversation timeout: {self.CONVERSATION_TIMEOUT}s')
-        self.get_logger().info('=' * 50)
+        self.get_logger().info(
+            f'[STT] Started | mic={self.mic_device_id} | '
+            f'hotwords={len(self.keywords)} | timeout={self.CONVERSATION_TIMEOUT}s'
+        )
 
     # =====================================================
     # 콜백
@@ -263,7 +272,7 @@ class NoilSTTNode(Node):
         응급 상황 시 핫워드 없이 즉시 청취 시작
         """
         if msg.data:
-            self.get_logger().info('🚨 Force listen mode ACTIVATED')
+            self.get_logger().info('[STT] Force listen ON')
 
             self.is_muted = False
             self.recognizer.reset(self.stream)
@@ -273,7 +282,7 @@ class NoilSTTNode(Node):
 
             self._reset_timeout_timer()
         else:
-            self.get_logger().info('✓ Force listen mode DEACTIVATED')
+            self.get_logger().info('[STT] Force listen OFF')
 
             self.recognizer.reset(self.stream)
             self.is_chatting = False
@@ -290,7 +299,7 @@ class NoilSTTNode(Node):
         TTS 출력 완료 시 사용자 입력 대기 시작
         """
         if msg.data and self.is_chatting:
-            self.get_logger().info('💬 TTS done. Waiting for user input...')
+            self.get_logger().info('[STT] Listening...')
 
             self.recognizer.reset(self.stream)
             self.can_listen = True
@@ -359,7 +368,7 @@ class NoilSTTNode(Node):
         clean_text = text.replace(" ", "")
 
         if any(keyword in clean_text for keyword in self.keywords):
-            self.get_logger().info(f'🎤 Hotword detected: "{text}"')
+            self.get_logger().info(f'[STT] Hotword: "{text}"')
 
             # 대화 모드 시작
             self.is_chatting = True
@@ -385,7 +394,7 @@ class NoilSTTNode(Node):
             self.timeout_timer.cancel()
             self.timeout_timer = None
 
-        self.get_logger().info(f'💬 User input: "{text}"')
+        self.get_logger().info(f'[STT] Input: "{text}"')
 
         # 응급 모드 / 일반 모드 분기
         if self.is_emergency_mode:
@@ -419,7 +428,7 @@ class NoilSTTNode(Node):
             self.timeout_timer = None
 
         if self.is_chatting:
-            self.get_logger().info('⏰ Conversation timeout. Ending session.')
+            self.get_logger().info('[STT] Timeout, session ended')
 
             # 상태 리셋
             self.is_chatting = False

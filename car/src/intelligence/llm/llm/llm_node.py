@@ -73,11 +73,11 @@ class NoilLLMNode(Node):
 
     def _load_parameters(self):
         """파라미터 로드"""
-        self.auth_url = self.get_parameter('auth_url').as_string()
-        self.talk_url = self.get_parameter('talk_url').as_string()
-        self.pet_id = self.get_parameter('pet_id').as_string()
-        self.auth_timeout = self.get_parameter('auth_timeout').as_double()
-        self.talk_timeout = self.get_parameter('talk_timeout').as_double()
+        self.auth_url = self.get_parameter('auth_url').value
+        self.talk_url = self.get_parameter('talk_url').value
+        self.pet_id = self.get_parameter('pet_id').value
+        self.auth_timeout = self.get_parameter('auth_timeout').value
+        self.talk_timeout = self.get_parameter('talk_timeout').value
 
     def _init_subscriber(self):
         """구독자 초기화"""
@@ -98,14 +98,10 @@ class NoilLLMNode(Node):
 
     def _log_configuration(self):
         """설정 로그"""
-        self.get_logger().info('=' * 50)
-        self.get_logger().info('★★★ LLM Communication Node Started ★★★')
-        self.get_logger().info('=' * 50)
-        self.get_logger().info(f'Pet ID: {self.pet_id}')
-        self.get_logger().info(f'Auth URL: {self.auth_url}')
-        self.get_logger().info(f'Talk URL: {self.talk_url}')
-        self.get_logger().info(f'Token status: {"✅ Valid" if self.access_token else "❌ Invalid"}')
-        self.get_logger().info('=' * 50)
+        token_status = "Valid" if self.access_token else "Invalid"
+        self.get_logger().info(
+            f'[LLM] Started | pet={self.pet_id} | token={token_status}'
+        )
 
     # =====================================================
     # JWT 토큰 관리
@@ -198,9 +194,7 @@ class NoilLLMNode(Node):
         """
         user_text = msg.data
 
-        self.get_logger().info('=' * 50)
-        self.get_logger().info(f'💬 STT received: "{user_text}"')
-        self.get_logger().info('🤖 Requesting LLM response...')
+        self.get_logger().info(f'[LLM] STT received: "{user_text}"')
 
         # 토큰 확인
         if not self._refresh_token_if_needed():
@@ -211,12 +205,10 @@ class NoilLLMNode(Node):
         success, reply = self._request_llm(user_text)
 
         if success and reply:
-            self.get_logger().info(f'✅ LLM response: "{reply}"')
+            self.get_logger().info(f'[LLM] Response: "{reply}"')
             self._publish_response(reply)
         else:
-            self.get_logger().error('❌ Failed to get LLM response')
-
-        self.get_logger().info('=' * 50)
+            self.get_logger().error('[LLM] Failed to get response')
 
     # =====================================================
     # LLM 서버 통신

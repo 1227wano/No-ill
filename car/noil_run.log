@@ -1,0 +1,736 @@
+[INFO] [launch]: All log files can be found below /home/jetson/.ros/log/2026-02-11-17-08-59-781598-jetson-desktop-31288
+[INFO] [launch]: Default logging verbosity is set to INFO
+[37;1m2026-02-11 17:09:00.047 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port7411: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[37;1m2026-02-11 17:09:00.048 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port7415: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[INFO] [ydlidar_ros2_driver_node-1]: process started with pid [31302]
+[ydlidar_ros2_driver_node-1] [37;1m2026-02-11 17:09:00.361 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port7411: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[ydlidar_ros2_driver_node-1] [37;1m2026-02-11 17:09:00.362 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port7415: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[INFO] [static_transform_publisher-2]: process started with pid [31304]
+[INFO] [static_transform_publisher-3]: process started with pid [31306]
+[INFO] [rf2o_laser_odometry_node-4]: process started with pid [31308]
+[INFO] [person_override_node-5]: process started with pid [31310]
+[INFO] [safety_override_node-6]: process started with pid [31312]
+[INFO] [chat_stop_gate_node-7]: process started with pid [31317]
+[INFO] [twist_mux-8]: process started with pid [31344]
+[INFO] [pca_drive_node-9]: process started with pid [31351]
+[INFO] [detect_node-10]: process started with pid [31357]
+[INFO] [judgement_node-11]: process started with pid [31364]
+[INFO] [emergency_response_node-12]: process started with pid [31388]
+[INFO] [upload_accident_node-13]: process started with pid [31395]
+[INFO] [llm_node-14]: process started with pid [31398]
+[INFO] [stt_node-15]: process started with pid [31400]
+[INFO] [tts_node-16]: process started with pid [31402]
+[rf2o_laser_odometry_node-4] [37;1m2026-02-11 17:09:00.242 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port7411: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[rf2o_laser_odometry_node-4] [37;1m2026-02-11 17:09:00.243 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port7415: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[person_override_node-5] [37;1m2026-02-11 17:09:00.288 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port7411: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[person_override_node-5] [37;1m2026-02-11 17:09:00.289 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port7415: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[safety_override_node-6] [37;1m2026-02-11 17:09:00.449 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port7411: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[safety_override_node-6] [37;1m2026-02-11 17:09:00.449 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port7415: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[chat_stop_gate_node-7] [37;1m2026-02-11 17:09:00.492 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port7411: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[chat_stop_gate_node-7] [37;1m2026-02-11 17:09:00.493 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port7415: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[twist_mux-8] [37;1m2026-02-11 17:09:00.553 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port7411: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[twist_mux-8] [37;1m2026-02-11 17:09:00.554 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port7415: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[pca_drive_node-9] [37;1m2026-02-11 17:09:00.514 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port7411: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[pca_drive_node-9] [37;1m2026-02-11 17:09:00.531 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port7415: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[static_transform_publisher-2] [WARN] [1770797340.220662370] []: Old-style arguments are deprecated; see --help for new-style arguments
+[static_transform_publisher-2] [INFO] [1770797340.738345771] [static_tf_pub_laser]: Spinning until stopped - publishing transform
+[static_transform_publisher-2] translation: ('0.000000', '0.000000', '0.020000')
+[static_transform_publisher-2] rotation: ('0.000000', '0.000000', '0.000000', '1.000000')
+[static_transform_publisher-2] from 'base_link' to 'laser_frame'
+[static_transform_publisher-3] [WARN] [1770797340.241049115] []: Old-style arguments are deprecated; see --help for new-style arguments
+[rf2o_laser_odometry_node-4] [WARN] [1770797340.396415893] [rcl.logging_rosout]: Publisher already registered for provided node name. If this is due to multiple nodes with the same name then all logs for that logger name will go out over the existing publisher. As soon as any node with that name is destructed it will unregister the publisher, preventing any further logs for that name from being published on the rosout topic.
+[rf2o_laser_odometry_node-4] [INFO] [1770797340.569491319] [laser_odometry]: Initializing RF2O node...
+[rf2o_laser_odometry_node-4] [WARN] [1770797340.674306986] [laser_odometry]: Waiting for laser_scans....
+[rf2o_laser_odometry_node-4] [WARN] [1770797340.774400326] [laser_odometry]: Waiting for laser_scans....
+[rf2o_laser_odometry_node-4] [WARN] [1770797340.874397439] [laser_odometry]: Waiting for laser_scans....
+[rf2o_laser_odometry_node-4] [WARN] [1770797340.974459514] [laser_odometry]: Waiting for laser_scans....
+[rf2o_laser_odometry_node-4] [WARN] [1770797341.074398611] [laser_odometry]: Waiting for laser_scans....
+[rf2o_laser_odometry_node-4] [WARN] [1770797341.174399694] [laser_odometry]: Waiting for laser_scans....
+[rf2o_laser_odometry_node-4] [WARN] [1770797341.274425577] [laser_odometry]: Waiting for laser_scans....
+[rf2o_laser_odometry_node-4] [WARN] [1770797341.374400099] [laser_odometry]: Waiting for laser_scans....
+[person_override_node-5] [INFO] [1770797341.411867416] [person_override_node]: ===========================================
+[person_override_node-5] [INFO] [1770797341.413705690] [person_override_node]: Person Override Node Started
+[person_override_node-5] [INFO] [1770797341.414572362] [person_override_node]: ===========================================
+[person_override_node-5] [INFO] [1770797341.415313528] [person_override_node]: Topics:
+[person_override_node-5] [INFO] [1770797341.415344729] [person_override_node]:   person_x : /person_x
+[person_override_node-5] [INFO] [1770797341.415360313] [person_override_node]:   obj_type : /object_type
+[person_override_node-5] [INFO] [1770797341.415370393] [person_override_node]:   cmd_vel  : /cmd_vel_person
+[person_override_node-5] [INFO] [1770797341.415379833] [person_override_node]:   fall     : /check_accident
+[person_override_node-5] [INFO] [1770797341.415388633] [person_override_node]:   arrived  : /fall_arrived
+[person_override_node-5] [INFO] [1770797341.415397274] [person_override_node]:   chatting : /is_chatting
+[person_override_node-5] [INFO] [1770797341.415405850] [person_override_node]:   scan     : /scan
+[person_override_node-5] [INFO] [1770797341.415414106] [person_override_node]: Arrival distance: 0.50 m
+[person_override_node-5] [INFO] [1770797341.415432154] [person_override_node]: ===========================================
+[rf2o_laser_odometry_node-4] [WARN] [1770797341.474443774] [laser_odometry]: Waiting for laser_scans....
+[twist_mux-8] [INFO] [1770797341.490238691] [twist_mux]: Topic handler 'topics.chatting' subscribed to topic 'cmd_vel_is_chatting': timeout = 0.300000s , priority = 255.
+[twist_mux-8] [INFO] [1770797341.501525811] [twist_mux]: Topic handler 'topics.navigation' subscribed to topic 'cmd_vel': timeout = 0.300000s , priority = 10.
+[ydlidar_ros2_driver_node-1] [0m[INFO] [1770797341.520757463] [ydlidar_ros2_driver_node]: [YDLIDAR INFO] Current ROS Driver Version: 1.0.1
+[ydlidar_ros2_driver_node-1] [0m
+[ydlidar_ros2_driver_node-1] [2026-02-11 17:09:01][info] SDK initializing
+[ydlidar_ros2_driver_node-1] [2026-02-11 17:09:01][info] SDK has been initialized
+[ydlidar_ros2_driver_node-1] [2026-02-11 17:09:01][info] SDK Version: 1.2.19
+[ydlidar_ros2_driver_node-1] [2026-02-11 17:09:01][info] Connect elapsed time 47 ms
+[ydlidar_ros2_driver_node-1] [2026-02-11 17:09:01][info] Lidar successfully connected [/dev/ttyUSB0:128000]
+[ydlidar_ros2_driver_node-1] [2026-02-11 17:09:01][info] Lidar running correctly! The health status good
+[ydlidar_ros2_driver_node-1] [0;31m[2026-02-11 17:09:01][error] Fail to get baseplate device information!
+[ydlidar_ros2_driver_node-1] [0m[2026-02-11 17:09:01][info] Check status, Elapsed time 0 ms
+[ydlidar_ros2_driver_node-1] [2026-02-11 17:09:01][info] Lidar init success, Elapsed time [47]ms
+[rf2o_laser_odometry_node-4] [WARN] [1770797341.574397048] [laser_odometry]: Waiting for laser_scans....
+[twist_mux-8] [INFO] [1770797341.580223140] [twist_mux]: Topic handler 'topics.person' subscribed to topic 'cmd_vel_person': timeout = 0.300000s , priority = 50.
+[twist_mux-8] [INFO] [1770797341.581252087] [twist_mux]: Topic handler 'topics.safety' subscribed to topic 'cmd_vel_safety': timeout = 0.300000s , priority = 200.
+[rf2o_laser_odometry_node-4] [WARN] [1770797341.674875323] [laser_odometry]: Waiting for laser_scans....
+[static_transform_publisher-3] [INFO] [1770797341.716101366] [base_to_laser_tf]: Spinning until stopped - publishing transform
+[static_transform_publisher-3] translation: ('0.100000', '0.000000', '0.100000')
+[static_transform_publisher-3] rotation: ('0.000000', '0.000000', '0.000000', '1.000000')
+[static_transform_publisher-3] from 'base_link' to 'laser_frame'
+[chat_stop_gate_node-7] [INFO] [1770797341.737254558] [chat_stop_gate_node]: ===========================================
+[chat_stop_gate_node-7] [INFO] [1770797341.739044191] [chat_stop_gate_node]: Chat Stop Gate Node Started
+[chat_stop_gate_node-7] [INFO] [1770797341.739081023] [chat_stop_gate_node]: ===========================================
+[chat_stop_gate_node-7] [INFO] [1770797341.739094496] [chat_stop_gate_node]: Subscribe: /is_chatting
+[chat_stop_gate_node-7] [INFO] [1770797341.739105120] [chat_stop_gate_node]: Publish  : /cmd_vel_is_chatting
+[chat_stop_gate_node-7] [INFO] [1770797341.739114464] [chat_stop_gate_node]: Rate     : 10.0 Hz
+[chat_stop_gate_node-7] [INFO] [1770797341.739133344] [chat_stop_gate_node]: ===========================================
+[rf2o_laser_odometry_node-4] [WARN] [1770797341.774393229] [laser_odometry]: Waiting for laser_scans....
+[safety_override_node-6] [INFO] [1770797341.835198802] [safety_override_node]: ===========================================
+[safety_override_node-6] [INFO] [1770797341.835489047] [safety_override_node]: Safety Override Node Started
+[safety_override_node-6] [INFO] [1770797341.835513336] [safety_override_node]: ===========================================
+[safety_override_node-6] [INFO] [1770797341.835524952] [safety_override_node]: Topics:
+[safety_override_node-6] [INFO] [1770797341.835535544] [safety_override_node]:   scan: /scan
+[safety_override_node-6] [INFO] [1770797341.835544824] [safety_override_node]:   cmd : /cmd_vel_safety
+[safety_override_node-6] [INFO] [1770797341.835558105] [safety_override_node]: Distance thresholds:
+[safety_override_node-6] [INFO] [1770797341.835568089] [safety_override_node]:   Slow down: 0.50 m
+[safety_override_node-6] [INFO] [1770797341.835586585] [safety_override_node]:   Reverse  : 0.30 m
+[safety_override_node-6] [INFO] [1770797341.835596697] [safety_override_node]: ===========================================
+[rf2o_laser_odometry_node-4] [WARN] [1770797341.874392455] [laser_odometry]: Waiting for laser_scans....
+[rf2o_laser_odometry_node-4] [WARN] [1770797341.974398114] [laser_odometry]: Waiting for laser_scans....
+[rf2o_laser_odometry_node-4] [WARN] [1770797342.074403133] [laser_odometry]: Waiting for laser_scans....
+[pca_drive_node-9] [INFO] [1770797342.142313318] [pca_driver]: pca_drive_node started (servo 0x60, motor 0x40)
+[ydlidar_ros2_driver_node-1] [2026-02-11 17:09:02][info] [YDLIDAR] Create thread 0xAE9FB8E0
+[rf2o_laser_odometry_node-4] [WARN] [1770797342.174397784] [laser_odometry]: Waiting for laser_scans....
+[ydlidar_ros2_driver_node-1] [0;31m[2026-02-11 17:09:02][error] Check Sum 0xAAFB != 0x7266
+[ydlidar_ros2_driver_node-1] [0m[2026-02-11 17:09:02][info] Successed to start scan mode, Elapsed time 1069 ms
+[ydlidar_ros2_driver_node-1] [2026-02-11 17:09:02][info] Module device info
+[ydlidar_ros2_driver_node-1] Firmware version: 3.1
+[ydlidar_ros2_driver_node-1] Hardware version: 3
+[ydlidar_ros2_driver_node-1] Model: S2PRO
+[ydlidar_ros2_driver_node-1] Serial: 2024082400081920
+[ydlidar_ros2_driver_node-1] [2026-02-11 17:09:02][info] Scan Frequency: 10.00Hz
+[ydlidar_ros2_driver_node-1] [2026-02-11 17:09:02][info] Fixed Size: 720
+[ydlidar_ros2_driver_node-1] [2026-02-11 17:09:02][info] Sample Rate: 5.00K
+[ydlidar_ros2_driver_node-1] [2026-02-11 17:09:02][info] Scan Frequency: 10.00Hz
+[ydlidar_ros2_driver_node-1] [2026-02-11 17:09:02][info] Fixed Size: 720
+[ydlidar_ros2_driver_node-1] [2026-02-11 17:09:02][info] Sample Rate: 5.00K
+[ydlidar_ros2_driver_node-1] [2026-02-11 17:09:02][info] Scan Frequency: 10.00Hz
+[ydlidar_ros2_driver_node-1] [2026-02-11 17:09:02][info] Fixed Size: 720
+[ydlidar_ros2_driver_node-1] [2026-02-11 17:09:02][info] Sample Rate: 5.00K
+[ydlidar_ros2_driver_node-1] [2026-02-11 17:09:02][info] Single Fixed Size: 430
+[ydlidar_ros2_driver_node-1] [2026-02-11 17:09:02][info] Sample Rate: 5.00K
+[ydlidar_ros2_driver_node-1] [2026-02-11 17:09:02][info] Successed to check the lidar, Elapsed time 291 ms
+[ydlidar_ros2_driver_node-1] [2026-02-11 17:09:02][info] Now lidar is scanning...
+[rf2o_laser_odometry_node-4] [WARN] [1770797342.274411795] [laser_odometry]: Waiting for laser_scans....
+[rf2o_laser_odometry_node-4] [WARN] [1770797342.374399118] [laser_odometry]: Waiting for laser_scans....
+[rf2o_laser_odometry_node-4] [WARN] [1770797342.474404617] [laser_odometry]: Waiting for laser_scans....
+[rf2o_laser_odometry_node-4] [WARN] [1770797342.574390852] [laser_odometry]: Waiting for laser_scans....
+[rf2o_laser_odometry_node-4] [WARN] [1770797342.674394559] [laser_odometry]: Waiting for laser_scans....
+[rf2o_laser_odometry_node-4] [WARN] [1770797342.774408731] [laser_odometry]: Waiting for laser_scans....
+[rf2o_laser_odometry_node-4] [WARN] [1770797342.874412278] [laser_odometry]: Waiting for laser_scans....
+[rf2o_laser_odometry_node-4] [WARN] [1770797342.974397233] [laser_odometry]: Waiting for laser_scans....
+[rf2o_laser_odometry_node-4] [WARN] [1770797343.074399084] [laser_odometry]: Waiting for laser_scans....
+[rf2o_laser_odometry_node-4] [WARN] [1770797343.174406632] [laser_odometry]: Waiting for laser_scans....
+[rf2o_laser_odometry_node-4] [WARN] [1770797343.274397828] [laser_odometry]: Waiting for laser_scans....
+[rf2o_laser_odometry_node-4] [WARN] [1770797343.374395168] [laser_odometry]: Waiting for laser_scans....
+[rf2o_laser_odometry_node-4] [WARN] [1770797343.474399868] [laser_odometry]: Waiting for laser_scans....
+[rf2o_laser_odometry_node-4] [INFO] [1770797343.474965414] [laser_odometry]: [rf2o] Got first Laser Scan .... Configuring node
+[rf2o_laser_odometry_node-4] [WARN] [1770797343.574432856] [laser_odometry]: Waiting for laser_scans....
+[rf2o_laser_odometry_node-4] [WARN] [1770797346.329151572] [laser_odometry]: Waiting for laser_scans....
+[rf2o_laser_odometry_node-4] [WARN] [1770797350.948015267] [laser_odometry]: Waiting for laser_scans....
+[rf2o_laser_odometry_node-4] [WARN] [1770797351.248004069] [laser_odometry]: Waiting for laser_scans....
+[emergency_response_node-12] [37;1m2026-02-11 17:09:03.707 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port7411: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[emergency_response_node-12] [37;1m2026-02-11 17:09:03.708 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port7415: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[INFO] [component_container_isolated-17]: process started with pid [31545]
+[judgement_node-11] [37;1m2026-02-11 17:09:03.925 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port7411: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[judgement_node-11] [37;1m2026-02-11 17:09:03.926 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port7415: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[stt_node-15] [37;1m2026-02-11 17:09:04.423 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port7411: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[stt_node-15] [37;1m2026-02-11 17:09:04.424 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port7415: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[upload_accident_node-13] [37;1m2026-02-11 17:09:04.460 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port7411: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[upload_accident_node-13] [37;1m2026-02-11 17:09:04.461 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port7415: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[llm_node-14] [37;1m2026-02-11 17:09:06.182 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port7411: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[llm_node-14] [37;1m2026-02-11 17:09:06.183 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port7415: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[emergency_response_node-12] [INFO] [1770797346.573510693] [emergency_response_node]: ==================================================
+[emergency_response_node-12] [INFO] [1770797346.574480311] [emergency_response_node]: ★★★ Emergency Response Node Started ★★★
+[emergency_response_node-12] [INFO] [1770797346.575260934] [emergency_response_node]: ==================================================
+[emergency_response_node-12] [INFO] [1770797346.575993043] [emergency_response_node]: Max attempts: 5
+[emergency_response_node-12] [INFO] [1770797346.576893636] [emergency_response_node]: Response timeout: 5.0s
+[emergency_response_node-12] [INFO] [1770797346.577693843] [emergency_response_node]: Cooldown: 60 min
+[emergency_response_node-12] [INFO] [1770797346.578552227] [emergency_response_node]: ==================================================
+[judgement_node-11] [INFO] [1770797346.640154361] [fall_judgement_node]: ==================================================
+[judgement_node-11] [INFO] [1770797346.641908665] [fall_judgement_node]: ★★★ Fall Judgement Node Started ★★★
+[judgement_node-11] [INFO] [1770797346.672418543] [fall_judgement_node]: ==================================================
+[judgement_node-11] [INFO] [1770797346.673435522] [fall_judgement_node]: Lying threshold: 30 frames
+[judgement_node-11] [INFO] [1770797346.674225520] [fall_judgement_node]: Cooldown: 10.0 seconds
+[judgement_node-11] [INFO] [1770797346.674969022] [fall_judgement_node]: ==================================================
+[upload_accident_node-13] [INFO] [1770797347.461847323] [upload_accident_node]: ==================================================
+[upload_accident_node-13] [INFO] [1770797347.487763740] [upload_accident_node]: ★★★ Upload Accident Node Started ★★★
+[upload_accident_node-13] [INFO] [1770797347.488758606] [upload_accident_node]: ==================================================
+[upload_accident_node-13] [INFO] [1770797347.489715072] [upload_accident_node]: Image path: /home/jetson/Downloads/N0111.jpg
+[upload_accident_node-13] [INFO] [1770797347.490637745] [upload_accident_node]: Upload URL: http://i14a301.p.ssafy.io:8080/api/events/report
+[upload_accident_node-13] [INFO] [1770797347.491471616] [upload_accident_node]: Max retries: 3
+[upload_accident_node-13] [INFO] [1770797347.492396114] [upload_accident_node]: ==================================================
+[stt_node-15] [WARN] [1770797347.578695538] [stt_node]: ⚠️  Brio microphone not found. Using default.
+[stt_node-15] [INFO] [1770797347.588248675] [stt_node]: ✅ Loaded 9 hotwords
+[detect_node-10] [37;1m2026-02-11 17:09:08.248 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port7411: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[detect_node-10] [37;1m2026-02-11 17:09:08.261 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port7415: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[llm_node-14] [INFO] [1770797348.507703679] [llm_node]: 🔑 Requesting JWT token (attempt 1/3)...
+[llm_node-14] [INFO] [1770797348.793310513] [llm_node]: ✅ JWT token obtained successfully
+[llm_node-14] [INFO] [1770797348.794186753] [llm_node]: ==================================================
+[llm_node-14] [INFO] [1770797348.794902223] [llm_node]: ★★★ LLM Communication Node Started ★★★
+[llm_node-14] [INFO] [1770797348.795596476] [llm_node]: ==================================================
+[llm_node-14] [INFO] [1770797348.796285832] [llm_node]: Pet ID: N0111
+[llm_node-14] [INFO] [1770797348.797008630] [llm_node]: Auth URL: http://i14a301.p.ssafy.io:8080/api/auth/pets/login
+[llm_node-14] [INFO] [1770797348.797705315] [llm_node]: Talk URL: http://i14a301.p.ssafy.io:8080/api/conversations/talk
+[llm_node-14] [INFO] [1770797348.798402224] [llm_node]: Token status: ✅ Valid
+[llm_node-14] [INFO] [1770797348.799063356] [llm_node]: ==================================================
+[tts_node-16] [37;1m2026-02-11 17:09:08.965 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port7411: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[tts_node-16] [37;1m2026-02-11 17:09:08.966 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port7415: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[detect_node-10] [INFO] [1770797350.749354588] [yolo_detector]: Loading TensorRT engine: /home/jetson/tolelom/S14P11A301/car/install/yolo_detector/share/yolo_detector/models/best.engine
+[detect_node-10] [INFO] [1770797351.890244730] [yolo_detector]: ✓ TensorRT engine loaded successfully
+[detect_node-10] [INFO] [1770797352.079980894] [yolo_detector]: ==================================================
+[detect_node-10] [INFO] [1770797352.080929103] [yolo_detector]: YOLO Detector Node Started
+[detect_node-10] [INFO] [1770797352.081744511] [yolo_detector]: ==================================================
+[detect_node-10] [INFO] [1770797352.082506733] [yolo_detector]: Model: 224x224
+[detect_node-10] [INFO] [1770797352.084071178] [yolo_detector]: Classes: desk, lying, others
+[detect_node-10] [INFO] [1770797352.085879691] [yolo_detector]: Emergency Capture Mode: Enabled
+[detect_node-10] [INFO] [1770797352.088084276] [yolo_detector]: ==================================================
+[tts_node-16] [INFO] [1770797351.230240315] [tts_node]: ✅ Found speaker: UACDemoV1.0: USB Audio (hw:0,0) (ID: 0)
+[INFO] [ros2-18]: process started with pid [31547]
+[component_container_isolated-17] [37;1m2026-02-11 17:09:12.223 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port7411: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[component_container_isolated-17] [37;1m2026-02-11 17:09:12.224 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port7415: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[component_container_isolated-17] [INFO] [1770797352.956178353] [nav2_container]: Load Library: /opt/ros/humble/lib/libmap_server_core.so
+[component_container_isolated-17] [INFO] [1770797353.078633300] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_map_server::CostmapFilterInfoServer>
+[component_container_isolated-17] [INFO] [1770797353.080443381] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_map_server::MapSaver>
+[component_container_isolated-17] [INFO] [1770797353.081825775] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_map_server::MapServer>
+[component_container_isolated-17] [INFO] [1770797353.083482766] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_map_server::MapServer>
+[rf2o_laser_odometry_node-4] [WARN] [1770797353.148037149] [laser_odometry]: Waiting for laser_scans....
+[component_container_isolated-17] [INFO] [1770797353.319241514] [map_server]: 
+[component_container_isolated-17] 	map_server lifecycle node launched. 
+[component_container_isolated-17] 	Waiting on external lifecycle transitions to activate
+[component_container_isolated-17] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[component_container_isolated-17] [INFO] [1770797353.325411165] [map_server]: Creating
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/map_server' in container '/nav2_container'
+[component_container_isolated-17] [INFO] [1770797353.332677668] [nav2_container]: Load Library: /opt/ros/humble/lib/libcontroller_server_core.so
+[component_container_isolated-17] [INFO] [1770797353.341334917] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_controller::ControllerServer>
+[component_container_isolated-17] [INFO] [1770797353.341474055] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_controller::ControllerServer>
+[component_container_isolated-17] [INFO] [1770797353.382299070] [controller_server]: 
+[component_container_isolated-17] 	controller_server lifecycle node launched. 
+[component_container_isolated-17] 	Waiting on external lifecycle transitions to activate
+[component_container_isolated-17] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[component_container_isolated-17] [INFO] [1770797353.412050343] [controller_server]: Creating controller server
+[rf2o_laser_odometry_node-4] [WARN] [1770797353.748089514] [laser_odometry]: Waiting for laser_scans....
+[component_container_isolated-17] [INFO] [1770797353.970819765] [local_costmap.local_costmap]: 
+[component_container_isolated-17] 	local_costmap lifecycle node launched. 
+[component_container_isolated-17] 	Waiting on external lifecycle transitions to activate
+[component_container_isolated-17] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[component_container_isolated-17] [INFO] [1770797353.972869211] [local_costmap.local_costmap]: Creating Costmap
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/controller_server' in container '/nav2_container'
+[component_container_isolated-17] [INFO] [1770797353.975105156] [nav2_container]: Load Library: /opt/ros/humble/lib/libamcl_core.so
+[detect_node-10] [INFO] [1770797353.982842100] [yolo_detector]: ✓✓✓ CAMERA INITIALIZED ✓✓✓
+[component_container_isolated-17] [INFO] [1770797354.054333093] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_amcl::AmclNode>
+[component_container_isolated-17] [INFO] [1770797354.054486696] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_amcl::AmclNode>
+[rf2o_laser_odometry_node-4] [WARN] [1770797354.895441750] [laser_odometry]: Waiting for laser_scans....
+[INFO] [patrol_node-19]: process started with pid [31588]
+[component_container_isolated-17] [INFO] [1770797356.130998835] [amcl]: 
+[component_container_isolated-17] 	amcl lifecycle node launched. 
+[component_container_isolated-17] 	Waiting on external lifecycle transitions to activate
+[component_container_isolated-17] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[component_container_isolated-17] [INFO] [1770797356.147843788] [amcl]: Creating
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/amcl' in container '/nav2_container'
+[component_container_isolated-17] [INFO] [1770797356.226943531] [nav2_container]: Load Library: /opt/ros/humble/lib/libsmoother_server_core.so
+[patrol_node-19] [37;1m2026-02-11 17:09:16.212 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port7411: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[patrol_node-19] [37;1m2026-02-11 17:09:16.221 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port7415: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[component_container_isolated-17] [INFO] [1770797356.243513728] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_smoother::SmootherServer>
+[component_container_isolated-17] [INFO] [1770797356.243639106] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_smoother::SmootherServer>
+[patrol_node-19] [INFO] [1770797356.786552020] [patrol_node]: ===========================================
+[patrol_node-19] [INFO] [1770797356.794541960] [patrol_node]: Patrol Node Started
+[patrol_node-19] [INFO] [1770797356.800334836] [patrol_node]: ===========================================
+[patrol_node-19] [INFO] [1770797356.803195401] [patrol_node]: Waypoint 1: (-3.03, -3.76)
+[patrol_node-19] [INFO] [1770797356.805837978] [patrol_node]: Waypoint 2: (0.91, -1.77)
+[patrol_node-19] [INFO] [1770797356.808395338] [patrol_node]: Person timeout: 3.0 seconds
+[patrol_node-19] [INFO] [1770797356.809965607] [patrol_node]: Object type topic: /object_type
+[patrol_node-19] [INFO] [1770797356.810949721] [patrol_node]: ===========================================
+[rf2o_laser_odometry_node-4] [WARN] [1770797357.773460172] [laser_odometry]: Waiting for laser_scans....
+[patrol_node-19] [WARN] [1770797357.787132266] [patrol_node]: ⏳ Waiting for Nav2 action server...
+[tts_node-16] [INFO] [1770797358.251508140] [tts_node]: ✅ TTS engine initialized
+[tts_node-16] [INFO] [1770797358.259718981] [tts_node]: ==================================================
+[tts_node-16] [INFO] [1770797358.271272220] [tts_node]: ★★★ TTS Node Started ★★★
+[tts_node-16] [INFO] [1770797358.277043431] [tts_node]: ==================================================
+[tts_node-16] [INFO] [1770797358.290486977] [tts_node]: Speaker ID: 0
+[tts_node-16] [INFO] [1770797358.311636203] [tts_node]: Sample rate: 48000 Hz
+[tts_node-16] [INFO] [1770797358.318735663] [tts_node]: Playback speed: 0.9x
+[tts_node-16] [INFO] [1770797358.332149289] [tts_node]: ==================================================
+[component_container_isolated-17] [INFO] [1770797358.866034137] [smoother_server]: 
+[component_container_isolated-17] 	smoother_server lifecycle node launched. 
+[component_container_isolated-17] 	Waiting on external lifecycle transitions to activate
+[component_container_isolated-17] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[component_container_isolated-17] [INFO] [1770797358.919544157] [smoother_server]: Creating smoother server
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/smoother_server' in container '/nav2_container'
+[tts_node-16] [INFO] [1770797358.940388865] [tts_node]: ✓ TTS speaker test OK (2 beeps)
+[component_container_isolated-17] [INFO] [1770797358.947475973] [nav2_container]: Load Library: /opt/ros/humble/lib/libnav2_lifecycle_manager_core.so
+[component_container_isolated-17] [INFO] [1770797358.950266137] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_lifecycle_manager::LifecycleManager>
+[component_container_isolated-17] [INFO] [1770797358.950416220] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_lifecycle_manager::LifecycleManager>
+[component_container_isolated-17] [INFO] [1770797359.248361766] [lifecycle_manager_localization]: Creating
+[component_container_isolated-17] [INFO] [1770797359.324832086] [nav2_container]: Load Library: /opt/ros/humble/lib/libplanner_server_core.so
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/lifecycle_manager_localization' in container '/nav2_container'
+[component_container_isolated-17] [INFO] [1770797359.329033636] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_planner::PlannerServer>
+[component_container_isolated-17] [INFO] [1770797359.329384107] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_planner::PlannerServer>
+[component_container_isolated-17] [INFO] [1770797359.349859368] [lifecycle_manager_localization]: [34m[1mCreating and initializing lifecycle service clients[0m[0m
+[component_container_isolated-17] [INFO] [1770797359.533990284] [lifecycle_manager_localization]: [34m[1mStarting managed nodes bringup...[0m[0m
+[component_container_isolated-17] [INFO] [1770797359.534277105] [lifecycle_manager_localization]: [34m[1mConfiguring map_server[0m[0m
+[component_container_isolated-17] [INFO] [1770797359.537814739] [map_server]: Configuring
+[component_container_isolated-17] [INFO] [1770797359.538073720] [map_io]: Loading yaml file: /home/jetson/tolelom/S14P11A301/car/install/no_ill_bringup/share/no_ill_bringup/maps/home_map.yaml
+[component_container_isolated-17] [INFO] [1770797359.538673571] [map_io]: resolution: 0.05
+[component_container_isolated-17] [INFO] [1770797359.538708324] [map_io]: origin[0]: -10.1
+[component_container_isolated-17] [INFO] [1770797359.538717828] [map_io]: origin[1]: -8.72
+[component_container_isolated-17] [INFO] [1770797359.538724932] [map_io]: origin[2]: 0
+[component_container_isolated-17] [INFO] [1770797359.538732068] [map_io]: free_thresh: 0.25
+[component_container_isolated-17] [INFO] [1770797359.538738948] [map_io]: occupied_thresh: 0.65
+[component_container_isolated-17] [INFO] [1770797359.538748933] [map_io]: mode: trinary
+[component_container_isolated-17] [INFO] [1770797359.538758885] [map_io]: negate: 0
+[component_container_isolated-17] [INFO] [1770797359.539221293] [map_io]: Loading image_file: /home/jetson/tolelom/S14P11A301/car/install/no_ill_bringup/share/no_ill_bringup/maps/home_map.pgm
+[component_container_isolated-17] [INFO] [1770797359.694153490] [map_io]: Read map /home/jetson/tolelom/S14P11A301/car/install/no_ill_bringup/share/no_ill_bringup/maps/home_map.pgm: 357 X 306 map @ 0.05 m/cell
+[tts_node-16] [INFO] [1770797359.735104428] [tts_node]: ✓ Camera test beep OK (3 beeps)
+[component_container_isolated-17] [INFO] [1770797359.820545059] [planner_server]: 
+[component_container_isolated-17] 	planner_server lifecycle node launched. 
+[component_container_isolated-17] 	Waiting on external lifecycle transitions to activate
+[component_container_isolated-17] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[component_container_isolated-17] [INFO] [1770797359.839864235] [lifecycle_manager_localization]: [34m[1mConfiguring amcl[0m[0m
+[component_container_isolated-17] [INFO] [1770797359.840246546] [amcl]: Configuring
+[component_container_isolated-17] [INFO] [1770797359.840447989] [amcl]: initTransforms
+[component_container_isolated-17] [INFO] [1770797359.862354445] [planner_server]: Creating
+[rf2o_laser_odometry_node-4] [WARN] [1770797359.903213670] [laser_odometry]: Waiting for laser_scans....
+[component_container_isolated-17] [INFO] [1770797360.064555682] [amcl]: initPubSub
+[component_container_isolated-17] [INFO] [1770797360.155224251] [amcl]: Subscribed to map topic.
+[component_container_isolated-17] [INFO] [1770797360.233170694] [amcl]: initialPoseReceived
+[component_container_isolated-17] [ERROR] [1770797360.233314089] [amcl]: Received initialpose message is malformed. Rejecting.
+[component_container_isolated-17] [INFO] [1770797360.235916634] [lifecycle_manager_localization]: [34m[1mActivating map_server[0m[0m
+[component_container_isolated-17] [INFO] [1770797360.236543013] [map_server]: Activating
+[component_container_isolated-17] [INFO] [1770797360.236926316] [map_server]: Creating bond (map_server) to lifecycle manager.
+[component_container_isolated-17] [INFO] [1770797360.237149425] [amcl]: Received a 357 X 306 map @ 0.050 m/pix
+[component_container_isolated-17] [INFO] [1770797360.404557662] [lifecycle_manager_localization]: Server map_server connected with bond.
+[component_container_isolated-17] [INFO] [1770797360.408518472] [lifecycle_manager_localization]: [34m[1mActivating amcl[0m[0m
+[component_container_isolated-17] [INFO] [1770797360.416405339] [amcl]: Activating
+[component_container_isolated-17] [INFO] [1770797360.416556414] [amcl]: initialPoseReceived
+[component_container_isolated-17] [INFO] [1770797360.416767906] [amcl]: Setting pose (1770797360.416765): -3.027 -3.758 1.571
+[component_container_isolated-17] [INFO] [1770797360.419138638] [amcl]: Creating bond (amcl) to lifecycle manager.
+[component_container_isolated-17] [INFO] [1770797360.441855829] [global_costmap.global_costmap]: 
+[component_container_isolated-17] 	global_costmap lifecycle node launched. 
+[component_container_isolated-17] 	Waiting on external lifecycle transitions to activate
+[component_container_isolated-17] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[component_container_isolated-17] [INFO] [1770797360.453833140] [global_costmap.global_costmap]: Creating Costmap
+[component_container_isolated-17] [INFO] [1770797360.548548536] [amcl]: createLaserObject
+[stt_node-15] [INFO] [1770797360.558587411] [stt_node]: ✅ Sherpa-ONNX recognizer initialized
+[component_container_isolated-17] [INFO] [1770797360.569789124] [lifecycle_manager_localization]: Server amcl connected with bond.
+[component_container_isolated-17] [INFO] [1770797360.569901446] [lifecycle_manager_localization]: [34m[1mManaged nodes are active[0m[0m
+[component_container_isolated-17] [INFO] [1770797360.569937446] [lifecycle_manager_localization]: [34m[1mCreating bond timer...[0m[0m
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/planner_server' in container '/nav2_container'
+[component_container_isolated-17] [INFO] [1770797360.577708663] [nav2_container]: Load Library: /opt/ros/humble/lib/libbehavior_server_core.so
+[component_container_isolated-17] [INFO] [1770797360.597175970] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<behavior_server::BehaviorServer>
+[component_container_isolated-17] [INFO] [1770797360.597301732] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<behavior_server::BehaviorServer>
+[rf2o_laser_odometry_node-4] [WARN] [1770797360.627873021] [laser_odometry]: Waiting for laser_scans....
+[rf2o_laser_odometry_node-4] [WARN] [1770797360.703205144] [laser_odometry]: Waiting for laser_scans....
+[component_container_isolated-17] [INFO] [1770797360.848042722] [behavior_server]: 
+[component_container_isolated-17] 	behavior_server lifecycle node launched. 
+[component_container_isolated-17] 	Waiting on external lifecycle transitions to activate
+[component_container_isolated-17] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/behavior_server' in container '/nav2_container'
+[component_container_isolated-17] [INFO] [1770797360.877135680] [nav2_container]: Load Library: /opt/ros/humble/lib/libbt_navigator_core.so
+[component_container_isolated-17] [INFO] [1770797360.885227542] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_bt_navigator::BtNavigator>
+[component_container_isolated-17] [INFO] [1770797360.885740768] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_bt_navigator::BtNavigator>
+[INFO] [ros2-18]: process has finished cleanly [pid 31547]
+[component_container_isolated-17] [INFO] [1770797361.117077429] [bt_navigator]: 
+[component_container_isolated-17] 	bt_navigator lifecycle node launched. 
+[component_container_isolated-17] 	Waiting on external lifecycle transitions to activate
+[component_container_isolated-17] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[component_container_isolated-17] [INFO] [1770797361.117297817] [bt_navigator]: Creating
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/bt_navigator' in container '/nav2_container'
+[component_container_isolated-17] [INFO] [1770797361.125381808] [nav2_container]: Load Library: /opt/ros/humble/lib/libwaypoint_follower_core.so
+[component_container_isolated-17] [INFO] [1770797361.126788426] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_waypoint_follower::WaypointFollower>
+[component_container_isolated-17] [INFO] [1770797361.126841003] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_waypoint_follower::WaypointFollower>
+[stt_node-15] [INFO] [1770797361.264343020] [stt_node]: ✅ Microphone stream started
+[stt_node-15] [INFO] [1770797361.265250781] [stt_node]: ==================================================
+[stt_node-15] [INFO] [1770797361.266025676] [stt_node]: ★★★ STT Control Node Started ★★★
+[stt_node-15] [INFO] [1770797361.266759161] [stt_node]: ==================================================
+[stt_node-15] [INFO] [1770797361.267435718] [stt_node]: Microphone ID: None
+[stt_node-15] [INFO] [1770797361.269906132] [stt_node]: Sample rate: 16000 Hz
+[stt_node-15] [INFO] [1770797361.270840613] [stt_node]: Hotwords: 9 loaded
+[stt_node-15] [INFO] [1770797361.271607220] [stt_node]: Conversation timeout: 7.0s
+[stt_node-15] [INFO] [1770797361.272284000] [stt_node]: ==================================================
+[rf2o_laser_odometry_node-4] [WARN] [1770797361.303199808] [laser_odometry]: Waiting for laser_scans....
+[component_container_isolated-17] [INFO] [1770797361.347147955] [waypoint_follower]: 
+[component_container_isolated-17] 	waypoint_follower lifecycle node launched. 
+[component_container_isolated-17] 	Waiting on external lifecycle transitions to activate
+[component_container_isolated-17] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[component_container_isolated-17] [INFO] [1770797361.351549413] [waypoint_follower]: Creating
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/waypoint_follower' in container '/nav2_container'
+[component_container_isolated-17] [INFO] [1770797361.370459493] [nav2_container]: Load Library: /opt/ros/humble/lib/libvelocity_smoother_core.so
+[component_container_isolated-17] [INFO] [1770797361.372405386] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_velocity_smoother::VelocitySmoother>
+[component_container_isolated-17] [INFO] [1770797361.372692207] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_velocity_smoother::VelocitySmoother>
+[component_container_isolated-17] [INFO] [1770797361.607688233] [velocity_smoother]: 
+[component_container_isolated-17] 	velocity_smoother lifecycle node launched. 
+[component_container_isolated-17] 	Waiting on external lifecycle transitions to activate
+[component_container_isolated-17] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/velocity_smoother' in container '/nav2_container'
+[component_container_isolated-17] [INFO] [1770797361.614789293] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_lifecycle_manager::LifecycleManager>
+[component_container_isolated-17] [INFO] [1770797361.614894607] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_lifecycle_manager::LifecycleManager>
+[component_container_isolated-17] [INFO] [1770797361.784852557] [lifecycle_manager_navigation]: Creating
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/lifecycle_manager_navigation' in container '/nav2_container'
+[component_container_isolated-17] [INFO] [1770797361.837283102] [lifecycle_manager_navigation]: [34m[1mCreating and initializing lifecycle service clients[0m[0m
+[component_container_isolated-17] [INFO] [1770797362.097627249] [lifecycle_manager_navigation]: [34m[1mStarting managed nodes bringup...[0m[0m
+[component_container_isolated-17] [INFO] [1770797362.097789076] [lifecycle_manager_navigation]: [34m[1mConfiguring controller_server[0m[0m
+[component_container_isolated-17] [INFO] [1770797362.098190555] [controller_server]: Configuring controller interface
+[component_container_isolated-17] [INFO] [1770797362.101669564] [controller_server]: getting goal checker plugins..
+[component_container_isolated-17] [INFO] [1770797362.105674055] [controller_server]: Controller frequency set to 20.0000Hz
+[component_container_isolated-17] [INFO] [1770797362.106176400] [local_costmap.local_costmap]: Configuring
+[component_container_isolated-17] [INFO] [1770797362.224551662] [local_costmap.local_costmap]: Using plugin "voxel_layer"
+[component_container_isolated-17] [INFO] [1770797362.240843070] [local_costmap.local_costmap]: Subscribed to Topics: scan
+[component_container_isolated-17] [INFO] [1770797362.312868156] [local_costmap.local_costmap]: Initialized plugin "voxel_layer"
+[component_container_isolated-17] [INFO] [1770797362.312980030] [local_costmap.local_costmap]: Using plugin "inflation_layer"
+[component_container_isolated-17] [INFO] [1770797362.338852768] [local_costmap.local_costmap]: Initialized plugin "inflation_layer"
+[component_container_isolated-17] [INFO] [1770797362.482186160] [controller_server]: Created progress_checker : progress_checker of type nav2_controller::SimpleProgressChecker
+[component_container_isolated-17] [INFO] [1770797362.497462092] [controller_server]: Created goal checker : general_goal_checker of type nav2_controller::SimpleGoalChecker
+[component_container_isolated-17] [INFO] [1770797362.509304297] [controller_server]: Controller Server has general_goal_checker  goal checkers available.
+[component_container_isolated-17] [INFO] [1770797362.511248205] [controller_server]: Created controller : FollowPath of type nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController
+[component_container_isolated-17] [INFO] [1770797362.593135843] [controller_server]: Controller Server has FollowPath  controllers available.
+[component_container_isolated-17] [INFO] [1770797362.694706632] [lifecycle_manager_navigation]: [34m[1mConfiguring smoother_server[0m[0m
+[component_container_isolated-17] [INFO] [1770797362.696636172] [smoother_server]: Configuring smoother server
+[component_container_isolated-17] [INFO] [1770797362.772965019] [smoother_server]: Created smoother : simple_smoother of type nav2_smoother::SimpleSmoother
+[component_container_isolated-17] [INFO] [1770797362.778828936] [smoother_server]: Smoother Server has simple_smoother  smoothers available.
+[component_container_isolated-17] [INFO] [1770797362.878423944] [lifecycle_manager_navigation]: [34m[1mConfiguring planner_server[0m[0m
+[component_container_isolated-17] [INFO] [1770797362.878807919] [planner_server]: Configuring
+[component_container_isolated-17] [INFO] [1770797362.878942194] [global_costmap.global_costmap]: Configuring
+[component_container_isolated-17] [INFO] [1770797362.927782624] [global_costmap.global_costmap]: Using plugin "static_layer"
+[component_container_isolated-17] [INFO] [1770797362.943360450] [global_costmap.global_costmap]: Subscribing to the map topic (/map) with transient local durability
+[component_container_isolated-17] [INFO] [1770797362.961072652] [global_costmap.global_costmap]: Initialized plugin "static_layer"
+[component_container_isolated-17] [INFO] [1770797362.961189774] [global_costmap.global_costmap]: Using plugin "obstacle_layer"
+[component_container_isolated-17] [INFO] [1770797362.985329712] [global_costmap.global_costmap]: Subscribed to Topics: scan
+[component_container_isolated-17] [INFO] [1770797363.054810495] [global_costmap.global_costmap]: Initialized plugin "obstacle_layer"
+[component_container_isolated-17] [INFO] [1770797363.056665474] [global_costmap.global_costmap]: Using plugin "inflation_layer"
+[component_container_isolated-17] [INFO] [1770797363.074855957] [global_costmap.global_costmap]: Initialized plugin "inflation_layer"
+[component_container_isolated-17] [INFO] [1770797363.238867943] [global_costmap.global_costmap]: StaticLayer: Resizing costmap to 357 X 306 at 0.050000 m/pix
+[component_container_isolated-17] [INFO] [1770797363.242562731] [planner_server]: Created global planner plugin GridBased of type nav2_navfn_planner/NavfnPlanner
+[component_container_isolated-17] [INFO] [1770797363.242800272] [planner_server]: Configuring plugin GridBased of type NavfnPlanner
+[component_container_isolated-17] [INFO] [1770797363.258529013] [planner_server]: Planner Server has GridBased  planners available.
+[component_container_isolated-17] [INFO] [1770797363.411975330] [lifecycle_manager_navigation]: [34m[1mConfiguring behavior_server[0m[0m
+[component_container_isolated-17] [INFO] [1770797363.412331464] [behavior_server]: Configuring
+[component_container_isolated-17] [INFO] [1770797363.509878179] [behavior_server]: Creating behavior plugin backup of type nav2_behaviors/BackUp
+[component_container_isolated-17] [INFO] [1770797363.512138125] [behavior_server]: Configuring backup
+[component_container_isolated-17] [INFO] [1770797363.698546400] [behavior_server]: Creating behavior plugin wait of type nav2_behaviors/Wait
+[component_container_isolated-17] [INFO] [1770797363.701148881] [behavior_server]: Configuring wait
+[patrol_node-19] [WARN] [1770797363.787139028] [patrol_node]: ⏳ Waiting for Nav2 action server...
+[component_container_isolated-17] [INFO] [1770797363.816217618] [lifecycle_manager_navigation]: [34m[1mConfiguring bt_navigator[0m[0m
+[component_container_isolated-17] [INFO] [1770797363.818508924] [bt_navigator]: Configuring
+[component_container_isolated-17] [INFO] [1770797364.426929005] [lifecycle_manager_navigation]: [34m[1mConfiguring waypoint_follower[0m[0m
+[component_container_isolated-17] [INFO] [1770797364.427379862] [waypoint_follower]: Configuring
+[component_container_isolated-17] [INFO] [1770797364.629732403] [waypoint_follower]: Created waypoint_task_executor : wait_at_waypoint of type nav2_waypoint_follower::WaitAtWaypoint
+[component_container_isolated-17] [INFO] [1770797364.640980389] [lifecycle_manager_navigation]: [34m[1mConfiguring velocity_smoother[0m[0m
+[component_container_isolated-17] [INFO] [1770797364.641942039] [velocity_smoother]: Configuring velocity smoother
+[component_container_isolated-17] [INFO] [1770797364.681512569] [lifecycle_manager_navigation]: [34m[1mActivating controller_server[0m[0m
+[component_container_isolated-17] [INFO] [1770797364.682042851] [controller_server]: Activating
+[component_container_isolated-17] [INFO] [1770797364.682148389] [local_costmap.local_costmap]: Activating
+[component_container_isolated-17] [INFO] [1770797364.682189701] [local_costmap.local_costmap]: Checking transform
+[component_container_isolated-17] [INFO] [1770797364.682485099] [local_costmap.local_costmap]: start
+[patrol_node-19] [INFO] [1770797364.787623700] [patrol_node]: 🚀 Navigating to waypoint 2: (0.91, -1.77)
+[component_container_isolated-17] [INFO] [1770797364.910449030] [controller_server]: Activating controller: FollowPath of type regulated_pure_pursuit_controller::RegulatedPurePursuitController
+[component_container_isolated-17] [INFO] [1770797364.910601929] [controller_server]: Creating bond (controller_server) to lifecycle manager.
+[component_container_isolated-17] [INFO] [1770797365.041921178] [lifecycle_manager_navigation]: Server controller_server connected with bond.
+[component_container_isolated-17] [INFO] [1770797365.042077949] [lifecycle_manager_navigation]: [34m[1mActivating smoother_server[0m[0m
+[component_container_isolated-17] [INFO] [1770797365.043233554] [smoother_server]: Activating
+[component_container_isolated-17] [INFO] [1770797365.043468503] [smoother_server]: Creating bond (smoother_server) to lifecycle manager.
+[component_container_isolated-17] [INFO] [1770797365.174079067] [lifecycle_manager_navigation]: Server smoother_server connected with bond.
+[component_container_isolated-17] [INFO] [1770797365.174282047] [lifecycle_manager_navigation]: [34m[1mActivating planner_server[0m[0m
+[component_container_isolated-17] [INFO] [1770797365.175550199] [planner_server]: Activating
+[component_container_isolated-17] [INFO] [1770797365.175919198] [global_costmap.global_costmap]: Activating
+[component_container_isolated-17] [INFO] [1770797365.175976159] [global_costmap.global_costmap]: Checking transform
+[component_container_isolated-17] [INFO] [1770797365.176056096] [global_costmap.global_costmap]: Timed out waiting for transform from base_link to map to become available, tf error: Lookup would require extrapolation into the past.  Requested time 1770797364.875594 but the earliest data is at time 1770797367.672853, when looking up transform from frame [base_link] to frame [map]
+[component_container_isolated-17] [INFO] [1770797365.676184722] [global_costmap.global_costmap]: Timed out waiting for transform from base_link to map to become available, tf error: Lookup would require extrapolation into the past.  Requested time 1770797365.382511 but the earliest data is at time 1770797367.672853, when looking up transform from frame [base_link] to frame [map]
+[component_container_isolated-17] [INFO] [1770797366.176545865] [global_costmap.global_costmap]: Timed out waiting for transform from base_link to map to become available, tf error: Lookup would require extrapolation into the past.  Requested time 1770797365.890761 but the earliest data is at time 1770797367.672853, when looking up transform from frame [base_link] to frame [map]
+[component_container_isolated-17] [INFO] [1770797366.680776970] [global_costmap.global_costmap]: Timed out waiting for transform from base_link to map to become available, tf error: Lookup would require extrapolation into the past.  Requested time 1770797366.399101 but the earliest data is at time 1770797367.672853, when looking up transform from frame [base_link] to frame [map]
+[component_container_isolated-17] [INFO] [1770797367.176145735] [global_costmap.global_costmap]: Timed out waiting for transform from base_link to map to become available, tf error: Lookup would require extrapolation into the past.  Requested time 1770797366.907349 but the earliest data is at time 1770797367.672853, when looking up transform from frame [base_link] to frame [map]
+[component_container_isolated-17] [INFO] [1770797367.676136892] [global_costmap.global_costmap]: Timed out waiting for transform from base_link to map to become available, tf error: Lookup would require extrapolation into the past.  Requested time 1770797367.415317 but the earliest data is at time 1770797367.672853, when looking up transform from frame [base_link] to frame [map]
+[patrol_node-19] [INFO] [1770797368.092488152] [patrol_node]: 👤 Person detected! Pausing patrol...
+[patrol_node-19] [INFO] [1770797368.092641947] [patrol_node]: ⏹ Canceling current navigation...
+[component_container_isolated-17] [INFO] [1770797368.176337174] [global_costmap.global_costmap]: start
+[component_container_isolated-17] [INFO] [1770797368.232219689] [planner_server]: Activating plugin GridBased of type NavfnPlanner
+[component_container_isolated-17] [INFO] [1770797368.239497329] [planner_server]: Creating bond (planner_server) to lifecycle manager.
+[component_container_isolated-17] [INFO] [1770797368.369568174] [lifecycle_manager_navigation]: Server planner_server connected with bond.
+[component_container_isolated-17] [INFO] [1770797368.369684016] [lifecycle_manager_navigation]: [34m[1mActivating behavior_server[0m[0m
+[component_container_isolated-17] [INFO] [1770797368.370612225] [behavior_server]: Activating
+[component_container_isolated-17] [INFO] [1770797368.370661314] [behavior_server]: Activating backup
+[component_container_isolated-17] [INFO] [1770797368.370707587] [behavior_server]: Activating wait
+[component_container_isolated-17] [INFO] [1770797368.370764196] [behavior_server]: Creating bond (behavior_server) to lifecycle manager.
+[component_container_isolated-17] [INFO] [1770797368.486444468] [lifecycle_manager_navigation]: Server behavior_server connected with bond.
+[component_container_isolated-17] [INFO] [1770797368.486593303] [lifecycle_manager_navigation]: [34m[1mActivating bt_navigator[0m[0m
+[component_container_isolated-17] [INFO] [1770797368.487657899] [bt_navigator]: Activating
+[rf2o_laser_odometry_node-4] [WARN] [1770797368.903459807] [laser_odometry]: Waiting for laser_scans....
+[component_container_isolated-17] [INFO] [1770797369.018509411] [bt_navigator]: Creating bond (bt_navigator) to lifecycle manager.
+[component_container_isolated-17] [INFO] [1770797369.132217519] [lifecycle_manager_navigation]: Server bt_navigator connected with bond.
+[component_container_isolated-17] [INFO] [1770797369.132351634] [lifecycle_manager_navigation]: [34m[1mActivating waypoint_follower[0m[0m
+[component_container_isolated-17] [INFO] [1770797369.133411366] [waypoint_follower]: Activating
+[component_container_isolated-17] [INFO] [1770797369.133507975] [waypoint_follower]: Creating bond (waypoint_follower) to lifecycle manager.
+[component_container_isolated-17] [INFO] [1770797369.272724336] [lifecycle_manager_navigation]: Server waypoint_follower connected with bond.
+[component_container_isolated-17] [INFO] [1770797369.272860466] [lifecycle_manager_navigation]: [34m[1mActivating velocity_smoother[0m[0m
+[component_container_isolated-17] [INFO] [1770797369.273781796] [velocity_smoother]: Activating
+[component_container_isolated-17] [INFO] [1770797369.273908038] [velocity_smoother]: Creating bond (velocity_smoother) to lifecycle manager.
+[component_container_isolated-17] [INFO] [1770797369.407338882] [lifecycle_manager_navigation]: Server velocity_smoother connected with bond.
+[component_container_isolated-17] [INFO] [1770797369.407468549] [lifecycle_manager_navigation]: [34m[1mManaged nodes are active[0m[0m
+[component_container_isolated-17] [INFO] [1770797369.407490405] [lifecycle_manager_navigation]: [34m[1mCreating bond timer...[0m[0m
+[patrol_node-19] [INFO] [1770797372.787677574] [patrol_node]: ✓ Person lost for 3.3 seconds. Resuming patrol...
+[patrol_node-19] [INFO] [1770797373.787686068] [patrol_node]: 🚀 Navigating to waypoint 2: (0.91, -1.77)
+[component_container_isolated-17] [INFO] [1770797373.789102126] [bt_navigator]: Begin navigating from current location (-2.71, -3.06) to (0.91, -1.77)
+[component_container_isolated-17] [INFO] [1770797373.810903046] [controller_server]: Received a goal, begin computing control effort.
+[component_container_isolated-17] [WARN] [1770797373.811051305] [controller_server]: No goal checker was specified in parameter 'current_goal_checker'. Server will use only plugin loaded general_goal_checker . This warning will appear once.
+[component_container_isolated-17] [INFO] [1770797374.861246503] [controller_server]: Passing new path to controller.
+[component_container_isolated-17] [INFO] [1770797375.911252105] [controller_server]: Passing new path to controller.
+[component_container_isolated-17] [INFO] [1770797376.911245705] [controller_server]: Passing new path to controller.
+[component_container_isolated-17] [INFO] [1770797377.961243127] [controller_server]: Passing new path to controller.
+[component_container_isolated-17] [INFO] [1770797379.011251660] [controller_server]: Passing new path to controller.
+[component_container_isolated-17] [INFO] [1770797380.011336128] [controller_server]: Passing new path to controller.
+[rf2o_laser_odometry_node-4] [WARN] [1770797380.203221677] [laser_odometry]: Waiting for laser_scans....
+[component_container_isolated-17] [INFO] [1770797381.061263073] [controller_server]: Passing new path to controller.
+[component_container_isolated-17] [INFO] [1770797382.111249545] [controller_server]: Passing new path to controller.
+[component_container_isolated-17] [WARN] [1770797382.512082055] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797382.561983119] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797382.611882071] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797382.661999075] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797382.711850250] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797382.761875540] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [ERROR] [1770797382.762038487] [controller_server]: Controller patience exceeded
+[component_container_isolated-17] [WARN] [1770797382.762165337] [controller_server]: [follow_path] [ActionServer] Aborting handle.
+[component_container_isolated-17] [INFO] [1770797382.779914214] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
+[component_container_isolated-17] [INFO] [1770797382.782415509] [controller_server]: Received a goal, begin computing control effort.
+[component_container_isolated-17] [WARN] [1770797382.903641847] [controller_server]: Control loop missed its desired rate of 20.0000Hz
+[component_container_isolated-17] [INFO] [1770797383.107196161] [controller_server]: Passing new path to controller.
+[component_container_isolated-17] [WARN] [1770797383.108293846] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797383.159457686] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797383.210691287] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797383.261934713] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797383.517612374] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797383.569084443] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797383.620729284] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797383.673652357] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797383.777490657] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797383.829220972] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797383.881561346] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797383.932738754] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797383.984489869] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797384.035719182] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [ERROR] [1770797384.035878673] [controller_server]: Controller patience exceeded
+[component_container_isolated-17] [WARN] [1770797384.035995732] [controller_server]: [follow_path] [ActionServer] Aborting handle.
+[patrol_node-19] [INFO] [1770797384.043265756] [patrol_node]: 👤 Person detected! Pausing patrol...
+[patrol_node-19] [INFO] [1770797384.043394911] [patrol_node]: ⏹ Canceling current navigation...
+[component_container_isolated-17] [INFO] [1770797384.049552562] [bt_navigator]: [navigate_to_pose] [ActionServer] Client requested to cancel the goal. Cancelling.
+[component_container_isolated-17] [INFO] [1770797384.049983258] [bt_navigator]: Goal canceled
+[patrol_node-19] [INFO] [1770797384.050203486] [patrol_node]: ⏸ Navigation canceled
+[patrol_node-19] [INFO] [1770797390.788143690] [patrol_node]: ✓ Person lost for 3.9 seconds. Resuming patrol...
+[patrol_node-19] [INFO] [1770797391.788081088] [patrol_node]: 🚀 Navigating to waypoint 2: (0.91, -1.77)
+[component_container_isolated-17] [INFO] [1770797391.797197323] [bt_navigator]: Begin navigating from current location (-2.19, -1.05) to (0.91, -1.77)
+[component_container_isolated-17] [WARN] [1770797391.806590012] [planner_server]: GridBased: failed to create plan with tolerance 0.50.
+[component_container_isolated-17] [WARN] [1770797391.806782976] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (0.91, -1.77)
+[component_container_isolated-17] [WARN] [1770797391.806825600] [planner_server]: [compute_path_to_pose] [ActionServer] Aborting handle.
+[component_container_isolated-17] [WARN] [1770797391.825403038] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-17] [WARN] [1770797391.825502528] [bt_navigator_navigate_to_pose_rclcpp_node]: Timed out while waiting for action server to acknowledge goal request for compute_path_to_pose
+[component_container_isolated-17] [INFO] [1770797391.826505043] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [WARN] [1770797392.190580851] [planner_server]: GridBased: failed to create plan with tolerance 0.50.
+[component_container_isolated-17] [WARN] [1770797392.190797240] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (0.91, -1.77)
+[component_container_isolated-17] [WARN] [1770797392.190845208] [planner_server]: [compute_path_to_pose] [ActionServer] Aborting handle.
+[component_container_isolated-17] [INFO] [1770797392.205870867] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
+[component_container_isolated-17] [INFO] [1770797392.206461502] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [WARN] [1770797393.199675518] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 1.0077 Hz
+[patrol_node-19] [INFO] [1770797393.217775507] [patrol_node]: 👤 Person detected! Pausing patrol...
+[patrol_node-19] [INFO] [1770797393.217911061] [patrol_node]: ⏹ Canceling current navigation...
+[component_container_isolated-17] [INFO] [1770797393.239387081] [controller_server]: Received a goal, begin computing control effort.
+[component_container_isolated-17] [INFO] [1770797393.239590765] [controller_server]: Goal was canceled. Stopping the robot.
+[component_container_isolated-17] [INFO] [1770797393.239620142] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[component_container_isolated-17] [INFO] [1770797393.240016789] [bt_navigator]: [navigate_to_pose] [ActionServer] Client requested to cancel the goal. Cancelling.
+[component_container_isolated-17] [INFO] [1770797393.240401596] [bt_navigator]: Goal canceled
+[patrol_node-19] [INFO] [1770797393.240894374] [patrol_node]: ⏸ Navigation canceled
+[rf2o_laser_odometry_node-4] [WARN] [1770797394.903203584] [laser_odometry]: Waiting for laser_scans....
+[patrol_node-19] [INFO] [1770797396.788127276] [patrol_node]: ✓ Person lost for 3.5 seconds. Resuming patrol...
+[patrol_node-19] [INFO] [1770797397.788138118] [patrol_node]: 🚀 Navigating to waypoint 2: (0.91, -1.77)
+[component_container_isolated-17] [INFO] [1770797397.789225690] [bt_navigator]: Begin navigating from current location (-3.71, 0.18) to (0.91, -1.77)
+[component_container_isolated-17] [INFO] [1770797397.810108356] [controller_server]: Received a goal, begin computing control effort.
+[component_container_isolated-17] [WARN] [1770797397.811015445] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797397.870023533] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797397.911437657] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797397.961052800] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797398.011038766] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797398.061137758] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797398.112591080] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [ERROR] [1770797398.112775404] [controller_server]: Controller patience exceeded
+[component_container_isolated-17] [WARN] [1770797398.112860909] [controller_server]: [follow_path] [ActionServer] Aborting handle.
+[component_container_isolated-17] [INFO] [1770797398.136462122] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
+[component_container_isolated-17] [INFO] [1770797398.137681505] [controller_server]: Received a goal, begin computing control effort.
+[component_container_isolated-17] [WARN] [1770797398.298500856] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797398.298812094] [controller_server]: Control loop missed its desired rate of 20.0000Hz
+[component_container_isolated-17] [WARN] [1770797398.299324488] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797398.350236008] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797398.401292010] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797398.452426158] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [ERROR] [1770797398.452588945] [controller_server]: Controller patience exceeded
+[component_container_isolated-17] [WARN] [1770797398.452722195] [controller_server]: [follow_path] [ActionServer] Aborting handle.
+[component_container_isolated-17] [INFO] [1770797398.470044250] [behavior_server]: Running wait
+[component_container_isolated-17] [WARN] [1770797398.892823931] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[patrol_node-19] [INFO] [1770797400.747131760] [patrol_node]: 👤 Person detected! Pausing patrol...
+[patrol_node-19] [INFO] [1770797400.747275699] [patrol_node]: ⏹ Canceling current navigation...
+[component_container_isolated-17] [INFO] [1770797400.770812591] [behavior_server]: Canceling wait
+[component_container_isolated-17] [ERROR] [1770797400.770871792] [bt_navigator_navigate_to_pose_rclcpp_node]: Failed to get result for wait in node halt!
+[component_container_isolated-17] [INFO] [1770797400.771099700] [behavior_server]: [wait] [ActionServer] Client requested to cancel the goal. Cancelling.
+[component_container_isolated-17] [INFO] [1770797400.771240247] [bt_navigator]: [navigate_to_pose] [ActionServer] Client requested to cancel the goal. Cancelling.
+[component_container_isolated-17] [INFO] [1770797400.771494908] [bt_navigator]: Goal canceled
+[patrol_node-19] [INFO] [1770797400.773502434] [patrol_node]: ⏸ Navigation canceled
+[judgement_node-11] [INFO] [1770797400.998116238] [fall_judgement_node]: 🔍 Lying sequence: 10/30
+[judgement_node-11] [INFO] [1770797401.595532245] [fall_judgement_node]: 🔍 Lying sequence: 20/30
+[person_override_node-5] [INFO] [1770797401.763141231] [person_override_node]: ↔️  Person moved away (>1m), resuming tracking
+[judgement_node-11] [INFO] [1770797402.156830291] [fall_judgement_node]: 🔍 Lying sequence: 30/30
+[judgement_node-11] [WARN] [1770797402.157811301] [fall_judgement_node]: ==================================================
+[judgement_node-11] [WARN] [1770797402.158638805] [fall_judgement_node]: 🚨 !!! FALL ACCIDENT DETECTED !!!
+[judgement_node-11] [WARN] [1770797402.159454340] [fall_judgement_node]: ==================================================
+[judgement_node-11] [INFO] [1770797402.160726716] [fall_judgement_node]: ⏳ Cooldown started: 10.0s
+[person_override_node-5] [WARN] [1770797402.160024559] [person_override_node]: 🚨 Fall accident detected! Starting emergency approach...
+[person_override_node-5] [INFO] [1770797402.163206827] [person_override_node]: 🎯 Person found, starting approach
+[person_override_node-5] [INFO] [1770797407.163490691] [person_override_node]: ✅ Arrived at fallen person (time-based fallback), triggering emergency response
+[emergency_response_node-12] [WARN] [1770797407.165772974] [emergency_response_node]: ==================================================
+[emergency_response_node-12] [WARN] [1770797407.166871299] [emergency_response_node]: 🚨 EMERGENCY PROCESS STARTED
+[emergency_response_node-12] [WARN] [1770797407.167799284] [emergency_response_node]: ==================================================
+[tts_node-16] [INFO] [1770797407.166155061] [tts_node]: 🚨 Emergency mode ON (fall_arrived)
+[chat_stop_gate_node-7] [INFO] [1770797407.269374068] [chat_stop_gate_node]: 💬 Chatting started → Robot STOPPED
+[tts_node-16] [INFO] [1770797407.270507689] [tts_node]: 💬 Conversation session STARTED
+[tts_node-16] [INFO] [1770797407.272141512] [tts_node]: 💬 Conversation session STARTED
+[detect_node-10] [INFO] [1770797407.273292062] [yolo_detector]: 💬 Chatting started: Publishing 10 "others"
+[emergency_response_node-12] [INFO] [1770797407.273789960] [emergency_response_node]: 🗣️  Asking patient... (Attempt 1/5)
+[stt_node-15] [INFO] [1770797407.274476340] [stt_node]: ✓ Force listen mode DEACTIVATED
+[tts_node-16] [INFO] [1770797407.275639274] [tts_node]: 🚨 Emergency TTS: "괜찮습니까?"
+[tts_node-16] /home/jetson/sherpa-onnx/sherpa-onnx/csrc/piper-phonemize-lexicon.cc:PiperPhonemesToIdsVits:146 Skip unknown phonemes. Unicode codepoint: \U+003f.
+[stt_node-15] [INFO] [1770797407.288050293] [stt_node]: ✓ Force listen mode DEACTIVATED
+[stt_node-15] [INFO] [1770797407.291186704] [stt_node]: ✓ Force listen mode DEACTIVATED
+[tts_node-16] Expression 'ret' failed in 'src/hostapi/alsa/pa_linux_alsa.c', line: 1736
+[tts_node-16] Expression 'AlsaOpen( &alsaApi->baseHostApiRep, params, streamDir, &self->pcm )' failed in 'src/hostapi/alsa/pa_linux_alsa.c', line: 1904
+[tts_node-16] Expression 'PaAlsaStreamComponent_Initialize( &self->playback, alsaApi, outParams, StreamDirection_Out, NULL != callback )' failed in 'src/hostapi/alsa/pa_linux_alsa.c', line: 2175
+[tts_node-16] Expression 'PaAlsaStream_Initialize( stream, alsaHostApi, inputParameters, outputParameters, sampleRate, framesPerBuffer, callback, streamFlags, userData )' failed in 'src/hostapi/alsa/pa_linux_alsa.c', line: 2839
+[tts_node-16] [ERROR] [1770797409.056839505] [tts_node]: ❌ TTS playback failed: Error opening OutputStream: Device unavailable [PaErrorCode -9985]
+[tts_node-16] [INFO] [1770797409.060110703] [tts_node]: 💬 Conversation session STARTED
+[emergency_response_node-12] [INFO] [1770797409.060124111] [emergency_response_node]: ✓ Emergency TTS done. Activating listen mode.
+[tts_node-16] [INFO] [1770797409.061308549] [tts_node]: 🚨 Emergency TTS: "괜찮습니까?"
+[tts_node-16] /home/jetson/sherpa-onnx/sherpa-onnx/csrc/piper-phonemize-lexicon.cc:PiperPhonemesToIdsVits:146 Skip unknown phonemes. Unicode codepoint: \U+003f.
+[stt_node-15] [INFO] [1770797409.063471822] [stt_node]: 🚨 Force listen mode ACTIVATED
+[stt_node-15] [INFO] [1770797409.065724057] [stt_node]: 🚨 Force listen mode ACTIVATED
+[stt_node-15] [INFO] [1770797409.069166266] [stt_node]: 🚨 Force listen mode ACTIVATED
+[patrol_node-19] [INFO] [1770797410.788498176] [patrol_node]: ✓ Person lost for 3.5 seconds. Resuming patrol...
+[tts_node-16] [INFO] [1770797411.591006288] [tts_node]: 🚨 Emergency TTS: "괜찮습니까?"
+[tts_node-16] /home/jetson/sherpa-onnx/sherpa-onnx/csrc/piper-phonemize-lexicon.cc:PiperPhonemesToIdsVits:146 Skip unknown phonemes. Unicode codepoint: \U+003f.
+[patrol_node-19] [INFO] [1770797411.788420424] [patrol_node]: 🚀 Navigating to waypoint 2: (0.91, -1.77)
+[component_container_isolated-17] [INFO] [1770797411.790361644] [bt_navigator]: Begin navigating from current location (-1.53, -2.79) to (0.91, -1.77)
+[component_container_isolated-17] [INFO] [1770797411.811854371] [controller_server]: Received a goal, begin computing control effort.
+[component_container_isolated-17] [WARN] [1770797411.863885307] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797411.913185088] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797412.063377019] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797412.113200778] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[judgement_node-11] [INFO] [1770797412.162497679] [fall_judgement_node]: ==================================================
+[judgement_node-11] [INFO] [1770797412.163366463] [fall_judgement_node]: ✓ Fall detection re-enabled
+[component_container_isolated-17] [WARN] [1770797412.163441985] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[judgement_node-11] [INFO] [1770797412.171038128] [fall_judgement_node]: ==================================================
+[component_container_isolated-17] [WARN] [1770797412.213504244] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797412.263599624] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797412.313553658] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [ERROR] [1770797412.313752478] [controller_server]: Controller patience exceeded
+[component_container_isolated-17] [WARN] [1770797412.313891712] [controller_server]: [follow_path] [ActionServer] Aborting handle.
+[component_container_isolated-17] [INFO] [1770797412.332095961] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
+[component_container_isolated-17] [INFO] [1770797412.335489561] [controller_server]: Received a goal, begin computing control effort.
+[component_container_isolated-17] [WARN] [1770797412.496348190] [controller_server]: Control loop missed its desired rate of 20.0000Hz
+[component_container_isolated-17] [WARN] [1770797412.547533734] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797412.598414154] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797412.649213227] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797412.699942219] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797412.750600042] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797412.801248329] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [ERROR] [1770797412.801425836] [controller_server]: Controller patience exceeded
+[component_container_isolated-17] [WARN] [1770797412.801513934] [controller_server]: [follow_path] [ActionServer] Aborting handle.
+[component_container_isolated-17] [INFO] [1770797412.829532672] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
+[component_container_isolated-17] [INFO] [1770797412.830389584] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [WARN] [1770797412.834318939] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-17] [WARN] [1770797413.199322840] [planner_server]: Planner loop missed its desired rate of 20.0000 Hz. Current loop rate is 2.7429 Hz
+[component_container_isolated-17] [INFO] [1770797413.212594388] [controller_server]: Received a goal, begin computing control effort.
+[component_container_isolated-17] [WARN] [1770797413.264972019] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797413.315268908] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797413.365031450] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797413.415100398] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797413.465201474] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797413.515138260] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [ERROR] [1770797413.515301399] [controller_server]: Controller patience exceeded
+[component_container_isolated-17] [WARN] [1770797413.515437433] [controller_server]: [follow_path] [ActionServer] Aborting handle.
+[component_container_isolated-17] [INFO] [1770797413.531802447] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
+[component_container_isolated-17] [INFO] [1770797413.542855360] [controller_server]: Received a goal, begin computing control effort.
+[component_container_isolated-17] [WARN] [1770797413.693683944] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797413.693935789] [controller_server]: Control loop missed its desired rate of 20.0000Hz
+[component_container_isolated-17] [WARN] [1770797413.694438422] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797413.745375547] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797413.796667334] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [WARN] [1770797413.848049331] [controller_server]: RegulatedPurePursuitController detected collision ahead!
+[component_container_isolated-17] [ERROR] [1770797413.848194997] [controller_server]: Controller patience exceeded
+[component_container_isolated-17] [WARN] [1770797413.849026149] [controller_server]: [follow_path] [ActionServer] Aborting handle.
+[component_container_isolated-17] [INFO] [1770797413.861398607] [behavior_server]: Running wait
+[emergency_response_node-12] [INFO] [1770797414.062623410] [emergency_response_node]: ⏰ No response detected. Retrying...
+[emergency_response_node-12] [INFO] [1770797414.063762311] [emergency_response_node]: 🗣️  Asking patient... (Attempt 2/5)
+[stt_node-15] [INFO] [1770797414.071598332] [stt_node]: ✓ Force listen mode DEACTIVATED
+[tts_node-16] [INFO] [1770797414.073795365] [tts_node]: 🚨 Emergency TTS: "괜찮습니까?"
+[tts_node-16] /home/jetson/sherpa-onnx/sherpa-onnx/csrc/piper-phonemize-lexicon.cc:PiperPhonemesToIdsVits:146 Skip unknown phonemes. Unicode codepoint: \U+003f.
+[stt_node-15] [INFO] [1770797414.097292290] [stt_node]: ✓ Force listen mode DEACTIVATED
+[stt_node-15] [INFO] [1770797414.099643695] [stt_node]: ✓ Force listen mode DEACTIVATED
+[emergency_response_node-12] [INFO] [1770797415.863506033] [emergency_response_node]: ✓ Emergency TTS done. Activating listen mode.
+[stt_node-15] [INFO] [1770797415.868151849] [stt_node]: 🚨 Force listen mode ACTIVATED
+[stt_node-15] [INFO] [1770797415.873028069] [stt_node]: 🚨 Force listen mode ACTIVATED
+[stt_node-15] [INFO] [1770797415.877250581] [stt_node]: 🚨 Force listen mode ACTIVATED
+[tts_node-16] [INFO] [1770797417.411790926] [tts_node]: 🚨 Emergency TTS: "괜찮습니까?"
+[tts_node-16] /home/jetson/sherpa-onnx/sherpa-onnx/csrc/piper-phonemize-lexicon.cc:PiperPhonemesToIdsVits:146 Skip unknown phonemes. Unicode codepoint: \U+003f.
+[safety_override_node-6] [WARN] [1770797417.736775806] [safety_override_node]: ⚠️  Emergency reverse! Distance: 0.10 m
+[component_container_isolated-17] [INFO] [1770797418.861712110] [behavior_server]: wait completed successfully
+[component_container_isolated-17] [WARN] [1770797418.892728538] [planner_server]: GridBased: failed to create plan with tolerance 0.50.
+[component_container_isolated-17] [WARN] [1770797418.892852156] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (0.91, -1.77)
+[component_container_isolated-17] [WARN] [1770797418.892882717] [planner_server]: [compute_path_to_pose] [ActionServer] Aborting handle.
+[component_container_isolated-17] [INFO] [1770797418.911089654] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [WARN] [1770797419.193510370] [planner_server]: GridBased: failed to create plan with tolerance 0.50.
+[component_container_isolated-17] [WARN] [1770797419.193811208] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (0.91, -1.77)
+[component_container_isolated-17] [WARN] [1770797419.193880841] [planner_server]: [compute_path_to_pose] [ActionServer] Aborting handle.
+[component_container_isolated-17] [INFO] [1770797419.211876990] [behavior_server]: Running backup
+[component_container_isolated-17] [INFO] [1770797419.212407176] [behavior_server]: DriveOnHeading: no acceleration or deceleration limits set
+[component_container_isolated-17] [ERROR] [1770797419.212926770] [behavior_server]: Pose Goes Off Grid.
+[component_container_isolated-17] [WARN] [1770797419.213136822] [behavior_server]: Collision Ahead - Exiting DriveOnHeading
+[component_container_isolated-17] [WARN] [1770797419.213171543] [behavior_server]: backup failed
+[component_container_isolated-17] [WARN] [1770797419.213201815] [behavior_server]: [backup] [ActionServer] Aborting handle.
+[component_container_isolated-17] [INFO] [1770797419.241348685] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
+[component_container_isolated-17] [INFO] [1770797419.241971481] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[tts_node-16] [INFO] [1770797419.687254134] [tts_node]: 🚨 Emergency TTS: "괜찮습니까?"
+[tts_node-16] /home/jetson/sherpa-onnx/sherpa-onnx/csrc/piper-phonemize-lexicon.cc:PiperPhonemesToIdsVits:146 Skip unknown phonemes. Unicode codepoint: \U+003f.
+[component_container_isolated-17] [WARN] [1770797420.194905364] [planner_server]: GridBased: failed to create plan with tolerance 0.50.
+[component_container_isolated-17] [WARN] [1770797420.195111895] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (0.91, -1.77)
+[component_container_isolated-17] [WARN] [1770797420.195282907] [planner_server]: [compute_path_to_pose] [ActionServer] Aborting handle.
+[component_container_isolated-17] [INFO] [1770797420.211149480] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[emergency_response_node-12] [INFO] [1770797420.866065265] [emergency_response_node]: ⏰ No response detected. Retrying...
+[emergency_response_node-12] [INFO] [1770797420.867392746] [emergency_response_node]: 🗣️  Asking patient... (Attempt 3/5)
+[stt_node-15] [INFO] [1770797420.870783050] [stt_node]: ✓ Force listen mode DEACTIVATED
+[stt_node-15] [INFO] [1770797420.873958950] [stt_node]: ✓ Force listen mode DEACTIVATED
+[stt_node-15] [INFO] [1770797420.875699591] [stt_node]: ✓ Force listen mode DEACTIVATED
+[emergency_response_node-12] [INFO] [1770797420.922265467] [emergency_response_node]: ✓ Emergency TTS done. Activating listen mode.
+[stt_node-15] [INFO] [1770797420.925584250] [stt_node]: 🚨 Force listen mode ACTIVATED
+[stt_node-15] [INFO] [1770797420.927640257] [stt_node]: 🚨 Force listen mode ACTIVATED
+[stt_node-15] [INFO] [1770797420.932085461] [stt_node]: 🚨 Force listen mode ACTIVATED
+[component_container_isolated-17] [WARN] [1770797420.939981515] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-17] [WARN] [1770797420.943330954] [BehaviorTreeEngine]: Behavior Tree tick rate 100.00 was exceeded!
+[component_container_isolated-17] [WARN] [1770797421.193240849] [planner_server]: GridBased: failed to create plan with tolerance 0.50.
+[component_container_isolated-17] [WARN] [1770797421.193386035] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (0.91, -1.77)
+[component_container_isolated-17] [WARN] [1770797421.193423764] [planner_server]: [compute_path_to_pose] [ActionServer] Aborting handle.
+[component_container_isolated-17] [INFO] [1770797421.219694727] [behavior_server]: Running wait
+[tts_node-16] [INFO] [1770797422.066302729] [tts_node]: 🚨 Emergency TTS: "괜찮습니까?"
+[tts_node-16] /home/jetson/sherpa-onnx/sherpa-onnx/csrc/piper-phonemize-lexicon.cc:PiperPhonemesToIdsVits:146 Skip unknown phonemes. Unicode codepoint: \U+003f.
+[tts_node-16] [INFO] [1770797424.508303463] [tts_node]: 🚨 Emergency TTS: "괜찮습니까?"
+[tts_node-16] /home/jetson/sherpa-onnx/sherpa-onnx/csrc/piper-phonemize-lexicon.cc:PiperPhonemesToIdsVits:146 Skip unknown phonemes. Unicode codepoint: \U+003f.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             

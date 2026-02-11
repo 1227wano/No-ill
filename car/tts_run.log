@@ -1,0 +1,13 @@
+[INFO] [1770792992.307450488] [tts_node]: ✅ Found speaker: UACDemoV1.0: USB Audio (hw:0,0) (ID: 0)
+[INFO] [1770792993.486831405] [tts_node]: ✅ TTS engine initialized
+[INFO] [1770792993.487833178] [tts_node]: ==================================================
+[INFO] [1770792993.488628190] [tts_node]: ★★★ TTS Node Started ★★★
+[INFO] [1770792993.489392672] [tts_node]: ==================================================
+[INFO] [1770792993.490142978] [tts_node]: Speaker ID: 0
+[INFO] [1770792993.490893027] [tts_node]: Sample rate: 48000 Hz
+[INFO] [1770792993.491663302] [tts_node]: Playback speed: 0.9x
+[INFO] [1770792993.492389894] [tts_node]: ==================================================
+[INFO] [1770792994.005570093] [tts_node]: ✓ TTS speaker test OK (2 beeps)
+[INFO] [1770793007.052600448] [tts_node]: 🗣️  LLM response: "안녕하세요. 테스트입니다."
+[INFO] [1770793063.281047378] [tts_node]: ✓ Camera test beep OK (3 beeps)
+[INFO] [1770793167.969740579] [tts_node]: ✓ Camera test beep OK (3 beeps)

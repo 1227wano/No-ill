@@ -91,13 +91,7 @@ private:
   }
 
   void logConfiguration() {
-    RCLCPP_INFO(get_logger(), "===========================================");
-    RCLCPP_INFO(get_logger(), "Chat Stop Gate Node Started");
-    RCLCPP_INFO(get_logger(), "===========================================");
-    RCLCPP_INFO(get_logger(), "Subscribe: %s", is_chatting_topic_.c_str());
-    RCLCPP_INFO(get_logger(), "Publish  : %s", cmd_out_topic_.c_str());
-    RCLCPP_INFO(get_logger(), "Rate     : %.1f Hz", publish_rate_);
-    RCLCPP_INFO(get_logger(), "===========================================");
+    RCLCPP_INFO(get_logger(), "[GATE] Started | rate=%.0fHz", publish_rate_);
   }
 
   // =====================================================
@@ -116,9 +110,9 @@ private:
     // 상태 변화 시에만 로그
     if (prev_state != is_chatting_) {
       if (is_chatting_) {
-        RCLCPP_INFO(get_logger(), "💬 Chatting started → Robot STOPPED");
+        RCLCPP_INFO(get_logger(), "[GATE] Chat ON -> STOP");
       } else {
-        RCLCPP_INFO(get_logger(), "✓ Chatting ended → Robot RELEASED");
+        RCLCPP_INFO(get_logger(), "[GATE] Chat OFF -> RELEASE");
       }
     }
   }

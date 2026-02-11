@@ -67,19 +67,19 @@ class ImageUploadNode(Node):
 
     def _load_parameters(self):
         """파라미터 로드"""
-        image_name = self.get_parameter('image_name').as_string()
-        save_dir = self.get_parameter('save_directory').as_string()
+        image_name = self.get_parameter('image_name').value
+        save_dir = self.get_parameter('save_directory').value
 
         # 이미지 경로 구성
         self.image_path = Path(os.path.expanduser(save_dir)) / image_name
 
         # 서버 URL
-        self.upload_url = self.get_parameter('upload_url').as_string()
+        self.upload_url = self.get_parameter('upload_url').value
 
         # 재시도 설정
-        self.max_retries = self.get_parameter('max_retries').as_integer()
-        self.retry_delay = self.get_parameter('retry_delay').as_double()
-        self.request_timeout = self.get_parameter('request_timeout').as_double()
+        self.max_retries = self.get_parameter('max_retries').value
+        self.retry_delay = self.get_parameter('retry_delay').value
+        self.request_timeout = self.get_parameter('request_timeout').value
 
     def _init_subscriber(self):
         """구독자 초기화"""
@@ -92,13 +92,9 @@ class ImageUploadNode(Node):
 
     def _log_configuration(self):
         """설정 로그"""
-        self.get_logger().info('=' * 50)
-        self.get_logger().info('★★★ Upload Accident Node Started ★★★')
-        self.get_logger().info('=' * 50)
-        self.get_logger().info(f'Image path: {self.image_path}')
-        self.get_logger().info(f'Upload URL: {self.upload_url}')
-        self.get_logger().info(f'Max retries: {self.max_retries}')
-        self.get_logger().info('=' * 50)
+        self.get_logger().info(
+            f'[UPLOAD] Started | image={self.image_path} | retries={self.max_retries}'
+        )
 
     # =====================================================
     # 콜백
@@ -112,9 +108,7 @@ class ImageUploadNode(Node):
         if not msg.data:
             return
 
-        self.get_logger().info('=' * 50)
-        self.get_logger().info('📤 accident_cap = True. Starting upload...')
-        self.get_logger().info('=' * 50)
+        self.get_logger().info('[UPLOAD] Starting upload...')
 
         # 업로드 시도
         success = self._upload_image_with_retry()
@@ -141,21 +135,17 @@ class ImageUploadNode(Node):
 
         # 파일 크기 확인
         file_size = self.image_path.stat().st_size
-        self.get_logger().info(f'📁 File size: {file_size / 1024:.2f} KB')
+        self.get_logger().debug(f'[UPLOAD] File size: {file_size / 1024:.1f}KB')
 
         # 재시도 루프
         for attempt in range(1, self.max_retries + 1):
-            self.get_logger().info(
-                f'🔄 Upload attempt {attempt}/{self.max_retries}...'
-            )
+            self.get_logger().info(f'[UPLOAD] Attempt {attempt}/{self.max_retries}')
 
             # 업로드 시도
             success, status_code, response_text = self._upload_image()
 
             if success:
-                self.get_logger().info(f'✅ Upload successful (status: {status_code})')
-                if response_text:
-                    self.get_logger().info(f'Response: {response_text}')
+                self.get_logger().info(f'[UPLOAD] Success (status: {status_code})')
                 return True
 
             # 실패 로그
@@ -166,9 +156,6 @@ class ImageUploadNode(Node):
 
             # 재시도 대기
             if attempt < self.max_retries:
-                self.get_logger().info(
-                    f'⏳ Retrying in {self.retry_delay} seconds...'
-                )
                 time.sleep(self.retry_delay)
 
         return False

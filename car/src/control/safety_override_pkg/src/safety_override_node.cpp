@@ -114,16 +114,7 @@ private:
     const double slow_dist = get_parameter("slow_dist").as_double();
     const double reverse_dist = get_parameter("reverse_dist").as_double();
 
-    RCLCPP_INFO(get_logger(), "===========================================");
-    RCLCPP_INFO(get_logger(), "Safety Override Node Started");
-    RCLCPP_INFO(get_logger(), "===========================================");
-    RCLCPP_INFO(get_logger(), "Topics:");
-    RCLCPP_INFO(get_logger(), "  scan: %s", scan_topic.c_str());
-    RCLCPP_INFO(get_logger(), "  cmd : %s", cmd_topic.c_str());
-    RCLCPP_INFO(get_logger(), "Distance thresholds:");
-    RCLCPP_INFO(get_logger(), "  Slow down: %.2f m", slow_dist);
-    RCLCPP_INFO(get_logger(), "  Reverse  : %.2f m", reverse_dist);
-    RCLCPP_INFO(get_logger(), "===========================================");
+    RCLCPP_INFO(get_logger(), "[SAFETY] Started | slow=%.2fm reverse=%.2fm", slow_dist, reverse_dist);
   }
 
   // =====================================================
@@ -232,7 +223,7 @@ private:
       get_logger(),
       *get_clock(),
       1000,  // 1초마다
-      "⚠️  Emergency reverse! Distance: %.2f m",
+      "[SAFETY] Emergency reverse! dist=%.2fm",
       left_dist  // front_dist 대신 참고용
     );
   }

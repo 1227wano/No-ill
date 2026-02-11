@@ -154,19 +154,7 @@ private:
     const auto scan_topic = get_parameter("scan_topic").as_string();
     const double arrival_dist = get_parameter("arrival_distance").as_double();
 
-    RCLCPP_INFO(get_logger(), "===========================================");
-    RCLCPP_INFO(get_logger(), "Person Override Node Started");
-    RCLCPP_INFO(get_logger(), "===========================================");
-    RCLCPP_INFO(get_logger(), "Topics:");
-    RCLCPP_INFO(get_logger(), "  person_x : %s", px_topic.c_str());
-    RCLCPP_INFO(get_logger(), "  obj_type : %s", ot_topic.c_str());
-    RCLCPP_INFO(get_logger(), "  cmd_vel  : %s", cmd_topic.c_str());
-    RCLCPP_INFO(get_logger(), "  fall     : %s", fall_topic.c_str());
-    RCLCPP_INFO(get_logger(), "  arrived  : %s", arrived_topic.c_str());
-    RCLCPP_INFO(get_logger(), "  chatting : %s", chatting_topic.c_str());
-    RCLCPP_INFO(get_logger(), "  scan     : %s", scan_topic.c_str());
-    RCLCPP_INFO(get_logger(), "Arrival distance: %.2f m", arrival_dist);
-    RCLCPP_INFO(get_logger(), "===========================================");
+    RCLCPP_INFO(get_logger(), "[PERSON] Started | arrival_dist=%.2fm", arrival_dist);
   }
 
   // =====================================================
@@ -205,7 +193,7 @@ private:
       fall_detected_ = true;
       approach_started_ = false;
       arrived_ = false;
-      RCLCPP_WARN(get_logger(), "🚨 Fall accident detected! Starting emergency approach...");
+      RCLCPP_WARN(get_logger(), "[PERSON] Fall detected, approaching");
 
     } else if (!msg->data && fall_detected_) {
       // 낙상 해제 (오탐 또는 처리 완료)
@@ -218,7 +206,7 @@ private:
       chatting_msg.data = false;
       pub_is_chatting_->publish(chatting_msg);
 
-      RCLCPP_INFO(get_logger(), "✓ Fall accident cleared, resuming normal operation");
+      RCLCPP_INFO(get_logger(), "[PERSON] Fall cleared, resuming");
     }
   }
 
@@ -290,7 +278,7 @@ private:
       } else {
         // 1m 이상 벌어지면 정지 해제
         follow_stopped_ = false;
-        RCLCPP_INFO(get_logger(), "↔️  Person moved away (>1m), resuming tracking");
+        RCLCPP_INFO(get_logger(), "[PERSON] Moved away, resuming tracking");
       }
     }
 
@@ -383,7 +371,7 @@ private:
     if (!approach_started_) {
       approach_started_ = true;
       approach_start_time_ = now();
-      RCLCPP_INFO(get_logger(), "🎯 Person found, starting approach");
+      RCLCPP_INFO(get_logger(), "[PERSON] Starting approach");
     }
 
     const double elapsed = (now() - approach_start_time_).seconds();
@@ -457,10 +445,7 @@ private:
 
     arrived_ = true;
 
-    RCLCPP_INFO(get_logger(),
-      "✅ Arrived at fallen person (%s), triggering emergency response",
-      reason.c_str()
-    );
+    RCLCPP_INFO(get_logger(), "[PERSON] Arrived (%s)", reason.c_str());
   }
 
   /**

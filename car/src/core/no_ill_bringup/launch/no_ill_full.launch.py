@@ -367,8 +367,8 @@ def generate_launch_description():
         stt_node,
         tts_node,
 
-        # Layer 7: 시각화 (즉시 실행)
-        rviz2,
+        # Layer 7: 시각화 (headless 환경에서는 비활성화)
+        # rviz2,
 
         # Layer 8: 초기화 (8초 후)
         set_initial_pose,

@@ -44,12 +44,9 @@ class FallJudgementNode(Node):
         self._init_subscriber()
         self._init_publisher()
 
-        self.get_logger().info('=' * 50)
-        self.get_logger().info('★★★ Fall Judgement Node Started ★★★')
-        self.get_logger().info('=' * 50)
-        self.get_logger().info(f'Lying threshold: {self.LYING_THRESHOLD} frames')
-        self.get_logger().info(f'Cooldown: {self.COOLDOWN_SECONDS} seconds')
-        self.get_logger().info('=' * 50)
+        self.get_logger().info(
+            f'[FALL] Started | threshold={self.LYING_THRESHOLD}frames | cooldown={self.COOLDOWN_SECONDS}s'
+        )
 
     # =====================================================
     # 초기화
@@ -92,10 +89,10 @@ class FallJudgementNode(Node):
             # lying 카운트 증가
             self.lying_count += 1
 
-            # 주기적 로그
-            if self.lying_count % self.LOG_INTERVAL == 0:
+            # 주기적 로그 (임계값 도달 직전만)
+            if self.lying_count == self.LYING_THRESHOLD - 1:
                 self.get_logger().info(
-                    f'🔍 Lying sequence: {self.lying_count}/{self.LYING_THRESHOLD}'
+                    f'[FALL] Lying sequence: {self.lying_count}/{self.LYING_THRESHOLD}'
                 )
 
             # 임계값 도달
@@ -120,9 +117,7 @@ class FallJudgementNode(Node):
         2. 상태 플래그 설정
         3. 쿨다운 타이머 시작
         """
-        self.get_logger().warn('=' * 50)
-        self.get_logger().warn('🚨 !!! FALL ACCIDENT DETECTED !!!')
-        self.get_logger().warn('=' * 50)
+        self.get_logger().warn('[FALL] FALL ACCIDENT DETECTED')
 
         # 상태 변경
         self.event_triggered = True
@@ -143,9 +138,7 @@ class FallJudgementNode(Node):
             self._reset_event_flag
         )
 
-        self.get_logger().info(
-            f'⏳ Cooldown started: {self.COOLDOWN_SECONDS}s'
-        )
+        self.get_logger().info(f'[FALL] Cooldown {self.COOLDOWN_SECONDS}s')
 
     def _reset_event_flag(self):
         """이벤트 플래그 리셋 (쿨다운 종료)
@@ -160,9 +153,7 @@ class FallJudgementNode(Node):
         # 플래그 해제
         self.event_triggered = False
 
-        self.get_logger().info('=' * 50)
-        self.get_logger().info('✓ Fall detection re-enabled')
-        self.get_logger().info('=' * 50)
+        self.get_logger().info('[FALL] Detection re-enabled')
 
 
 def main(args=None):
