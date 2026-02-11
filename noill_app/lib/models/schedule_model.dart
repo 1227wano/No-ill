@@ -30,9 +30,14 @@ class ScheduleModel {
 
   // 2. 💡 등록(POST) 명세에 맞춰 petNo는 제외하고 petId만 포함
   Map<String, dynamic> toJson(String petId) {
+    // 1. 서버가 한국 시간 그대로 받기를 원할 수 있으므로 toUtc()를 빼고 테스트해보세요.
+    // 2. .split('.').first 를 통해 ".000Z" 부분을 완전히 제거합니다.
+    String formattedTime = schTime.toIso8601String().split('.').first;
+    // 결과값 예시: "2026-02-11T18:40:00"
+
     return {
       "schName": schName,
-      "schTime": schTime.toUtc().toIso8601String(), // 서버로는 UTC로 보냄
+      "schTime": formattedTime,
       "petId": petId,
       "schMemo": schMemo ?? "",
     };

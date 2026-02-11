@@ -38,6 +38,7 @@ class SettingsScreen extends ConsumerWidget {
               ),
             ),
             SizedBox(height: 16.h), // 홈 화면과 동일한 높이 부여
+            SizedBox(width: 20.h), // 홈 화면과 동일한 높이 부여
             // 프로필 섹션
             // 프로필 섹션을 Container로 감싸서 '카드' 느낌 주기
             Container(

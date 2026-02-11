@@ -155,7 +155,7 @@ class ScheduleMainScreen extends ConsumerWidget {
     return RefreshIndicator(
       onRefresh: () async {
         ref.invalidate(scheduleNotifierProvider);
-        return await ref.watch(scheduleNotifierProvider.future);
+        return await ref.read(scheduleNotifierProvider.future);
       },
       child: ListView.builder(
         // 일정이 적어도 당겨서 새로고침 가능하게 함
@@ -166,13 +166,14 @@ class ScheduleMainScreen extends ConsumerWidget {
         itemBuilder: (context, index) {
           final schedule = schedules[index];
           final bool isPassed = schedule.isPassed; // ✅ 시간 지남 여부 판단
+          final localTime = schedule.schTime.toLocal();
 
           return ListTile(
             leading: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  "${schedule.schTime.hour.toString().padLeft(2, '0')}:${schedule.schTime.minute.toString().padLeft(2, '0')}",
+                  "${localTime.hour.toString().padLeft(2, '0')}:${localTime.minute.toString().padLeft(2, '0')}",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: isPassed ? Colors.grey : Colors.black, // ✅ 회색 처리 로직
@@ -208,7 +209,7 @@ class ScheduleMainScreen extends ConsumerWidget {
     return RefreshIndicator(
       onRefresh: () async {
         ref.invalidate(scheduleNotifierProvider);
-        return await ref.watch(scheduleNotifierProvider.future);
+        return await ref.read(scheduleNotifierProvider.future);
       },
       child: SingleChildScrollView(
         // ✅ 화면 전체 높이를 차지하게 해서 어디서든 당길 수 있게 함
