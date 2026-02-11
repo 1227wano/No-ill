@@ -87,7 +87,6 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     );
   }
 
-  // main_screen.dart 내부 _showContactSelection 수정
   // main_screen.dart 하단 혹은 내부에 있는 함수
   void _showContactSelection(BuildContext context, WidgetRef ref) {
     // 1. 현재 보호자가 관리 중인 어르신 목록을 가져옵니다.

@@ -17,7 +17,7 @@ class CustomBottomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       // ✅ 2. 바닥 밀착: 하단 여백을 30에서 12로 줄여 바닥에 더 붙어 보이게 조정
-      margin: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+      margin: const EdgeInsets.fromLTRB(10, 10, 10, 12),
       height: 64, // 높이를 약간 슬림하게 조정
       decoration: BoxDecoration(
         color: Colors.white,

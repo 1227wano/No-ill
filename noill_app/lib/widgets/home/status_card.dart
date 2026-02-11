@@ -63,7 +63,7 @@ class StatusCard extends ConsumerWidget {
                 isWarning ? "STATUS: WARNING" : "STATUS: SAFE",
                 style: TextStyle(
                   fontSize: 12.sp,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   color: pointColor.withOpacity(0.7),
                 ),
               ),

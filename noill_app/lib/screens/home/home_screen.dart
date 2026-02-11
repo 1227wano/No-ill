@@ -18,7 +18,6 @@ import '../../widgets/atoms/light_diffusion_background.dart';
 import '../../widgets/home/event_banner.dart';
 import '../../widgets/home/care_dropdown.dart';
 import '../../widgets/home/status_card.dart';
-import '../../widgets/home/robot_mode.dart';
 import '../../widgets/home/daily_schedule.dart';
 import '../../core/constants/app_constants.dart';
 
@@ -225,6 +224,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final selectedPet = ref.watch(selectedPetProvider);
     final hasSelectedPet = selectedPet != null;
 
+    // 가장 최근 사고 데이터 감지 (배너 표시 여부 결정)
+    final latestEvent = ref.watch(latestEventProvider);
+    final hasAccident = latestEvent != null;
+
     return SafeArea(
       child: LightDiffusionBackground(
         child: Scaffold(
@@ -246,11 +249,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     SizedBox(height: 32.h),
                     _buildSectionHeader("실시간 상태", "어르신이 안전하게 계신지 확인하세요"),
                     const StatusCard(), // forceWarning 제거 (서버 연동 시)
-                    SizedBox(height: 32.h),
-                    const LatestAccidentBanner(),
-                    SizedBox(height: 32.h),
-                    const RobotSection(),
-                    SizedBox(height: 32.h),
+                    // SizedBox(height: 32.h),
+                    // 🚨 [수정 핵심] 사고가 있을 때만 배너와 간격(SizedBox)을 표시
+                    if (hasAccident) ...[
+                      const LatestAccidentBanner(),
+                      SizedBox(height: 32.h), // 배너가 뜰 때만 이 간격도 생김
+                    ],
                     _buildSectionHeader("오늘의 일정", "예정된 주요 일과들이에요"),
                     const DailyScheduleSection(),
                   ],

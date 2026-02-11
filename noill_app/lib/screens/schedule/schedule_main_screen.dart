@@ -5,7 +5,6 @@ import 'package:noill_app/core/constants/color_constants.dart';
 import 'package:noill_app/screens/schedule/schedule_form_sheet.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../core/constants/app_constants.dart';
 import '../../models/schedule_model.dart';
 import '../../providers/schedule_provider.dart';
 

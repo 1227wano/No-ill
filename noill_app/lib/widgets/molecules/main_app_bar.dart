@@ -7,8 +7,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/constants/color_constants.dart';
 
 class MainAppBar extends ConsumerWidget implements PreferredSizeWidget {
+  final bool automaticallyImplyLeading;
   // 이제 앱바에서는 드롭다운을 쓰지 않으므로 옵션이 필요 없습니다.
-  const MainAppBar({super.key});
+  const MainAppBar({super.key, this.automaticallyImplyLeading = true});
 
   @override
   Size get preferredSize => const Size.fromHeight(60);
@@ -16,10 +17,13 @@ class MainAppBar extends ConsumerWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return AppBar(
+      toolbarHeight: 60,
       backgroundColor: Colors.white,
       elevation: 0,
-      centerTitle: true,
+      centerTitle: false,
       titleSpacing: 20,
+
+      automaticallyImplyLeading: automaticallyImplyLeading,
 
       // 1. 왼쪽: 깔끔한 브랜드 로고
       title: const Text(

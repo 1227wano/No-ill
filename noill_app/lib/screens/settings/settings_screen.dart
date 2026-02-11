@@ -25,7 +25,7 @@ class SettingsScreen extends ConsumerWidget {
       backgroundColor: Colors.transparent,
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(24, 20, 24, 120),
+          padding: EdgeInsets.symmetric(horizontal: 20.w), // 홈 화면과 동일한 패딩
           children: [
             SizedBox(height: AppLayout.topSectionGap),
             Text(
@@ -37,8 +37,7 @@ class SettingsScreen extends ConsumerWidget {
                 letterSpacing: -0.5, // 자간을 살짝 좁혀 정돈된 느낌 부여
               ),
             ),
-            const SizedBox(height: 32),
-
+            SizedBox(height: 16.h), // 홈 화면과 동일한 높이 부여
             // 프로필 섹션
             // 프로필 섹션을 Container로 감싸서 '카드' 느낌 주기
             Container(
@@ -67,7 +66,7 @@ class SettingsScreen extends ConsumerWidget {
                       color: NoIllColors.primary, // 아이콘을 브랜드 컬러로
                     ),
                   ),
-                  SizedBox(width: 16.w),
+                  SizedBox(height: 16.w),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
