@@ -79,11 +79,11 @@ private:
     declare_parameter<double>("publish_hz", 20.0);      // 명령 발행 주기 (Hz)
 
     // 낙상 대응 파라미터
-    declare_parameter<double>("fall_approach_speed", 0.15);  // 낙상 접근 속도 (m/s)
-    declare_parameter<double>("fall_approach_time", 5.0);    // 최대 접근 시간 (초)
+    declare_parameter<double>("fall_approach_speed", 0.25);  // 낙상 접근 속도 (m/s)
+    declare_parameter<double>("fall_approach_time", 100.0);    // 최대 접근 시간 (초)
 
     // LiDAR 기반 거리 측정
-    declare_parameter<double>("arrival_distance", 0.5);      // 낙상 도착 거리 (m)
+    declare_parameter<double>("arrival_distance", 0.8);      // 낙상 도착 거리 (m)
     declare_parameter<double>("follow_stop_distance", 0.5);  // 일반 추적 정지 거리 (m)
     declare_parameter<double>("scan_angle_range", 20.0);     // 전방 감지 각도 (degree)
   }

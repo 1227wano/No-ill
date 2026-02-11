@@ -203,7 +203,7 @@ public:
     servo_freq_   = declare_parameter<int>("servo_freq_hz", 60);
     motor_freq_   = declare_parameter<int>("motor_freq_hz", 60); // 너 파이썬이 60Hz라 동일하게
 
-    max_lin_      = declare_parameter<double>("max_linear", 0.5);  // cmd_vel linear.x 이 값이면 full throttle
+    max_lin_      = declare_parameter<double>("max_linear", 0.43);  // cmd_vel linear.x 이 값이면 full throttle
     max_ang_      = declare_parameter<double>("max_angular", 1.0); // cmd_vel angular.z 이 값이면 최대 조향
 
     deadband_     = declare_parameter<double>("deadband", 0.03);   // 작은 떨림 제거
